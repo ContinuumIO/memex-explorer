@@ -201,8 +201,7 @@ div:not(.bk-plot-wrapper) > table {
   border: none;
   text-transform: uppercase;
   margin-bottom: 25px;
-  padding: 0 !important;
-  margin: 0 auto; }
+  padding: 0 !important; }
   .btn-default a, .btn-primary a, .btn-danger a {
     color: inherit !important;
     text-transform: inherit !important;
@@ -298,5 +297,8 @@ form .btn-primary, form .btn-default {
   float: left;
   padding: 6px 12px !important;
   margin: 10px 35px; }
+
+.col-sm-12 {
+  margin: 0 auto; }
 
 /*# sourceMappingURL=dashboard.css.map */

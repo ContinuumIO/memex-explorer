@@ -255,7 +255,6 @@ div:not(.bk-plot-wrapper) > {
   text-transform: uppercase;
   margin-bottom: 25px;
   padding: 0 !important;
-  margin:0 auto;
   a {
       color: inherit !important;
       text-transform: inherit !important;
@@ -305,4 +304,7 @@ form {
     padding: 6px 12px !important;
     margin: 10px 35px;
   }
+}
+.col-sm-12{
+  margin: 0 auto;
 }
