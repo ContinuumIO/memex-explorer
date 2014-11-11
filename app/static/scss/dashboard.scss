@@ -32,6 +32,11 @@ body {
   a.navbar-brand {
     color: white;
   }
+  a.right{
+    float:right;
+    margin-right:30px;
+    margin-left:30px;
+  }
   li.reset {
     background-color: #222222;
     a {
