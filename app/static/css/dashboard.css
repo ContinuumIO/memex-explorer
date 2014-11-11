@@ -201,7 +201,8 @@ div:not(.bk-plot-wrapper) > table {
   border: none;
   text-transform: uppercase;
   margin-bottom: 25px;
-  padding: 0 !important; }
+  padding: 0 !important;
+  margin: 0 auto; }
   .btn-default a, .btn-primary a, .btn-danger a {
     color: inherit !important;
     text-transform: inherit !important;
