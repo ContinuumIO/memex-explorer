@@ -89,6 +89,11 @@ def register():
     return render_template('register_crawl.html', form=form)
 
 
+@app.route('/crawls')
+def crawls():
+    pass
+
+
 @app.route('/crawl/<crawl_endpoint>')
 def crawl(crawl_endpoint):
     crawl = Crawl.query.filter_by(endpoint=crawl_endpoint).first()
