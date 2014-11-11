@@ -37,6 +37,12 @@ def plot_builder(crawl, plot):
         d = Harvest(harvest)
         script, div = d.create_plot_harvest()
 
+    if plot.plot == 'harvest_updating':
+        data = MonitorData.query.filter_by(crawl_id=crawl.id)
+        harvest = data.filter_by(name='harvest').first().data_uri
+        d = Harvest(harvest)
+        script, div = d.create_plot_harvest()
+
     if plot.plot == 'harvest_rate':
         data = MonitorData.query.filter_by(crawl_id=crawl.id)
         harvest = data.filter_by(name='harvest').first().data_uri
