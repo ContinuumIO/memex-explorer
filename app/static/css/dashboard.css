@@ -230,7 +230,9 @@ div:not(.bk-plot-wrapper) > table {
   /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$topColor', endColorstr='$bottomColor',GradientType=0 );
   /* IE6-9 */
-  color: #fff; }
+  color: #fff;
+  display: inline;
+  margin-left: 20px; }
   .btn-default:hover, .btn-primary:hover {
     background: #47658B;
     /* Old browsers */
@@ -298,7 +300,8 @@ form .btn-primary, form .btn-default {
   padding: 6px 12px !important;
   margin: 10px 35px; }
 
-.col-sm-12 {
+.inner {
+  width: 75%;
   margin: 0 auto; }
 
 /*# sourceMappingURL=dashboard.css.map */
