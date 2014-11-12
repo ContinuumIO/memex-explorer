@@ -92,18 +92,21 @@ def register():
 
 @app.route('/crawls')
 def crawls():
+    harvest_csv = []
     harvest_data = []
-    crawl_info = ()
+    crawl_info = {}
     crawls = Crawl.query.all()
     monitor_data = MonitorData.query.all()
     for x in crawls:
         for y in monitor_data:
-            if x.id == y.crawl_id and y.name == 'harvest':
-                harvest_data += y.data_uri
-    crawl_csv = [CSV(x) for x in harvest_data]
-    for x in crawl_csv:
-        crawl_info += (x)
-    return render_template('crawls.html', crawls=crawls, data_uri=data_uri)
+            if y.name == 'harvest' and y.crawl_id == x.id:
+                harvest_csv.append(pd.read_csv(y.data_uri, sep='\t', names=['1', '2', '3']))
+    for x in harvest_csv:
+        pages_crawled = int(x.tail(1)['2'].values)
+        time_start = dt.datetime.fromtimestamp(int(x.head(1)['3'].values))
+        time_end = dt.datetime.fromtimestamp(int(x.tail(1)['3'].values))
+        harvest_data += (pages_crawled, time_start, time_end)
+    return render_template('crawls.html', crawls=crawls, harvest_data=harvest_data)
 
 
 @app.route('/crawl/<crawl_endpoint>')

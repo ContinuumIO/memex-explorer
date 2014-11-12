@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% set active_page = "overview" %}
+
+{% block content %}
+<div class='col-sm-12'>
+<div class='inner'>
+	{% for x in crawls %}
+			<h1>{{ x.name }}</h1>
+			<table class="table">
+			<thead>
+				<tr class='active'>
+    				<th>Name</th>
+    				<th># Pages Crawled</th>
+    				<th>Date Started</th>
+    				<th>Date Ended</th>
+  				</tr>
+  			</thead>
+				<tr>
+					<td>{{ x.name }}</td>
+					{% for y in harvest_data %}
+					<td>{{ y }}</td>
+					{% else %}
+					<h2>No crawl data available.</h2>
+					{% endfor %}
+				</tr>
+			</table>
+	{% endfor %}
+</div>
+</div>
+{% endblock %}
