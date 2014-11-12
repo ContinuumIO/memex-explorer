@@ -16,7 +16,6 @@
   		</tr>
   	</thead>
 		<tr>
-
 			{% for y in harvest_data %}
 			<td>{{ y[0] }}</td>
 			<td>{{ y[1] }}</td>
@@ -24,6 +23,26 @@
 			{% endfor %}
 		</tr>
 	</table>
+<div class='col-sm-12'>
+	<button type="button" class="btn btn-default btn-control">
+  		<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+	</button>
+	<button type="button" class="btn btn-default btn-control">
+  		<span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
+	</button>
+	<button type="button" class="btn btn-default btn-control">
+  		<span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+	</button>
+	<button type="button" class="btn btn-default btn-control-text">
+  		<a href="">Add Frontier</a>
+	</button>
+	<button type="button" class="btn btn-default btn-control-text">
+  		<a href="">Remove Frontier</a>
+	</button>
+	<button type="button" class="btn btn-default btn-control-text">
+  		<a href="">Remove Crawl</a>
+	</button>
+</div>
 {% else %}
 	<h3>No harvest statistics available.</h3>
 {% endif %}

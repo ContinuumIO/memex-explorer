@@ -210,6 +210,16 @@ div:not(.bk-plot-wrapper) > table {
   .btn-default.btn-duo, .btn-primary.btn-duo, .btn-danger.btn-duo {
     float: left;
     margin-right: 20px; }
+  .btn-default.btn-control, .btn-primary.btn-control, .btn-danger.btn-control {
+    font-size: 30px;
+    background: none;
+    color: black;
+    box-shadow: none; }
+  .btn-default.btn-control-text, .btn-primary.btn-control-text, .btn-danger.btn-control-text {
+    font-size: 14px;
+    background: none;
+    color: black;
+    box-shadow: none; }
   .btn-default:hover a, .btn-primary:hover a, .btn-danger:hover a {
     text-decoration: none; }
 

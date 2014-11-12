@@ -265,6 +265,18 @@ div:not(.bk-plot-wrapper) > {
     float: left;
     margin-right: 20px;
   }
+  &.btn-control{
+    font-size: 30px;
+    background:none;
+    color:black;
+    box-shadow:none;
+  }
+  &.btn-control-text{
+    font-size: 14px;
+    background:none;
+    color:black;
+    box-shadow:none;
+  }
   &:hover {
     a {
       text-decoration: none;
