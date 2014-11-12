@@ -22,6 +22,7 @@ from webhelpers import text
 
 from blaze import resource, discover, Data, into, compute
 from pandas import DataFrame
+import pandas as pd
 from bokeh.plotting import ColumnDataSource
 
 # Local Imports
@@ -91,7 +92,18 @@ def register():
 
 @app.route('/crawls')
 def crawls():
-    pass
+    harvest_data = []
+    crawl_info = ()
+    crawls = Crawl.query.all()
+    monitor_data = MonitorData.query.all()
+    for x in crawls:
+        for y in monitor_data:
+            if x.id == y.crawl_id and y.name == 'harvest':
+                harvest_data += y.data_uri
+    crawl_csv = [CSV(x) for x in harvest_data]
+    for x in crawl_csv:
+        crawl_info += (x)
+    return render_template('crawls.html', crawls=crawls, data_uri=data_uri)
 
 
 @app.route('/crawl/<crawl_endpoint>')
