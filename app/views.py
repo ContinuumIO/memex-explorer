@@ -67,6 +67,17 @@ def index():
 # Crawl
 # -----------------------------------------------------------------------------
 
+
+def harvest_stats(query):
+    if query and query.name == 'harvest':
+        harvest_csv = pd.read_csv(query.data_uri, sep='\t', names=['1', '2', '3'])
+        pages_crawled = int(harvest_csv.tail(1)['2'].values)
+        time_start = dt.datetime.fromtimestamp(int(harvest_csv.head(1)['3'].values))
+        time_end = dt.datetime.fromtimestamp(int(harvest_csv.tail(1)['3'].values))
+        harvest_data = (pages_crawled, time_start, time_end)
+        yield harvest_data
+
+
 @app.route('/register_crawl', methods=['GET', 'POST'])
 def register():
     form = CrawlForm(request.form)
@@ -94,15 +105,14 @@ def register():
 def crawls():
     harvest_csv = []
     harvest_data = []
-    crawl_info = {}
     contained_crawls = []
     crawls = Crawl.query.all()
     monitor_data = MonitorData.query.all()
+    contained_crawls = [y.crawl_id for y in monitor_data]
     for x in crawls:
         for y in monitor_data:
             if y.name == 'harvest' and y.crawl_id == x.id:
                 harvest_csv.append(pd.read_csv(y.data_uri, sep='\t', names=['1', '2', '3']))
-                contained_crawls.append(y.crawl_id)
     for x in harvest_csv:
         pages_crawled = int(x.tail(1)['2'].values)
         time_start = dt.datetime.fromtimestamp(int(x.head(1)['3'].values))
@@ -112,9 +122,11 @@ def crawls():
                             contained_crawls=contained_crawls)
 
 
-@app.route('/crawl/<crawl_endpoint>')
+@app.route('/crawls/<crawl_endpoint>')
 def crawl(crawl_endpoint):
     crawl = Crawl.query.filter_by(endpoint=crawl_endpoint).first()
+    harvest_data = list(harvest_stats(MonitorData.query.filter_by(crawl_id=crawl.id, 
+                                name='harvest').first()))
     if crawl is None:
         flash("Crawl '%s' was not found." % crawl_endpoint, 'error')
         abort(404)
@@ -129,7 +141,8 @@ def crawl(crawl_endpoint):
 
     return render_template('crawl.html',
                             crawl=crawl, data_list=data_list,
-                            plot_list=plot_list, dash_list=dash_list)
+                            plot_list=plot_list, dash_list=dash_list, 
+                            harvest_data=harvest_data)
 
 # Data
 # -----------------------------------------------------------------------------

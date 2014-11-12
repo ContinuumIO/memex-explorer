@@ -2,11 +2,31 @@
 {% set active_page = "overview" %}
 
 {% block content %}
-
+<div class='col-sm-12'>
+<div class='inner'>
 <h2 class="dashboard-name">{{ crawl.name }}</h2>
-
 <p>{{ crawl.description }}</p>
+{% if harvest_data %}
+	<table class="table">
+	<thead>
+		<tr class='active'>
+    		<th># Pages Crawled</th>
+    		<th>Date Started</th>
+    		<th>Date Ended</th>
+  		</tr>
+  	</thead>
+		<tr>
 
+			{% for y in harvest_data %}
+			<td>{{ y[0] }}</td>
+			<td>{{ y[1] }}</td>
+			<td>{{ y[2] }}</td>
+			{% endfor %}
+		</tr>
+	</table>
+{% else %}
+	<h3>No harvest statistics available.</h3>
+{% endif %}
 <button type="button" class="btn btn-default btn-duo">
   <a href="/crawl/{{ crawl.endpoint }}/register_data">Add Monitor Data</a>
 </button>
@@ -27,7 +47,7 @@
 <h3 class="available-dashboards">Monitor Data:</h3>
 <ul>
 {% for d in data_list %}
-<li><a href="/crawl/{{ crawl.endpoint }}/data/{{ d.endpoint }}">{{d.name}}</a></l>
+<li><a href="/crawl/{{ crawl.endpoint }}/data/{{ d.endpoint }}">{{d.name}}</a></li>
 {% endfor %}
 </ul>
 {% endif %}
@@ -36,7 +56,7 @@
 <h3 class="available-dashboards">Plots:</h3>
 <ul>
 {% for p in plot_list %}
-<li><a href="/{{ crawl.endpoint }}/plot/{{ p.endpoint }}">{{ p.name}}</a></l>
+<li><a href="/{{ crawl.endpoint }}/plot/{{ p.endpoint }}">{{ p.name}}</a></li>
 {% endfor %}
 </ul>
 {% endif %}
@@ -45,12 +65,12 @@
 <h3 class="available-dashboards">Dashboards:</h3>
 <ul>
 {% for d in dash_list %}
-<li><a href="/{{ crawl.endpoint }}/dashboard/{{ d.endpoint }}">{{ d.name }}</a></l>
+<li><a href="/{{ crawl.endpoint }}/dashboard/{{ d.endpoint }}">{{ d.name }}</a></li>
 {% endfor %}
 </ul>
 {% else %}
 <h3>No dashboards available.</h3>
 {% endif %}
-
-
+</div>
+</div>
 {% endblock content %}
