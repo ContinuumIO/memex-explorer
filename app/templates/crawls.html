@@ -7,7 +7,7 @@
 <div class='col-sm-12'>
 <div class='inner'>
 	<h1>Crawls</h1>
-		{% for x in crawls %}
+	{% for x in crawls %}
 			<h2><a href="{{ url_for('crawls') }}{{ x.endpoint }}">{{ x.name }}</a></h2>
 		{% if x.id in contained_crawls %}
 			<table class="table">
@@ -34,7 +34,7 @@
 			<h3>No harvest data available.</h3>
 		{% endif %}
 	{% endfor %}
-	<br><br><br>
+	<br><br>
 	<div class='center-buttons'>
 		<button type="button" class="btn btn-default">
   			<a href="{{ url_for('register') }}">Add Crawl</a>

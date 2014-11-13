@@ -220,7 +220,7 @@ def plots():
     return render_template('plots.html', plots=plots)
 
 
-@app.route('/<crawl_endpoint>/plot/<plot_endpoint>')
+@app.route('/plots/<crawl_endpoint>/plot/<plot_endpoint>')
 def plot(crawl_endpoint, plot_endpoint):
     crawl = Crawl.query.filter_by(endpoint=crawl_endpoint).first()
     plot = Plot.query.filter_by(endpoint=plot_endpoint).first()
@@ -272,7 +272,19 @@ def data_edit(data_endpoint):
     return render_template('edit.html', form=form, crawl=crawl)
 
 
-@app.route('/dashboard/<dashboard_endpoint>')
+@app.route('/dashboards/')
+def dashboards():
+    dashboards = Dashboard.query.all()
+    return render_template('dashboards.html', dashboards=dashboards)
+
+
+@app.route('/dashboards/create_dashboard/')
+def create_dashboard():
+    crawls = Crawl.query.all()
+    return render_template('create_dashboard.html', crawls=crawls)
+
+
+@app.route('/dashboards/<dashboard_endpoint>')
 def dash(dashboard_endpoint):
     dash = Dashboard.query.filter_by(endpoint=dashboard_endpoint).first()
     plots = dash.plots

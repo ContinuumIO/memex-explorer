@@ -79,7 +79,7 @@
   		</thead>
 		{% for d in plot_list %}
 		<tr>
-			<td><a href=''>{{ d.name }}</a></td>
+			<td><a href="{{ url_for('plots') }}{{ crawl.endpoint }}/plot/{{ d.endpoint }}">{{ d.name }}</a></td>
 		</tr>
 		{% endfor %}
 	</table>
