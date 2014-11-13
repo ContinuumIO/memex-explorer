@@ -101,7 +101,7 @@ def register():
     return render_template('register_crawl.html', form=form)
 
 
-@app.route('/crawls')
+@app.route('/crawls/')
 def crawls():
     harvest_csv = []
     harvest_data = []
@@ -147,7 +147,7 @@ def crawl(crawl_endpoint):
 # Data
 # -----------------------------------------------------------------------------
 
-@app.route('/crawl/<crawl_endpoint>/register_data', methods=['GET', 'POST'])
+@app.route('/crawls/<crawl_endpoint>/register_data', methods=['GET', 'POST'])
 def register_data(crawl_endpoint):
     crawl = Crawl.query.filter_by(endpoint=crawl_endpoint).first()
     form = MonitorDataForm(request.form)

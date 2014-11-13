@@ -277,6 +277,11 @@ div:not(.bk-plot-wrapper) > {
     color:black;
     box-shadow:none;
   }
+  &.right{
+    float:right;
+    margin-right:30px;
+    margin-left:30px;
+  }
   &:hover {
     a {
       text-decoration: none;

@@ -5,6 +5,9 @@
 <div class='col-sm-12'>
 <div class='inner'>
 <h2 class="dashboard-name">{{ crawl.name }}</h2>
+<button type="button" class="btn btn-default right">
+  	<a href="">Remove Crawl</a>
+</button>
 <p>{{ crawl.description }}</p>
 {% if harvest_data %}
 	<table class="table">
@@ -46,50 +49,70 @@
 {% else %}
 	<h3>No harvest statistics available.</h3>
 {% endif %}
-<button type="button" class="btn btn-default btn-duo">
-  <a href="/crawl/{{ crawl.endpoint }}/register_data">Add Monitor Data</a>
-</button>
 
-<button type="button" class="btn btn-default btn-duo">
-  <a href="/crawl/{{ crawl.endpoint }}/create_plot">Add Plot</a>
-</button>
-
-<button type="button" class="btn btn-default btn-duo">
-  <a href="/crawl/{{ crawl.endpoint }}/delete">Delete</a>
-</button>
-
-<button type="button" class="btn btn-default">
-  <a href="/crawl/{{ crawl.endpoint }}/edit">Edit</a>
-</button>
-
-{% if data_list %}
-<h3 class="available-dashboards">Monitor Data:</h3>
-<ul>
-{% for d in data_list %}
-<li><a href="/crawl/{{ crawl.endpoint }}/data/{{ d.endpoint }}">{{d.name}}</a></li>
-{% endfor %}
-</ul>
-{% endif %}
-
-{% if plot_list %}
-<h3 class="available-dashboards">Plots:</h3>
-<ul>
-{% for p in plot_list %}
-<li><a href="/{{ crawl.endpoint }}/plot/{{ p.endpoint }}">{{ p.name}}</a></li>
-{% endfor %}
-</ul>
-{% endif %}
-
-{% if dash_list %}
-<h3 class="available-dashboards">Dashboards:</h3>
-<ul>
-{% for d in dash_list %}
-<li><a href="/{{ crawl.endpoint }}/dashboard/{{ d.endpoint }}">{{ d.name }}</a></li>
-{% endfor %}
-</ul>
-{% else %}
-<h3>No dashboards available.</h3>
-{% endif %}
+<div class='col-sm-6'>
+	{% if dash_list %}
+	<table class="table">
+		<thead>
+			<tr class='active'>
+    			<th>Dashboards</th>
+  			</tr>
+  		</thead>
+		{% for d in dash_list %}
+		<tr>
+			<td>{{ x.name }}</td>
+		</tr>
+		{% endfor %}
+	</table>
+	{% else %}
+	<p style='font-size:20px;'>There are currently no dashboards associated with this crawl.</p>
+	{% endif %}
+	<button type="button" class="btn btn-default">
+  		<a href="/dashboard">Add Dashboard</a>
+	</button>
+</div>
+<div class='col-sm-6'>
+	{% if plot_list %}
+	<table class="table">
+		<thead>
+			<tr class='active'>
+    			<th>Plots</th>
+  			</tr>
+  		</thead>
+		{% for d in plot_list %}
+		<tr>
+			<td><a href=''>{{ d.name }}</a></td>
+		</tr>
+		{% endfor %}
+	</table>
+	{% else %}
+	<p style='font-size:20px;'>There are currently no plots associated with this crawl.</p>
+	{% endif %}
+	<button type="button" class="btn btn-default btn-duo">
+  		<a href="{{ url_for('crawls') }}{{ crawl.endpoint }}/create_plot">Add Plot</a>
+	</button>
+</div>
+<div class='col-sm-12'>
+	{% if data_list %}
+	<table class="table">
+		<thead>
+			<tr class='active'>
+    			<th>Monitor Data</th>
+  			</tr>
+  		</thead>
+		{% for d in data_list %}
+		<tr>
+			<td><a href=''>{{ d.name }}</a></td>
+		</tr>
+		{% endfor %}
+	</table>
+	{% else %}
+	<p style='font-size:20px;'>There is currently no monitor data associated with this crawl.</p>
+	{% endif %}
+	<button type="button" class="btn btn-default btn-duo">
+  		<a href="{{ url_for('crawls') }}{{ crawl.endpoint }}/register_data">Add Monitor Data</a>
+	</button>
+</div>
 </div>
 </div>
 {% endblock content %}

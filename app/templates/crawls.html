@@ -8,7 +8,7 @@
 <div class='inner'>
 	<h1>Crawls</h1>
 		{% for x in crawls %}
-			<h2><a href="{{ url_for('crawls') }}/{{ x.endpoint }}">{{ x.name }}</a></h2>
+			<h2><a href="{{ url_for('crawls') }}{{ x.endpoint }}">{{ x.name }}</a></h2>
 		{% if x.id in contained_crawls %}
 			<table class="table">
 			<thead>
