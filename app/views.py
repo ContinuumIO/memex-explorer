@@ -170,7 +170,7 @@ def register_data(crawl_endpoint):
     return render_template('register_data.html', crawl=crawl, form=form)
 
 
-@app.route('/crawl/<crawl_endpoint>/data/<data_endpoint>')
+@app.route('/crawls/<crawl_endpoint>/data/<data_endpoint>')
 def data(crawl_endpoint, data_endpoint):
     crawl = Crawl.query.filter_by(endpoint=crawl_endpoint).first()
     monitor_data = MonitorData.query.filter_by(crawl_id=crawl.id, endpoint=data_endpoint).first()
@@ -223,6 +223,13 @@ def data_explore(crawl_endpoint, data_endpoint):
 # Plot
 # -----------------------------------------------------------------------------
 
+
+@app.route("/plots/")
+def plots():
+    plots = Plot.query.all()
+    return render_template('plots.html', plots=plots)
+
+
 @app.route('/<crawl_endpoint>/plot/<plot_endpoint>')
 def plot(crawl_endpoint, plot_endpoint):
     crawl = Crawl.query.filter_by(endpoint=crawl_endpoint).first()
@@ -233,7 +240,7 @@ def plot(crawl_endpoint, plot_endpoint):
                            plot=plot, crawl=crawl, div=div, script=script) 
 
 
-@app.route('/crawl/<crawl_endpoint>/create_plot', methods=['GET', 'POST'])
+@app.route('/crawls/<crawl_endpoint>/create_plot', methods=['GET', 'POST'])
 def create_plot(crawl_endpoint):
     form = PlotForm(request.form)
     crawl = Crawl.query.filter_by(endpoint=crawl_endpoint).first()

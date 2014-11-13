@@ -49,7 +49,6 @@
 {% else %}
 	<h3>No harvest statistics available.</h3>
 {% endif %}
-
 <div class='col-sm-6'>
 	{% if dash_list %}
 	<table class="table">
@@ -102,7 +101,7 @@
   		</thead>
 		{% for d in data_list %}
 		<tr>
-			<td><a href=''>{{ d.name }}</a></td>
+			<td><a href="{{ url_for('crawls') }}{{crawl.endpoint}}/data/{{d.endpoint}}">{{ d.name }}</a></td>
 		</tr>
 		{% endfor %}
 	</table>

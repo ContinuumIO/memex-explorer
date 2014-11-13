@@ -2,32 +2,34 @@
 {% set active_page = "overview" %}
 
 {% block content %}
-
+<div class='col-sm-12'>
+<div class='inner'>
 <h2 class="dashboard-name">{{data.name}}</h2>
 
 {% include 'data_header.html' %}
 
 <button type="button" class="btn btn-default btn-duo">
-  <a href="/crawl/{{crawl.endpoint}}/data/{{data.endpoint}}/explore">Explore</a>
+  <a href="{{ url_for('crawls') }}{{crawl.endpoint}}/data/{{data.endpoint}}/explore">Explore</a>
 </button>
 
 <button type="button" class="btn btn-default btn-duo">
-  <a href="/crawl/{{crawl.endpoint}}/data/{{data.endpoint}}/create_plot">Add plot</a>
+  <a href="{{ url_for('crawls') }}{{crawl.endpoint}}/data/{{data.endpoint}}/create_plot">Add plot</a>
 </button>
 
 <button type="button" class="btn btn-default btn-duo">
-  <a href="/crawl/{{crawl.endpoint}}/data/{{data.endpoint}}/delete">Delete</a>
+  <a href="{{ url_for('crawls') }}{{crawl.endpoint}}/data/{{data.endpoint}}/delete">Delete</a>
 </button>
 
 <button type="button" class="btn btn-default">
-  <a href="/crawl/{{crawl.endpoint}}/data/{{data.endpoint}}/edit">Edit</a>
+  <a href="{{ url_for('crawls') }}{{crawl.endpoint}}/data/{{data.endpoint}}/edit">Edit</a>
 </button>
 
 <h3 class="available-dashboards">Plots:</h3>
 <ul>
 {% for p in plot_list %}
-<li><a href="/{{crawl.endpoint}}/plot/{{p.endpoint}}">{{p.name}}</a></l>
+<li><a href="/{{crawl.endpoint}}/plot/{{p.endpoint}}">{{p.name}}</a></li>
 {% endfor %}
 </ul>
-
+</div>
+</div>
 {% endblock content %}
