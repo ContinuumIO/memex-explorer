@@ -22,6 +22,7 @@ from webhelpers import text
 
 from blaze import resource, discover, Data, into, compute
 from pandas import DataFrame
+from toolz import concat
 import pandas as pd
 from bokeh.plotting import ColumnDataSource
 
@@ -103,21 +104,10 @@ def register():
 
 @app.route('/crawls/')
 def crawls():
-    harvest_csv = []
-    harvest_data = []
-    contained_crawls = []
-    crawls = Crawl.query.all()
     monitor_data = MonitorData.query.all()
+    crawls = Crawl.query.all()
+    harvest_data = concat([list(harvest_stats(x)) for x in monitor_data])
     contained_crawls = [y.crawl_id for y in monitor_data]
-    for x in crawls:
-        for y in monitor_data:
-            if y.name == 'harvest' and y.crawl_id == x.id:
-                harvest_csv.append(pd.read_csv(y.data_uri, sep='\t', names=['1', '2', '3']))
-    for x in harvest_csv:
-        pages_crawled = int(x.tail(1)['2'].values)
-        time_start = dt.datetime.fromtimestamp(int(x.head(1)['3'].values))
-        time_end = dt.datetime.fromtimestamp(int(x.tail(1)['3'].values))
-        harvest_data += (pages_crawled, time_start, time_end)
     return render_template('crawls.html', crawls=crawls, harvest_data=harvest_data,
                             contained_crawls=contained_crawls)
 

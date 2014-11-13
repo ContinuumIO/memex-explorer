@@ -267,15 +267,28 @@ div:not(.bk-plot-wrapper) > {
   }
   &.btn-control{
     font-size: 30px;
-    background:none;
     color:black;
-    box-shadow:none;
+    background:none;
+    box-shadow: none;
+    width:50px;
+      &:hover {
+        @include gradient(#1B8220, #1D9918);
+        @include boxShadow(3px 3px 5px 0px rgba(0, 0, 0, .55));
+        color: #fff;
+      }
   }
-  &.btn-control-text{
+  &.text{
     font-size: 14px;
-    background:none;
-    color:black;
-    box-shadow:none;
+    font-weight: bold;
+    color: #000;
+    letter-spacing:normal;
+    width:100px;
+    float:right;
+      &:hover {
+        @include gradient(#1B8220, #1D9918);
+        @include boxShadow(3px 3px 5px 0px rgba(0, 0, 0, .55));
+        color: #fff;
+      }
   }
   &.right{
     float:right;
@@ -328,4 +341,15 @@ form {
 .inner{
   width: 50%;
   margin: 0 auto;
+}
+
+@media (max-width: 1001px) {
+  .inner{
+    width: 75%;
+  }
+}
+@media (max-width: 769px) {
+  .inner{
+    width: 100%;
+  }
 }

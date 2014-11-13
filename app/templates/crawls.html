@@ -22,7 +22,11 @@
 				<tr>
 					<td>{{ x.name }}</td>
 					{% for y in harvest_data %}
-					<td>{{ y }}</td>
+						{% if y %}
+						<td>{{ y[0] }}</td>
+						<td>{{ y[1] }}</td>
+						<td>{{ y[2] }}</td>
+						{% endif %}
 					{% endfor %}
 				</tr>
 			</table>
