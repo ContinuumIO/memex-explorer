@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% set active_page = "overview" %}
+
+{% block title %}Dashboards{% endblock %}
+
+{% block content %}
+<div class='col-sm-12'>
+<div class='inner'>
+	<h1>Dashboards</h1>
+	{% if dashboards %}
+		{% for x in dashboards %}
+			<h2><a href="{{ url_for('dashboards') }}{{ x.endpoint }}">{{ x.name }}</a></h2>
+			<table class="table">
+			<thead>
+				<tr class='active'>
+    				<th>Name</th>
+  				</tr>
+  			</thead>
+				<tr>
+					<td>{{ x.name }}</td>
+				</tr>
+			</table>
+		{% endfor %}
+	{% else %}
+		<h3>No dashboards have been registered.</h3>
+	{% endif %}
+	<br><br>
+	<div class='center-buttons'>
+		<button type="button" class="btn btn-default">
+  			<a href="{{ url_for('create_dashboard') }}">Create Dashboard</a>
+		</button>
+	</div>
+</div>
+</div>
+{% endblock %}

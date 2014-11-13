@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% set active_page = "overview" %}
+
+{% block title %}Crawls{% endblock %}
+
+{% block content %}
+<div class='col-sm-12'>
+<div class='inner'>
+	<h1>Crawls</h1>
+	{% for x in crawls %}
+			<h2><a href="{{ url_for('crawls') }}{{ x.endpoint }}">{{ x.name }}</a></h2>
+		{% if x.id in contained_crawls %}
+			<table class="table">
+			<thead>
+				<tr class='active'>
+    				<th>Name</th>
+    				<th># Pages Crawled</th>
+    				<th>Date Started</th>
+    				<th>Date Ended</th>
+  				</tr>
+  			</thead>
+				<tr>
+					<td>{{ x.name }}</td>
+					{% for y in harvest_data %}
+						{% if y %}
+						<td>{{ y[0] }}</td>
+						<td>{{ y[1] }}</td>
+						<td>{{ y[2] }}</td>
+						{% endif %}
+					{% endfor %}
+				</tr>
+			</table>
+		{% else %}
+			<h3>No harvest data available.</h3>
+		{% endif %}
+	{% endfor %}
+	<br><br>
+	<div class='center-buttons'>
+		<button type="button" class="btn btn-default">
+  			<a href="{{ url_for('register') }}">Add Crawl</a>
+		</button>
+	</div>
+</div>
+</div>
+{% endblock %}

@@ -22,6 +22,8 @@ from webhelpers import text
 
 from blaze import resource, discover, Data, into, compute
 from pandas import DataFrame
+from toolz import concat
+import pandas as pd
 from bokeh.plotting import ColumnDataSource
 
 # Local Imports
@@ -66,6 +68,17 @@ def index():
 # Crawl
 # -----------------------------------------------------------------------------
 
+
+def harvest_stats(query):
+    if query and query.name == 'harvest':
+        harvest_csv = pd.read_csv(query.data_uri, sep='\t', names=['1', '2', '3'])
+        pages_crawled = int(harvest_csv.tail(1)['2'].values)
+        time_start = dt.datetime.fromtimestamp(int(harvest_csv.head(1)['3'].values))
+        time_end = dt.datetime.fromtimestamp(int(harvest_csv.tail(1)['3'].values))
+        harvest_data = (pages_crawled, time_start, time_end)
+        yield harvest_data
+
+
 @app.route('/register_crawl', methods=['GET', 'POST'])
 def register():
     form = CrawlForm(request.form)
@@ -89,9 +102,21 @@ def register():
     return render_template('register_crawl.html', form=form)
 
 
-@app.route('/crawl/<crawl_endpoint>')
+@app.route('/crawls/')
+def crawls():
+    monitor_data = MonitorData.query.all()
+    crawls = Crawl.query.all()
+    harvest_data = concat([list(harvest_stats(x)) for x in monitor_data])
+    contained_crawls = [y.crawl_id for y in monitor_data]
+    return render_template('crawls.html', crawls=crawls, harvest_data=harvest_data,
+                            contained_crawls=contained_crawls)
+
+
+@app.route('/crawls/<crawl_endpoint>')
 def crawl(crawl_endpoint):
     crawl = Crawl.query.filter_by(endpoint=crawl_endpoint).first()
+    harvest_data = list(harvest_stats(MonitorData.query.filter_by(crawl_id=crawl.id, 
+                                name='harvest').first()))
     if crawl is None:
         flash("Crawl '%s' was not found." % crawl_endpoint, 'error')
         abort(404)
@@ -106,12 +131,13 @@ def crawl(crawl_endpoint):
 
     return render_template('crawl.html',
                             crawl=crawl, data_list=data_list,
-                            plot_list=plot_list, dash_list=dash_list)
+                            plot_list=plot_list, dash_list=dash_list, 
+                            harvest_data=harvest_data)
 
 # Data
 # -----------------------------------------------------------------------------
 
-@app.route('/crawl/<crawl_endpoint>/register_data', methods=['GET', 'POST'])
+@app.route('/crawls/<crawl_endpoint>/register_data', methods=['GET', 'POST'])
 def register_data(crawl_endpoint):
     crawl = Crawl.query.filter_by(endpoint=crawl_endpoint).first()
     form = MonitorDataForm(request.form)
@@ -134,7 +160,7 @@ def register_data(crawl_endpoint):
     return render_template('register_data.html', crawl=crawl, form=form)
 
 
-@app.route('/crawl/<crawl_endpoint>/data/<data_endpoint>')
+@app.route('/crawls/<crawl_endpoint>/data/<data_endpoint>')
 def data(crawl_endpoint, data_endpoint):
     crawl = Crawl.query.filter_by(endpoint=crawl_endpoint).first()
     monitor_data = MonitorData.query.filter_by(crawl_id=crawl.id, endpoint=data_endpoint).first()
@@ -187,7 +213,14 @@ def data_explore(crawl_endpoint, data_endpoint):
 # Plot
 # -----------------------------------------------------------------------------
 
-@app.route('/<crawl_endpoint>/plot/<plot_endpoint>')
+
+@app.route("/plots/")
+def plots():
+    plots = Plot.query.all()
+    return render_template('plots.html', plots=plots)
+
+
+@app.route('/plots/<crawl_endpoint>/plot/<plot_endpoint>')
 def plot(crawl_endpoint, plot_endpoint):
     crawl = Crawl.query.filter_by(endpoint=crawl_endpoint).first()
     plot = Plot.query.filter_by(endpoint=plot_endpoint).first()
@@ -197,7 +230,7 @@ def plot(crawl_endpoint, plot_endpoint):
                            plot=plot, crawl=crawl, div=div, script=script) 
 
 
-@app.route('/crawl/<crawl_endpoint>/create_plot', methods=['GET', 'POST'])
+@app.route('/crawls/<crawl_endpoint>/create_plot', methods=['GET', 'POST'])
 def create_plot(crawl_endpoint):
     form = PlotForm(request.form)
     crawl = Crawl.query.filter_by(endpoint=crawl_endpoint).first()
@@ -239,7 +272,19 @@ def data_edit(data_endpoint):
     return render_template('edit.html', form=form, crawl=crawl)
 
 
-@app.route('/dashboard/<dashboard_endpoint>')
+@app.route('/dashboards/')
+def dashboards():
+    dashboards = Dashboard.query.all()
+    return render_template('dashboards.html', dashboards=dashboards)
+
+
+@app.route('/dashboards/create_dashboard/')
+def create_dashboard():
+    crawls = Crawl.query.all()
+    return render_template('create_dashboard.html', crawls=crawls)
+
+
+@app.route('/dashboards/<dashboard_endpoint>')
 def dash(dashboard_endpoint):
     dash = Dashboard.query.filter_by(endpoint=dashboard_endpoint).first()
     plots = dash.plots

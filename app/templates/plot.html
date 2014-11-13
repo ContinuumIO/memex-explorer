@@ -8,6 +8,8 @@
 {% endif %}
 
 {% block content %}
+<div class='col-sm-12'>
+<div class='inner'>
 <h2 class="dashboard-name">{{plot.name}}</h2>
 
 {% include 'plot_header.html' %}
@@ -22,6 +24,7 @@
 <div class="data-sample">
 {{ div|safe }}
 </div>
-
+</div>
+</div>
 {% endblock content %}
 

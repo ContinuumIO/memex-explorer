@@ -32,6 +32,11 @@ body {
   a.navbar-brand {
     color: white;
   }
+  a.right{
+    float:right;
+    margin-right:30px;
+    margin-left:30px;
+  }
   li.reset {
     background-color: #222222;
     a {
@@ -260,6 +265,36 @@ div:not(.bk-plot-wrapper) > {
     float: left;
     margin-right: 20px;
   }
+  &.btn-control{
+    font-size: 30px;
+    color:black;
+    background:none;
+    box-shadow: none;
+    width:50px;
+      &:hover {
+        @include gradient(#1B8220, #1D9918);
+        @include boxShadow(3px 3px 5px 0px rgba(0, 0, 0, .55));
+        color: #fff;
+      }
+  }
+  &.text{
+    font-size: 14px;
+    font-weight: bold;
+    color: #000;
+    letter-spacing:normal;
+    width:100px;
+    float:right;
+      &:hover {
+        @include gradient(#1B8220, #1D9918);
+        @include boxShadow(3px 3px 5px 0px rgba(0, 0, 0, .55));
+        color: #fff;
+      }
+  }
+  &.right{
+    float:right;
+    margin-right:30px;
+    margin-left:30px;
+  }
   &:hover {
     a {
       text-decoration: none;
@@ -269,6 +304,8 @@ div:not(.bk-plot-wrapper) > {
 .btn-default, .btn-primary {
   @include gradient(#5779A8, #415A7D);
   color: #fff;
+  display: inline;
+  margin-left:20px;
   &:hover {
     @include gradient(#47658B, #324764);
     color: #fff;
@@ -298,5 +335,21 @@ form {
     float: left;
     padding: 6px 12px !important;
     margin: 10px 35px;
+  }
+}
+
+.inner{
+  width: 50%;
+  margin: 0 auto;
+}
+
+@media (max-width: 1001px) {
+  .inner{
+    width: 75%;
+  }
+}
+@media (max-width: 769px) {
+  .inner{
+    width: 100%;
   }
 }

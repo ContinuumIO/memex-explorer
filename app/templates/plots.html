@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% set active_page = "overview" %}
+
+{% block title %}Plots{% endblock %}
+
+{% block content %}
+<div class='col-sm-12'>
+<div class='inner'>
+	<h1>Plots</h1>
+		{% if plots %}
+		<table class="table">
+			<thead>
+				<tr class='active'>
+    				<th>Plots</th>
+  				</tr>
+  			</thead>
+				{% for y in plots %}
+				<tr>
+					<td><a href="{{ url_for('plots') }}crawl1/plot/{{ y.endpoint }}">{{ y.name }}</a></td>
+				</tr>
+				{% endfor %}
+			</table>
+		{% else %}
+			<h3>No plots registered</h3>
+		{% endif %}
+	<br><br><br>
+	<div class='center-buttons'>
+		<button type="button" class="btn btn-default">
+  			<a href="{{ url_for('register') }}">Add Plot</a>
+		</button>
+	</div>
+</div>
+</div>
+{% endblock %}
