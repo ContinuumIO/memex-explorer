@@ -110,11 +110,16 @@ class Harvest(object):
 
         legend().orientation = "top_left"
         push()
+        return autoload_server(curplot(), cursession())
 
     def launch_pusher(self):
+        # REMOVE
+        return
+        #
+        
         if not self.doc_name:
             return False
-        cmd = shlex.split('python harvest.py --crawl %s --file %s' % (self.doc_name, self.harvest_data))
+        cmd = shlex.split('python app/viz/harvest.py --crawl %s --file %s' % (self.crawl, self.harvest_data))
         pusher = subprocess.Popen(cmd)
         return pusher.pid
 
@@ -124,19 +129,22 @@ class Harvest(object):
             sleep(1)
             if self.current != os.path.getmtime(self.harvest_data):
                 self.current = os.path.getmtime(self.harvest_data)
-                print('changed!!')
+                print('Updating!!\n')
                 self.source = self.update_source()
 
-                s = Session()                                                                                                                                                                                                                                                                
-                s.use_doc(self.doc_name)                                                                                                                                                                                                                                                              
-                d = Document()                                                                                                                                                                                                                                                               
-                s.load_document(d)                                                                                                                                                                                                                                                           
+                s = Session()
+                s.use_doc(self.doc_name)
+                d = Document()
+                s.load_document(d)
+                a = d.context.select({'type': ColumnDataSource})
+                try:
+                    cds = list(a)[0]
+                    cds.data = self.source.data
+                    # push()
+                    s.store_objects(cds)
+                except IndexError:
+                    raise IndexError('No ColumnDataSource objects on doc " %s"' % self.doc_name)
 
-                x = d._models.values()
-                f = [f for f in x if isinstance(f, ColumnDataSource)][0]
-                f.data = self.source.data
-                store_objects(f)
-                # push()
 
             else:
                 sys.stdout.write(".")
@@ -147,5 +155,5 @@ if __name__ == "__main__":
 
     args = parse_args()
     harvest = Harvest(**vars(args))
-    harvest.create_and_push()
+    print harvest.create_and_push()
     harvest.keep_pushing()

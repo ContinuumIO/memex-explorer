@@ -40,8 +40,9 @@ def plot_builder(crawl, plot):
     if plot.plot == 'harvest_updating':
         data = MonitorData.query.filter_by(crawl_id=crawl.id)
         harvest = data.filter_by(name='harvest').first().data_uri
-        d = Harvest(harvest)
-        script, div = d.create_plot_harvest()
+        d = Harvest(input_data=harvest, crawl=crawl.name)
+        script, div = ('', d.create_and_push())
+        print "Launched child with pid %s" % d.launch_pusher()
 
     if plot.plot == 'harvest_rate':
         data = MonitorData.query.filter_by(crawl_id=crawl.id)

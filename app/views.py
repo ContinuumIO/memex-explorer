@@ -197,6 +197,16 @@ def plot(crawl_endpoint, plot_endpoint):
                            plot=plot, crawl=crawl, div=div, script=script) 
 
 
+# @app.route('/crawl/<crawl_endpoint>/dashboard')
+# def show_dashboard(crawl_endpoint, plot_endpoint):
+#     crawl = Crawl.query.filter_by(endpoint=crawl_endpoint).first()
+#     plot = Plot.query.filter_by(endpoint=plot_endpoint).first()
+#     script, div = plot_builder(crawl, plot)
+
+#     return render_template('plot.html',
+#                            plot=plot, crawl=crawl, div=div, script=script) 
+
+
 @app.route('/crawl/<crawl_endpoint>/create_plot', methods=['GET', 'POST'])
 def create_plot(crawl_endpoint):
     form = PlotForm(request.form)
@@ -245,7 +255,7 @@ def dash(dashboard_endpoint):
     plots = dash.plots
     crawls = dash.crawls.query.all()
 
-    return render_template('dash.html', dash=dash, plot=plot, crawls=crawls) 
+    return render_template('dash.html', dash=dash, plot=plot, crawls=crawls)
 
 
 @app.route('/contact', methods=['GET', 'POST'])
