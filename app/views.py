@@ -239,6 +239,24 @@ def data_edit(data_endpoint):
     return render_template('edit.html', form=form, crawl=crawl)
 
 
+def grid(plots):
+    pass
+
+
+@app.route('/dashboards/')
+def dashboards():
+    return render_template('dashboards.html')
+
+
+@app.route('/dashboard_test/')
+def dashboard_test():
+    plots = Plot.query.all()
+    #layout = grid(len(plots))
+    crawl = Crawl.query.filter_by(endpoint='crawl1').first()
+    plotting = [plot_builder(crawl, x) for x in plots]
+    return render_template('dashboard_test.html', plotting=plotting)
+
+
 @app.route('/dashboard/<dashboard_endpoint>')
 def dash(dashboard_endpoint):
     dash = Dashboard.query.filter_by(endpoint=dashboard_endpoint).first()

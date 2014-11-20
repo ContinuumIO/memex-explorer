@@ -104,8 +104,8 @@ class Termite(object):
         TOPICS = into(list, TOPICS)
 
         figure(x_range=TOPICS, y_range=WORDS, 
-               plot_width=1000, plot_height=1700,
-               title="Termite Plot", tools='resize, save')
+               plot_width=400, plot_height=400,
+               title="Termite Plot", tools='save')
 
         circle(x="topic", y="word", size="size", fill_alpha=0.6, source=self.source)
         xaxis().major_label_orientation = np.pi/3
