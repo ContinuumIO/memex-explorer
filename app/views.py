@@ -101,15 +101,13 @@ def crawl(crawl_endpoint):
 
     data = crawl.monitor_data.all()
     plots = crawl.plots
-    dashbs = crawl.dashboards
 
     data_list = [dict(name=x.name, endpoint=x.endpoint) for x in data]
     plot_list = [dict(name=x.name, endpoint=x.endpoint) for x in plots]
-    dash_list = [dict(name=x.name, endpoint=x.endpoint) for x in dashbs]
 
     return render_template('crawl.html',
                             crawl=crawl, data_list=data_list,
-                            plot_list=plot_list, dash_list=dash_list)
+                            plot_list=plot_list)
 
 # Data
 # -----------------------------------------------------------------------------
@@ -244,24 +242,27 @@ def data_edit(data_endpoint):
 
 @app.route('/dashboards/')
 def dashboards():
-    return render_template('dashboards.html')
+    dashboards = Dashboard.query.all()
+    return render_template('dashboards.html', dashboards=dashboards)
 
 
-@app.route('/dashboard_test/')
-def dashboard_test():
-    plots = Plot.query.all()
-    crawl = Crawl.query.filter_by(endpoint='crawl1').first()
-    plotting = [plot_builder(crawl, x) for x in plots]
-    return render_template('dashboard_test.html', plotting=plotting)
-
-
-@app.route('/dashboard/<dashboard_endpoint>')
+@app.route('/dashboards/<dashboard_endpoint>')
 def dash(dashboard_endpoint):
     dash = Dashboard.query.filter_by(endpoint=dashboard_endpoint).first()
     plots = dash.plots
     crawls = dash.crawls.query.all()
 
     return render_template('dash.html', dash=dash, plot=plot, crawls=crawls) 
+
+
+@app.route('/dashboards/add_dashboard')
+def add_dashboard():
+    return render_template('add_dashboard.html')
+
+
+@app.route('/dashboards/add_plots')
+def add_plots():
+    return render_template('add_plots.html')
 
 
 @app.route('/contact', methods=['GET', 'POST'])

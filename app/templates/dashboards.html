@@ -6,16 +6,13 @@
 {% block content %}
 <h1>Dashboards</h1>
 
-<table class="table table-striped">
-    <tr>
-        <th>Dashboard</th>
-        <th>Associated Crawls</th> 
-    </tr>
-    <tr>
-        <td><a href="{{ url_for('dashboard_test') }}">Test</a></td>
-        <td>Crawl 1, Crawl 2</td>
-    </tr>
-</table>
+{% if dashboards %}
+    {% for x in dashboards %}
+        {{ x }}
+    {% endfor %}
+{% else %}
+    <p>There are currently no dashboards.</p>
+{% endif %}
 
 <button type="button" class="btn btn-default">
     <a href="">Add Dashboard</a>

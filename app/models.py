@@ -23,8 +23,6 @@ class Crawl(db.Model):
     monitor_data = db.relationship('MonitorData', backref='crawl', lazy='dynamic')
     plots = db.relationship('Plot', secondary=plots, \
         backref=db.backref('crawl', lazy='dynamic'))
-    dashboards = db.relationship('Dashboard', secondary=dashboards, \
-        backref=db.backref('crawls', lazy='dynamic'))
 
     def __repr__(self):
         return '<Crawl %r>' % (self.name)
