@@ -41,16 +41,4 @@
 </ul>
 {% endif %}
 
-{% if dash_list %}
-<h3 class="available-dashboards">Dashboards:</h3>
-<ul>
-{% for d in dash_list %}
-<li><a href="/{{ crawl.endpoint }}/dashboard/{{ d.endpoint }}">{{ d.name }}</a></l>
-{% endfor %}
-</ul>
-{% else %}
-<h3>No dashboards available.</h3>
-{% endif %}
-
-
 {% endblock content %}

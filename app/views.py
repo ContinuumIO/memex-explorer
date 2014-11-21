@@ -11,6 +11,8 @@ import os
 import logging
 import json
 import datetime as dt
+import math
+import itertools
 
 # Third-party Libraries 
 # ---------------------
@@ -23,6 +25,7 @@ from webhelpers import text
 from blaze import resource, discover, Data, into, compute
 from pandas import DataFrame
 from bokeh.plotting import ColumnDataSource
+import numpy as np
 
 # Local Imports
 # -------------
@@ -98,15 +101,13 @@ def crawl(crawl_endpoint):
 
     data = crawl.monitor_data.all()
     plots = crawl.plots
-    dashbs = crawl.dashboards
 
     data_list = [dict(name=x.name, endpoint=x.endpoint) for x in data]
     plot_list = [dict(name=x.name, endpoint=x.endpoint) for x in plots]
-    dash_list = [dict(name=x.name, endpoint=x.endpoint) for x in dashbs]
 
     return render_template('crawl.html',
                             crawl=crawl, data_list=data_list,
-                            plot_list=plot_list, dash_list=dash_list)
+                            plot_list=plot_list)
 
 # Data
 # -----------------------------------------------------------------------------
@@ -239,13 +240,45 @@ def data_edit(data_endpoint):
     return render_template('edit.html', form=form, crawl=crawl)
 
 
-@app.route('/dashboard/<dashboard_endpoint>')
+@app.route('/dashboards/')
+def dashboards():
+    dashboards = Dashboard.query.all()
+    return render_template('dashboards.html', dashboards=dashboards)
+
+
+@app.route('/dashboards/<dashboard_endpoint>')
 def dash(dashboard_endpoint):
     dash = Dashboard.query.filter_by(endpoint=dashboard_endpoint).first()
-    plots = dash.plots
-    crawls = dash.crawls.query.all()
+    plots = []
+    return render_template('dash.html', dash=dash, plots=plots) 
 
-    return render_template('dash.html', dash=dash, plot=plot, crawls=crawls) 
+
+@app.route('/dashboards/add_dashboard', methods=['GET', 'POST'])
+def add_dashboard():
+    form = DashboardForm()
+    if form.validate_on_submit():
+        endpoint = text.urlify(form.name.data)
+        dashboard = Dashboard(name=form.name.data,
+                      endpoint=endpoint,
+                      description=form.description.data)
+
+        dashboard_exists = dashboard.query.filter_by(name=form.name.data).first()
+        if dashboard_exists:
+            flash("A dashboard named '%s' has already been registered-"
+                  "please provide another name." % form.name.data, 'error')
+            return render_template('register_dashboard.html', form=form)
+        else:
+            db.session.add(dashboard)
+            db.session.commit()
+            flash('%s has successfully been registered!' % form.name.data, 'success')
+            return redirect(url_for('dashboards', crawl_endpoint=endpoint))
+
+    return render_template('add_dashboard.html', form=form)
+
+
+@app.route('/dashboards/<dashboard_endpoint>/add_plots')
+def add_plots():
+    return render_template('add_plots.html')
 
 
 @app.route('/contact', methods=['GET', 'POST'])

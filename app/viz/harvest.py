@@ -30,7 +30,7 @@ class Harvest(object):
 
     def create_plot_harvest(self):
 
-        figure(plot_width=500, plot_height=250, title="Harvest Plot", tools='pan, wheel_zoom, box_zoom, reset, resize, save, hover', x_axis_type='datetime')
+        figure(plot_width=400, plot_height=400, title="Harvest Plot", tools='pan, wheel_zoom, box_zoom, reset, save, hover', x_axis_type='datetime')
         hold()
 
         scatter(x="timestamp", y="relevant_pages", fill_alpha=0.6, color="red", source=self.source)
@@ -53,7 +53,7 @@ class Harvest(object):
 
     def create_plot_harvest_rate(self):
 
-        figure(plot_width=500, plot_height=250, title="Harvest Rate", x_axis_type='datetime', tools='pan, wheel_zoom, box_zoom, reset, resize, save, hover')
+        figure(plot_width=400, plot_height=400, title="Harvest Rate", x_axis_type='datetime', tools='pan, wheel_zoom, box_zoom, reset, save, hover')
         line(x="timestamp", y="harvest_rate", fill_alpha=0.6, color="blue", width=0.2, legend="harvest_rate", source=self.source)
         scatter(x="timestamp", y="harvest_rate", alpha=0, color="blue", legend="harvest_rate", source=self.source)
 
