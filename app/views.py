@@ -249,10 +249,8 @@ def dashboards():
 @app.route('/dashboards/<dashboard_endpoint>')
 def dash(dashboard_endpoint):
     dash = Dashboard.query.filter_by(endpoint=dashboard_endpoint).first()
-    plots = dash.plots
-    crawls = dash.crawls.query.all()
-
-    return render_template('dash.html', dash=dash, plot=plot, crawls=crawls) 
+    plots = []
+    return render_template('dash.html', dash=dash, plots=plots) 
 
 
 @app.route('/dashboards/add_dashboard', methods=['GET', 'POST'])
@@ -278,7 +276,7 @@ def add_dashboard():
     return render_template('add_dashboard.html', form=form)
 
 
-@app.route('/dashboards/add_plots')
+@app.route('/dashboards/<dashboard_endpoint>/add_plots')
 def add_plots():
     return render_template('add_plots.html')
 
