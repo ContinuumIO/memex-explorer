@@ -7,14 +7,16 @@
 <h1>Dashboards</h1>
 
 {% if dashboards %}
+    <ul>
     {% for x in dashboards %}
-        {{ x }}
+        <li>{{ x.name }}</li>
     {% endfor %}
+    </ul>
 {% else %}
     <p>There are currently no dashboards.</p>
 {% endif %}
 
 <button type="button" class="btn btn-default">
-    <a href="">Add Dashboard</a>
+    <a href="{{ url_for('add_dashboard') }}">Add Dashboard</a>
 </button>
 {% endblock %}

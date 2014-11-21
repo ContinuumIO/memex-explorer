@@ -255,9 +255,27 @@ def dash(dashboard_endpoint):
     return render_template('dash.html', dash=dash, plot=plot, crawls=crawls) 
 
 
-@app.route('/dashboards/add_dashboard')
+@app.route('/dashboards/add_dashboard', methods=['GET', 'POST'])
 def add_dashboard():
-    return render_template('add_dashboard.html')
+    form = DashboardForm()
+    if form.validate_on_submit():
+        endpoint = text.urlify(form.name.data)
+        dashboard = Dashboard(name=form.name.data,
+                      endpoint=endpoint,
+                      description=form.description.data)
+
+        dashboard_exists = dashboard.query.filter_by(name=form.name.data).first()
+        if dashboard_exists:
+            flash("A dashboard named '%s' has already been registered-"
+                  "please provide another name." % form.name.data, 'error')
+            return render_template('register_dashboard.html', form=form)
+        else:
+            db.session.add(dashboard)
+            db.session.commit()
+            flash('%s has successfully been registered!' % form.name.data, 'success')
+            return redirect(url_for('dashboards', crawl_endpoint=endpoint))
+
+    return render_template('add_dashboard.html', form=form)
 
 
 @app.route('/dashboards/add_plots')

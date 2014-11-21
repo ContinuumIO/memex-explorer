@@ -80,9 +80,8 @@
               <li{% if id == active_page %} class="active"{% endif %}><a href="{{ href|e }}">{{ caption|e }}</a></li>
             {% endfor %}-->
           <h4>Dashboards</h4>
-            {% for dash in dashboards %}
-            {% set href, id, caption = ['/dash/' + dash.endpoint , dash.endpoint, dash.name] %}
-              <li{% if id == active_page %} class="active"{% endif %}><a href="{{ href|e }}">{{ caption|e }}</a></li>
+            {% for dash in dashboards %}          
+              <li{% if id == active_page %} class="active"{% endif %}><a href="{{ url_for('dashboards')}}{{ dash.endpoint }}">{{ dash.name }}</a></li>
             {% endfor %}
           </ul>
           <button type="button" class="btn btn-default">
