@@ -9,9 +9,10 @@ plots = db.Table('plots',
 
 
 dashboards = db.Table('dashboards',
-    db.Column('crawl_id', db.Integer, db.ForeignKey('crawl.id')),
-    db.Column('dashboard_id', db.Integer, db.ForeignKey('dashboard.id'))
+    db.Column('dashboard_id', db.Integer, db.ForeignKey('dashboard.id')),
+    db.Column('plot_id', db.Integer, db.ForeignKey('plot.id')),
 )
+
 
 class Crawl(db.Model):
     __tablename__ = "crawl"
@@ -51,6 +52,8 @@ class Plot(db.Model):
     description = db.Column(db.Text)
     endpoint = db.Column(db.String(64), index=True, unique=True)
     plot = db.Column(db.String(64), index=True)
+    dashboards = db.relationship('Dashboard', secondary=dashboards, \
+        backref=db.backref('plot', lazy='dynamic'))
 
 
 class Dashboard(db.Model):

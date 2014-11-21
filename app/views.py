@@ -11,6 +11,8 @@ import os
 import logging
 import json
 import datetime as dt
+import math
+import itertools
 
 # Third-party Libraries 
 # ---------------------
@@ -23,6 +25,7 @@ from webhelpers import text
 from blaze import resource, discover, Data, into, compute
 from pandas import DataFrame
 from bokeh.plotting import ColumnDataSource
+import numpy as np
 
 # Local Imports
 # -------------
@@ -239,10 +242,6 @@ def data_edit(data_endpoint):
     return render_template('edit.html', form=form, crawl=crawl)
 
 
-def grid(plots):
-    pass
-
-
 @app.route('/dashboards/')
 def dashboards():
     return render_template('dashboards.html')
@@ -251,7 +250,6 @@ def dashboards():
 @app.route('/dashboard_test/')
 def dashboard_test():
     plots = Plot.query.all()
-    #layout = grid(len(plots))
     crawl = Crawl.query.filter_by(endpoint='crawl1').first()
     plotting = [plot_builder(crawl, x) for x in plots]
     return render_template('dashboard_test.html', plotting=plotting)
