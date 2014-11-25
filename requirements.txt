@@ -1,0 +1,5 @@
+flask-sqlalchemy
+sqlalchemy-migrate
+Flask-WTF
+flask-mail
+tld

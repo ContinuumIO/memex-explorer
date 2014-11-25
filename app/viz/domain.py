@@ -1,17 +1,18 @@
 """
 Generate the domain plot.
 """
+from __future__ import absolute_import, division, print_function
+
 import csv
 import datetime as dt
-import unicodecsv
-from cStringIO import StringIO
-from blaze import *
+
 import pandas as pd
 from tld import get_tld
 from bokeh.plotting import *
 from bokeh.objects import ColumnDataSource
 from bokeh.embed import components
 from bokeh.resources import CDN
+
 
 def group_by_minutes(d, minutes):
     k = d + dt.timedelta(minutes=-(d.minute % minutes)) 
@@ -60,7 +61,7 @@ class Domain(object):
                         #line = [domain, timestamp, minute]
                         writer.writerow(line)
                     except csv.Error as e:
-                        print 'file %s, line %d: %s' % (input_summary, reader.line_num, e)
+                        print('file %s, line %d: %s' % (input_summary, reader.line_num, e))
                         pass
 
         crawled_file = self.output_dir+'/'+'crawledpages.csv'
@@ -82,7 +83,7 @@ class Domain(object):
                         #line = [domain, timestamp, minute]
                         writer.writerow(line)
                     except csv.Error as e:
-                        print 'file %s, line %d: %s' % (input_summary, reader.line_num, e)
+                        print('file %s, line %d: %s' % (input_summary, reader.line_num, e))
                         pass
 
         frontier_file = self.output_dir + '/' + 'frontierpages.csv'
@@ -112,7 +113,7 @@ class Domain(object):
                         #line = [url, domain]
                         #writer.writerow(line)
                     except csv.Error as e:
-                        print 'file %s, line %d: %s' % (input_summary, reader.line_num, e)
+                        print('file %s, line %d: %s' % (input_summary, reader.line_num, e))
                         pass
 
         #frontier_file = "frontierpages.csv"
@@ -122,7 +123,7 @@ class Domain(object):
         #t_crawled = Table(CSV(crawled_file, columns=["url", "domain", "timestamp", "minute"], encoding='utf-8'), schema = "{url: string, domain:string, timestamp:datetime, minute:datetime}")
         #t_relevant = Table(CSV(relevant_file, columns=["url", "domain", "timestamp", "minute"], encoding='utf-8'), schema ="{url: string, domain:string, timestamp:datetime, minute:datetime}")
         df_frontier = pd.read_csv(frontier_file, names = ["domain"], delimiter='\t', encoding='utf-8', engine='c', error_bad_lines=False, squeeze=True)
-        print df_frontier
+        print(df_frontier)
         df_crawled = pd.read_csv(crawled_file, names = ["domain", "timestamp", "minute"], delimiter='\t', encoding='utf-8')
         df_relevant = pd.read_csv(relevant_file, names = ["domain", "timestamp", "minute"], delimiter='\t', encoding='utf-8')
 
@@ -149,9 +150,9 @@ class Domain(object):
         sort_relevant = joined.sort('relevant_count', ascending=False).head(25)
         sort_crawled = joined.sort('crawled_count', ascending=False).head(25)
         sort_frontier = joined.sort('frontier_count', ascending=False).head(25)
-        print sort_relevant
-        print sort_crawled
-        print sort_frontier
+        print(sort_relevant)
+        print(sort_crawled)
+        print(sort_frontier)
 
         return sort_relevant, sort_crawled, sort_frontier
 
@@ -159,8 +160,8 @@ class Domain(object):
     def update_source(self):
 
         sort_relevant, sort_crawled, sort_frontier = self.generate_data()
-        print "What's wrong?"
-        print sort_relevant
+        print("What's wrong?")
+        print(sort_relevant)
         # Sorted by Relevance
         # Generate the column that calculates the center of the rectangle for the rect glyph.
         sort_relevant['relevant_rect'] = sort_relevant['relevant_count'].map(lambda x: x/2)
@@ -190,7 +191,7 @@ class Domain(object):
 
         # Sorted by Relevance
         y_range= self.sort_relevant_source.data['index']
-        print y_range
+        print(y_range)
 
         figure(plot_width=400, plot_height=400, title="Domains Sorted by Relevance", y_range = y_range, tools='pan, wheel_zoom, box_zoom, reset, resize, save, hover')
 

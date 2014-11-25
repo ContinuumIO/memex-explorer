@@ -1,0 +1,11 @@
+flask
+pip
+libdynd
+dynd-python
+h5py
+pymongo
+toolz
+pytables
+pygments
+bokeh
+blaze

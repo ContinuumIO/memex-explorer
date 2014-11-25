@@ -1,33 +1,24 @@
 """Main views for memex-viewer application"""
 from __future__ import absolute_import, division, print_function
 
-#  IMPORTS 
+#  IMPORTS
 # =========
 
 # Standard Library
 # ----------------
 
-import os
-import logging
-import json
-import datetime as dt
-
-# Third-party Libraries 
+# Third-party Libraries
 # ---------------------
 
 from flask import (redirect, flash, render_template, request, url_for,
-                   send_from_directory, jsonify, session, abort)
-from werkzeug import secure_filename
-from webhelpers import text
-
-from blaze import resource, discover, Data, into, compute
+                   abort)
+from blaze import resource, Data, into
 from pandas import DataFrame
-from bokeh.plotting import ColumnDataSource
 
 # Local Imports
 # -------------
 
-from . import app, db
+from . import app, db, text
 from .models import Crawl, MonitorData, Dashboard, Plot
 from .forms import CrawlForm, DashboardForm, MonitorDataForm, DashboardForm, PlotForm, ContactForm
 from .mail import send_email
