@@ -186,7 +186,6 @@ def add_model(project_name):
             x.save(MODEL_FILES + form.name.data + '/' + x.filename)
         model = DataModel(name=form.name.data,
                           filename=MODEL_FILES + form.name.data)
-
         db.session.add(model)
         db.session.commit()
         flash('Model has successfully been registered!', 'success')
