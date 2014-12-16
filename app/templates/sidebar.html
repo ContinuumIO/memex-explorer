@@ -46,14 +46,11 @@
           <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseFour">
             Data Models
           </a>
-          {% if models[0] %}
-          <a href="#" style='float:right;'><i class="fa fa-list"></i></a>
-          {% endif %}
         </div>
         <div id="collapseFour" class="accordion-body collapse accordion-links">
         {% for x in models %}
           <div class="accordion-inner">
-            <a href="#">{{ x.name }}</a>
+            {{ x.name }}
           </div>
         {% endfor %}
           <div class="accordion-inner">
@@ -81,7 +78,7 @@
           </div>
         </div>
       </div>
-      <div class="accordion-group">
+      <!-- <div class="accordion-group">
         <div class="accordion-heading sidebar-buttons">
           <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseThree">
             Data Sources
@@ -100,6 +97,6 @@
             <a href="#">+ Add Data Source</a>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
 </div>
