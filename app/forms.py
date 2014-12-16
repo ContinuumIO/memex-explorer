@@ -10,6 +10,10 @@ from models import DataModel
 from . import app, db
 
 
+__all__ = ['CrawlForm', 'MonitorDataForm', 'DashboardForm', 'PlotForm', 
+           'ContactForm', 'ProjectForm', 'DataModelForm']
+
+
 def data_models():
     return DataModel.query.all()
 
