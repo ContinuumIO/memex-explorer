@@ -1,5 +1,8 @@
 import os
 
+
+__all__ = ['SEED_FILES', 'CONFIG_FILES', 'MODEL_FILES', 'CRAWLS_PATH']
+
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 # Project
