@@ -180,7 +180,8 @@ def add_model(project_name):
             flash('Data model name already exists, please choose another name', 'error')
             return render_template('add_data_model.html', form=form)
         files = request.files.getlist("files")
-        os.mkdir(MODEL_FILES + form.name.data)
+        if not os.path.exists(MODEL_FILES + form.name.data):
+            os.makedirs(MODEL_FILES + form.name.data)
         for x in files:
             x.save(MODEL_FILES + form.name.data + '/' + x.filename)
         model = DataModel(name=form.name.data,
