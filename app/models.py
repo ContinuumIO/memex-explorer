@@ -162,3 +162,5 @@ class Dashboard(db.Model):
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
     plots = db.relationship('Plot', secondary=plot_dashboard, \
         backref=db.backref('dashboard', lazy='dynamic'))
+
+

@@ -1,60 +1,60 @@
 from . import app, db 
 import os
-from .config import SEED_FILES, CONFIG_FILES, MODEL_FILES, CRAWLS_PATH
-from .models import (Project, Crawl, Dashboard, Image,
-                     DataSource, Plot, DataModel, ImageSpace)
+from app import models
+from app import config
+
 
 MATCHES = app.MATCHES
 
 def get_project(project_name):
     """Return the project identified by `project_name`.
     """
-    return Project.query.filter_by(name=project_name).first()
+    return models.Project.query.filter_by(name=project_name).first()
 
 
 def get_crawl(crawl_name):
     """Return the first crawl under `project_id` that matches `crawl_name`.
     """
-    return Crawl.query.filter_by(name=crawl_name).first()
+    return models.Crawl.query.filter_by(name=crawl_name).first()
 
 
 def get_crawls(project_id):
     """Return all crawls that match `project_id`.
     """
-    return Crawl.query.filter_by(project_id=project_id)
+    return models.Crawl.query.filter_by(project_id=project_id)
 
 
 def get_dashboards(project_id):
     """Return all dashboards that match `project_id`.
     """
-    return Dashboard.query.filter_by(project_id=project_id)
+    return models.Dashboard.query.filter_by(project_id=project_id)
 
 
 def get_models():
     """
     Return all models that match 'project_id'
     """
-    return DataModel.query.all()
+    return models.DataModel.query.all()
 
 
 def get_images(project_id):
     """Return all images under `project_id` that match `crawl_name`.
     """
-    return Image.query.filter_by(project_id=project_id)
+    return models.Image.query.filter_by(project_id=project_id)
 
 
 def get_image(image_id):
     """Return the image that matches `image_id`.
     """
-    return Image.query.filter_by(id=image_id).first()
+    return models.Image.query.filter_by(id=image_id).first()
 
 def get_crawl_model(crawl):
     """Return the page classifier model used by that crawl.
     """
-    return DataModel.query.filter_by(id=crawl.data_model_id).first()
+    return models.DataModel.query.filter_by(id=crawl.data_model_id).first()
 
 def get_image_space(project_id):
-    return ImageSpace.query.filter_by(project_id=project_id)
+    return models.ImageSpace.query.filter_by(project_id=project_id)
 
 
 def get_matches(project_id, image_id):
@@ -62,17 +62,18 @@ def get_matches(project_id, image_id):
     """
 
     img = get_image(image_id)
-    return Image.query.filter_by(project_id=project_id, EXIF_BodySerialNumber=img.EXIF_BodySerialNumber).all()
+    return models.Image.query.filter_by(project_id=project_id, 
+                                        EXIF_BodySerialNumber=img.EXIF_BodySerialNumber).all()
 
 
 def db_add_crawl(project, form, seed_filename):
-    crawl = Crawl(name=form.name.data,
+    crawl = models.Crawl(name=form.name.data,
                   description=form.description.data,
                   crawler=form.crawler.data,
                   project_id=project.id,
                   data_model_id=form.data_model.data.id,
-                  config = os.path.join(CONFIG_FILES,'config_default'),
-                  seeds_list = SEED_FILES + seed_filename)
+                  config = os.path.join(config.CONFIG_FILES,'config_default'),
+                  seeds_list = config.SEED_FILES + seed_filename)
 
     db.session.add(crawl)
     db.session.commit()
@@ -81,25 +82,25 @@ def db_add_crawl(project, form, seed_filename):
 
 def db_init_ache(project, crawl):
     key = project.name + '-' + crawl.name
-    crawled_data_uri = os.path.join(CRAWLS_PATH, crawl.name, 'data/data_monitor/crawledpages.csv')
-    crawled_data = DataSource(name=key + '-crawledpages',
+    crawled_data_uri = os.path.join(config.CRAWLS_PATH, crawl.name, 'data/data_monitor/crawledpages.csv')
+    crawled_data = models.DataSource(name=key + '-crawledpages',
                               data_uri=crawled_data_uri,
                               project_id=project.id)
 
-    relevant_data_uri = os.path.join(CRAWLS_PATH, crawl.name, 'data/data_monitor/relevantpages.csv')
-    relevant_data = DataSource(name=key + '-relevantpages',
+    relevant_data_uri = os.path.join(config.CRAWLS_PATH, crawl.name, 'data/data_monitor/relevantpages.csv')
+    relevant_data = models.DataSource(name=key + '-relevantpages',
                                data_uri=relevant_data_uri,
                                project_id=project.id,
                                crawl=crawl)
 
-    frontier_data_uri = os.path.join(CRAWLS_PATH, crawl.name, 'data/data_monitor/frontierpages.csv')
-    frontier_data = DataSource(name=key + '-frontierpages',
+    frontier_data_uri = os.path.join(config.CRAWLS_PATH, crawl.name, 'data/data_monitor/frontierpages.csv')
+    frontier_data = models.DataSource(name=key + '-frontierpages',
                                data_uri=frontier_data_uri,
                                project_id=project.id,
                                crawl=crawl)
 
-    harvest_data_uri = os.path.join(CRAWLS_PATH, crawl.name, 'data/data_monitor/harvestinfo.csv')
-    harvest_data = DataSource(name=key + '-harvestinfo',
+    harvest_data_uri = os.path.join(config.CRAWLS_PATH, crawl.name, 'data/data_monitor/harvestinfo.csv')
+    harvest_data = models.DataSource(name=key + '-harvestinfo',
                                data_uri=harvest_data_uri,
                                project_id=project.id,
                                crawl=crawl)

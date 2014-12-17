@@ -39,8 +39,7 @@
         <span style="color: red;">[{{error}}]</span>
         {% endfor %}
      </div>
-
-    <div class="form-group">
+  {#  <div class="form-group">
         <label class="col-sm-2 control-label">{{form.config.label}}</label>
         <div class="col-sm-6">
           {{ form.config|safe }}
@@ -48,7 +47,7 @@
         {% for error in form.errors.config %}
         <span style="color: red;">[{{error}}]</span>
         {% endfor %}
-    </div>
+    </div> #}
     <div class="form-group">
       <label class="col-sm-2 control-label">{{form.data_model.label}}</label>
       <div class="col-sm-6">
