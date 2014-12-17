@@ -1,10 +1,6 @@
 from . import db
 
 # Table Relations
-__all__ = ['team_user', 'data_plot', 'crawl_data', 'crawl_image',
-           'image_image', 'plot_dashboard', 'Team', 'User', 'Project',
-           'Crawl', 'DataModel', 'DataSource', 'ImageSpace', 'Image',
-           'Plot', 'Dashboard']
 
 # Teams can consist of several users,
 #   users can belong to many teams.

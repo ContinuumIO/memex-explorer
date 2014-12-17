@@ -10,10 +10,6 @@ from models import DataModel
 from . import app, db
 
 
-__all__ = ['CrawlForm', 'MonitorDataForm', 'DashboardForm', 'PlotForm', 
-           'ContactForm', 'ProjectForm', 'DataModelForm']
-
-
 def data_models():
     return DataModel.query.all()
 
@@ -24,7 +20,7 @@ class CrawlForm(Form):
     crawler = SelectField('Crawler', choices=[('nutch','Nutch'), \
                          ('ache','Ache')],
                           validators=[DataRequired()])
-    config = FileField('Configuration', validators=[DataRequired()])
+    #config = FileField('Configuration', validators=[DataRequired()])
     seeds_list = FileField('Seeds List', validators=[DataRequired()])
     data_model = QuerySelectField('Data Model', query_factory=data_models, \
                                   allow_blank=True, get_label='name')

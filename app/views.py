@@ -29,10 +29,10 @@ from bokeh.plotting import ColumnDataSource
 # -------------
 
 from . import app, db
-from app import models
-from app import db_api
-from app import forms
-from app import crawls
+from . import models
+from . import db_api
+from . import forms
+from . import crawls
 
 from .rest_api import api
 from .mail import send_email
@@ -151,6 +151,8 @@ def add_crawl(project_name):
     form = forms.CrawlForm()
     if form.validate_on_submit():
         seed_filename = secure_filename(form.seeds_list.data.filename)
+        if not os.path.exists(SEED_FILES):
+            os.makedirs(SEED_FILES)
         form.seeds_list.data.save(SEED_FILES + seed_filename)
         # TODO allow upload configuration
         #config_filename = secure_filename(form.config.data.filename)
