@@ -1,5 +1,5 @@
 <div class="col-sm-3 col-md-2 sidebar">
-    <a href="{{ url_for('project', project_name=project.name) }}"><h2><i class='fa {{ project.icon }}'></i><br>{{ project.name }}</h2></a>
+    <a href="{{ url_for('project', project_name=project.name) }}"><h2><i class='fa {{ project.icon }}'></i><br>{{ project.pretty_name }}</h2></a>
     <div class="accordion" id="accordion2">
       <div class="accordion-group">
         <div class="accordion-heading sidebar-buttons">
