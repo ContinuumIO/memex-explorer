@@ -24,14 +24,14 @@
                 <div class="panel-heading">
                     <div class="row">
                         <div class="col-xs-3">
-                            <p>{{ project.pretty_name }}</p>
+                            <p>{{ project.name }}</p>
                         </div>
                         <div class="col-xs-9 text-right">
                             <i class="fa {{project.icon}} fa-3x"></i>
                         </div>
                     </div>
                 </div>
-                <a href="/{{project.name}}">
+                <a href="/{{project.slug}}">
                     <div class="panel-footer">
                         <p>{{ project.description|truncate(255, True) }}</p>
                  
