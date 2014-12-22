@@ -64,8 +64,8 @@ class User(db.Model):
 class Project(db.Model):
     __tablename__ = "project"
     id = db.Column(db.Integer, primary_key=True)
+    slug = db.Column(db.String(64), unique=True)
     name = db.Column(db.String(64), unique=True)
-    pretty_name = db.Column(db.String(64), unique=True)
     description = db.Column(db.Text)
     icon = db.Column(db.String(64))
 
