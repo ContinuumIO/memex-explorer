@@ -144,7 +144,7 @@ def delete_project(project_name):
     project = get_project(project_name)
     db.session.delete(project)
     db.session.commit()
-    flash('%s has successfully been deleted.' % project.name, 'success')
+    flash('%s has successfully been deleted.' % project.pretty_name, 'success')
     return redirect(url_for('index'))
 
 
@@ -155,7 +155,8 @@ def edit_project(project_name):
     original_name = project.name
     if form.validate_on_submit():
         if form.name.data:
-            project.name = form.name.data
+            project.pretty_name = form.name.data
+            project.name = text.urlify(form.name.data)
         if form.description.data:
             project.description = form.description.data
         if form.icon.data:
@@ -171,11 +172,13 @@ def add_project():
     form = ProjectForm(request.form)
 
     if form.validate_on_submit():
-        project = Project(name=form.name.data, description=form.description.data, \
-                        icon=form.icon.data)
+        project = Project(name=text.urlify(form.name.data),
+                          pretty_name=form.name.data,
+                          description=form.description.data,
+                          icon=form.icon.data)
         db.session.add(project)
         db.session.commit()
-        flash("Project '%s' was successfully registered" % project.name, 'success')
+        flash("Project '%s' was successfully registered" % project.pretty_name, 'success')
         return redirect(url_for('project', project_name=project.name))
 
     return render_template('add_project.html', form=form)
