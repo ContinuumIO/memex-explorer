@@ -6,16 +6,16 @@ from .models import (Project, Crawl, Dashboard, Image,
 
 MATCHES = app.MATCHES
 
-def get_project(project_name):
-    """Return the project identified by `project_name`.
+def get_project(project_slug):
+    """Return the project identified by `project_slug`.
     """
-    return Project.query.filter_by(name=project_name).first()
+    return Project.query.filter_by(slug=project_slug).first()
 
 
-def get_crawl(crawl_name):
-    """Return the first crawl under `project_id` that matches `crawl_name`.
+def get_crawl(crawl_slug):
+    """Return the first crawl that matches `crawl_name`.
     """
-    return Crawl.query.filter_by(name=crawl_name).first()
+    return Crawl.query.filter_by(slug=crawl_slug).first()
 
 
 def get_crawls(project_id):
@@ -80,7 +80,7 @@ def get_matches(project_id, image_name):
     return Image.query.filter_by(EXIF_BodySerialNumber=img.EXIF_BodySerialNumber).all()
 
 
-#def get_images_in_space(project_name, image_space_name):
+#def get_images_in_space(project_slug, image_space_slug):
 #     """Return all images under `project_id` that match metadata on `image_id`.
 #    """
 #    # TODO modify db model so we have a link between image and image_space
@@ -102,7 +102,7 @@ def db_add_crawl(project, form, seed_filename):
 
 
 def db_init_ache(project, crawl):
-    key = project.name + '-' + crawl.name
+    key = project.slug + '-' + crawl.name
     crawled_data_uri = os.path.join(CRAWLS_PATH, crawl.name, 'data/data_monitor/crawledpages.csv')
     crawled_data = DataSource(name=key + '-crawledpages',
                               data_uri=crawled_data_uri,

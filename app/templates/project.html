@@ -9,11 +9,11 @@
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
   <h1>{{ project.name }}
     <form onsubmit='return confirm("Are you sure you want to delete this project?");' class='form-button'>
-        <button formmethod='post' title="Delete Project" formaction="{{ url_for('delete_project', project_name=project.name) }}" id="removeButton" type="submit" class="btn btn-control">
+        <button formmethod='post' title="Delete Project" formaction="{{ url_for('delete_project', project_slug=project.slug) }}" id="removeButton" type="submit" class="btn btn-control">
             <span class="fa fa-close"></span>
         </button>
     </form>
-    <a href="{{ url_for('edit_project', project_name=project.name) }}">
+    <a href="{{ url_for('edit_project', project_slug=project.slug) }}">
     <button id="editButton" title="Edit Project" type="button" class="btn btn-control">
         <i class="fa fa-edit"></i>
     </button></a>
@@ -31,14 +31,14 @@
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     <div class="row">
         <div class="col-sm-3">
-            <h3><a href="{{ url_for('crawls', project_name=project.name) }}">
-              <i class="fa fa-search"> &nbsp; </i>Crawls</a> &nbsp;&nbsp;&nbsp; <a href="{{ url_for('add_crawl', project_name=project.name) }}"><i class="fa fa-plus-square"></i></h3>
+            <h3><a href="{{ url_for('crawls', project_slug=project.slug) }}">
+              <i class="fa fa-search"> &nbsp; </i>Crawls</a> &nbsp;&nbsp;&nbsp; <a href="{{ url_for('add_crawl', project_slug=project.slug) }}"><i class="fa fa-plus-square"></i></h3>
 
             {%  if crawls and crawls[0] %}
             <ul class="list-group">
                 {%  for w in crawls %}
                 <li class="list-group-item">
-                    <a href="{{ url_for('crawl', project_name=project.name, crawl_name=w.name) }}"><i class="fa fa-search"></i>  {{ w.name }}</a>
+                    <a href="{{ url_for('crawl', project_slug=project.slug, crawl_slug=w.slug) }}"><i class="fa fa-search"></i>  {{ w.name }}</a>
                 </li>
                 {% endfor %}
             </ul>
@@ -49,12 +49,12 @@
 
         <div class="col-sm-3">
             <h3><a href="#">
-              <i class="fa fa-line-chart"> &nbsp; </i>Dashboards</a> &nbsp;&nbsp;&nbsp; <a href="{{ url_for('add_dashboard', project_name=project.name) }}"><i class="fa fa-plus-square"></i></h3>
+              <i class="fa fa-line-chart"> &nbsp; </i>Dashboards</a> &nbsp;&nbsp;&nbsp; <a href="{{ url_for('add_dashboard', project_slug=project.slug) }}"><i class="fa fa-plus-square"></i></h3>
             {%  if dashboards and dashboards[0] %}
             <ul class="list-group">
                 {% for x in dashboards %}
                 <li class="list-group-item">
-                    <a href="{{ url_for('dash', project_name=project.name, dashboard_name=x.name) }}"><i class="fa fa-line-chart"></i> {{ x.name }}</a>
+                    <a href="{{ url_for('dash', project_slug=project.slug, dashboard_name=x.name) }}"><i class="fa fa-line-chart"></i> {{ x.name }}</a>
                 </li>
                 {% endfor %}
             </ul>

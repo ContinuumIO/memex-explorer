@@ -12,7 +12,7 @@
     {% if crawls[0] %}
     {% for crawl in crawls %}
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-        <a href="{{ url_for('crawl', project_name=project.name, crawl_name=crawl.name) }}">
+        <a href="{{ url_for('crawl', project_slug=project.slug, crawl_slug=crawl.slug) }}">
             <p>{{ crawl.name }}</p>
         </a>
         <p>{{ crawl.description }}</p>

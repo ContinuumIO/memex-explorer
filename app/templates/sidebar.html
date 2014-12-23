@@ -1,9 +1,9 @@
 <div class="col-sm-3 col-md-2 sidebar">
-    <a href="{{ url_for('project', project_name=project.name) }}"><h2><i class='fa {{ project.icon }}'></i><br>{{ project.name }}</h2></a>
+    <a href="{{ url_for('project', project_slug=project.slug) }}"><h2><i class='fa {{ project.icon }}'></i><br>{{ project.name }}</h2></a>
     <div class="accordion" id="accordion2">
       <div class="accordion-group">
         <div class="accordion-heading sidebar-buttons">
-           <a href="{{ url_for('crawls', project_name=project.name) }}">
+           <a href="{{ url_for('crawls', project_slug=project.slug) }}">
           Crawls
           </a>
           {% if crawls[0] %}
@@ -13,11 +13,11 @@
         <div id="collapseOne" class="accordion-body collapse accordion-links">
         {% for w in crawls if crawls %}
           <div class="accordion-inner">
-            <a href="{{ url_for('crawl', project_name=project.name, crawl_name=w.name) }}">{{ w.name }}</a>
+            <a href="{{ url_for('crawl', project_slug=project.slug, crawl_slug=w.slug) }}">{{ w.name }}</a>
           </div>
         {% endfor %}
           <div class="accordion-inner">
-            <a href="{{ url_for('add_crawl', project_name=project.name) }}">+ Add Crawl</a>
+            <a href="{{ url_for('add_crawl', project_slug=project.slug) }}">+ Add Crawl</a>
           </div>
         </div>
       </div>
@@ -34,12 +34,12 @@
         {% for x in crawls %}
           <div class="accordion-inner">
             {% if x.crawler == "ache" %}
-            <a href="{{ url_for('crawl_dash', project_name=project.name, crawl_name=x.name) }}">{{ x.name }}</a>
+            <a href="{{ url_for('crawl_dash', project_slug=project.slug, crawl_slug=x.slug) }}">{{ x.name }}</a>
             {% endif %}
           </div>
         {% endfor %}
           <div class="accordion-inner">
-            <a href="{{ url_for('add_dashboard', project_name=project.name) }}">+ Add Dashboard</a>
+            <a href="{{ url_for('add_dashboard', project_slug=project.slug) }}">+ Add Dashboard</a>
           </div>
         </div>
       </div>
@@ -59,7 +59,7 @@
           </div>
         {% endfor %}
           <div class="accordion-inner">
-            <a href="{{ url_for('add_model', project_name=project.name) }}">+ Add Data Model</a>
+            <a href="{{ url_for('add_model', project_slug=project.slug) }}">+ Add Data Model</a>
           </div>
         </div>
       </div>
@@ -75,7 +75,7 @@
         <div id="collapseFive" class="accordion-body collapse accordion-links">
         {% for x in image_spaces %}
           <div class="accordion-inner">
-            <a href="{{ url_for('image_table', project_name = project.name, image_space_name=x.name) }}">{{ x.name }}</a>
+            <a href="{{ url_for('image_table', project_slug = project.slug, image_space_slug=x.slug) }}">{{ x.name }}</a>
           </div>
         {% endfor %}
           <div class="accordion-inner">

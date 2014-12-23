@@ -19,7 +19,7 @@ $( document ).ready(function() {
 
     function pollStatusNow() {
         $.ajax({
-            url: "/{{ project.name }}/crawls/{{ crawl.name }}/status",
+            url: "/{{ project.slug }}/crawls/{{ crawl.slug }}/status",
             type: "GET",
             success: function(data) {
                 $( '#status' ).text( data );
@@ -32,7 +32,7 @@ $( document ).ready(function() {
     $('#playButton').on('click', function(){
         $.ajax({
           type: "POST",
-          url: "/{{ project.name }}/crawls/{{ crawl.name }}/run",
+          url: "/{{ project.slug }}/crawls/{{ crawl.slug }}/run",
           success: playSuccess
         });
     });
@@ -40,14 +40,14 @@ $( document ).ready(function() {
     $('#stopButton').on('click', function(){
         $.ajax({
           type: "POST",
-          url: "/{{ project.name }}/crawls/{{ crawl.name }}/stop",
+          url: "/{{ project.slug }}/crawls/{{ crawl.slug }}/stop",
           success: stopSuccess
         });
     });
 
     (function pollStatus() {
         $.ajax({
-            url: "/{{ project.name }}/crawls/{{ crawl.name }}/status",
+            url: "/{{ project.slug }}/crawls/{{ crawl.slug }}/status",
             type: "GET",
             success: function(data) {
                 $( '#status' ).text( data );
@@ -85,13 +85,13 @@ $( document ).ready(function() {
               <!-- <button id="seedButton" type="button" class="btn btn-control">
                   <i class="fa fa-file-o"></i>
               </button> -->
-              <a href="{{ url_for('edit_crawl', project_name=project.name, crawl_name=crawl.name) }}" style='text-decoration:none;'>
+              <a href="{{ url_for('edit_crawl', project_slug=project.slug, crawl_slug=crawl.slug) }}" style='text-decoration:none;'>
                 <button id="editButton" type="button" title="Edit Crawl" class="btn btn-control">
                   <i class="fa fa-edit"></i>
                 </button>
               </a>
               <form onsubmit='return confirm("Are you sure?");' class='form-button'>
-                <button formmethod='post' formaction="{{ url_for('delete_crawl', project_name=project.name, crawl_name=crawl.name) }}" id="removeButton" type="submit" title="Delete Crawl" class="btn btn-control">
+                <button formmethod='post' formaction="{{ url_for('delete_crawl', project_slug=project.slug, crawl_slug=crawl.slug) }}" id="removeButton" type="submit" title="Delete Crawl" class="btn btn-control">
                     <span class="fa fa-close"></span>
                 </button>
               </form>

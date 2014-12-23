@@ -23,8 +23,8 @@
 
               {% for image in images %}
                 <tr>
-                  <td><a href="{{ url_for('compare', image_name=image.img_file, project_name=project.name, image_space_name=image_space.name) }}">
-                      <img src="{{ url_for('image_source', image_space_name=image_space.name, image_name=image['img_file']) }}"
+                  <td><a href="{{ url_for('compare', image_name=image.img_file, project_slug=project.slug, image_space_slug=image_space.slug) }}">
+                      <img src="{{ url_for('image_source', image_space_slug=image_space.slug, image_name=image['img_file']) }}"
                            height="75" width="75" class="thumbnail" alt="{{ image['img_file'] }}"></a></td>
                   <td>{{ image.EXIF_LensSerialNumber }}</td>
                   <td>{{ image.MakerNote_SerialNumberFormat }}</td>

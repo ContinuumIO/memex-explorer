@@ -1,7 +1,7 @@
 """Main views for memex-explorer application"""
 from __future__ import absolute_import, division, print_function
 
-#  IMPORTS 
+#  IMPORTS
 # =========
 
 # Standard Library
@@ -13,7 +13,7 @@ import json
 import datetime as dt
 import subprocess
 
-# Third-party Libraries 
+# Third-party Libraries
 # ---------------------
 
 from flask import (redirect, flash, render_template, request, url_for,
@@ -58,7 +58,7 @@ from .viz.plot import plot_exists
 # from .viz.termite import Termite
 
 
-# Dictionary of crawls by key(project_name-crawl_name)
+# Dictionary of crawls by key(project_slug-crawl_name)
 CRAWLS_RUNNING = {}
 
 
@@ -70,12 +70,12 @@ def context():
 
     context_vars = {}
 
-    if request.view_args and 'project_name' in request.view_args:
-        project_name = request.view_args['project_name']
-        project = get_project(project_name)
+    if request.view_args and 'project_slug' in request.view_args:
+        project_slug = request.view_args['project_slug']
+        project = get_project(project_slug)
         if not project:
             return {}
-            # flash("Project '%s' was not found." % project_name, 'error')
+            # flash("Project '%s' was not found." % project_slug, 'error')
             # abort(404)
 
         crawls = get_crawls(project.id)
@@ -128,8 +128,8 @@ def about_page():
 # Project
 # -----------------------------------------------------------------------------
 
-@app.route('/<project_name>')
-def project(project_name):
+@app.route('/<project_slug>')
+def project(project_slug):
 
     # return render_template('project.html', project=project, crawls=crawls,
     #                                        dashboards=dashboards)
@@ -139,23 +139,24 @@ def project(project_name):
     return render_template('project.html')
 
 
-@app.route('/<project_name>/delete', methods=['POST'])
-def delete_project(project_name):
-    project = get_project(project_name)
+@app.route('/<project_slug>/delete', methods=['POST'])
+def delete_project(project_slug):
+    project = get_project(project_slug)
     db.session.delete(project)
     db.session.commit()
     flash('%s has successfully been deleted.' % project.name, 'success')
     return redirect(url_for('index'))
 
 
-@app.route('/<project_name>/edit', methods=['POST', 'GET'])
-def edit_project(project_name):
+@app.route('/<project_slug>/edit', methods=['POST', 'GET'])
+def edit_project(project_slug):
     form = EditProjectForm()
-    project = get_project(project_name)
-    original_name = project.name
+    project = get_project(project_slug)
+    original_name = project.slug
     if form.validate_on_submit():
         if form.name.data:
             project.name = form.name.data
+            project.slug = text.urlify(form.name.data)
         if form.description.data:
             project.description = form.description.data
         if form.icon.data:
@@ -171,12 +172,14 @@ def add_project():
     form = ProjectForm(request.form)
 
     if form.validate_on_submit():
-        project = Project(name=form.name.data, description=form.description.data, \
-                        icon=form.icon.data)
+        project = Project(slug=text.urlify(form.name.data),
+                          name=form.name.data,
+                          description=form.description.data,
+                          icon=form.icon.data)
         db.session.add(project)
         db.session.commit()
         flash("Project '%s' was successfully registered" % project.name, 'success')
-        return redirect(url_for('project', project_name=project.name))
+        return redirect(url_for('project', project_slug=project.slug))
 
     return render_template('add_project.html', form=form)
 
@@ -184,8 +187,8 @@ def add_project():
 # Crawl
 # -----------------------------------------------------------------------------
 
-@app.route('/<project_name>/add_crawl', methods=['GET', 'POST'])
-def add_crawl(project_name):
+@app.route('/<project_slug>/add_crawl', methods=['GET', 'POST'])
+def add_crawl(project_slug):
     form = CrawlForm()
     if form.validate_on_submit():
         seed_filename = secure_filename(form.seeds_list.data.filename)
@@ -193,26 +196,26 @@ def add_crawl(project_name):
         # TODO allow upload configuration
         #config_filename = secure_filename(form.config.data.filename)
         #form.config.data.save(CONFIG_FILES + config_filename)
-        project = get_project(project_name)
+        project = get_project(project_slug)
         crawl = db_add_crawl(project, form, seed_filename)
         subprocess.Popen(['mkdir', os.path.join(CRAWLS_PATH, crawl.name)])
 
         if crawl.crawler == 'ache':
             db_init_ache(project, crawl)
 
-        else: 
+        else:
             #TODO add db_init_nutch
             pass
 
         flash('%s has successfully been registered!' % form.name.data, 'success')
-        return redirect(url_for('crawl', project_name=get_project(project_name),
+        return redirect(url_for('crawl', project_slug=get_project(project_slug),
                                          crawl_name=form.name.data))
 
     return render_template('add_crawl.html', form=form)
 
 
-@app.route('/<project_name>/add_model', methods=['GET', 'POST'])
-def add_model(project_name):
+@app.route('/<project_slug>/add_model', methods=['GET', 'POST'])
+def add_model(project_slug):
     form = DataModelForm()
     if form.validate_on_submit():
         registered_model = DataModel.query.filter_by(name=form.name.data).first()
@@ -229,49 +232,50 @@ def add_model(project_name):
         db.session.add(model)
         db.session.commit()
         flash('Model has successfully been registered!', 'success')
-        return redirect(url_for('project', 
-                                project_name=get_project(project_name).name))
+        return redirect(url_for('project',
+                                project_slug=get_project(project_slug).name))
 
     return render_template('add_data_model.html', form=form)
 
 
-@app.route('/<project_name>/crawls')
-def crawls(project_name):
+@app.route('/<project_slug>/crawls')
+def crawls(project_slug):
     return render_template('crawls.html')
 
 
-@app.route('/<project_name>/crawls/<crawl_name>')
-def crawl(project_name, crawl_name):
-    project = get_project(project_name)
-    crawl = get_crawl(crawl_name)
+@app.route('/<project_slug>/crawls/<crawl_slug>')
+def crawl(project_slug, crawl_slug):
+    project = get_project(project_slug)
+    crawl = get_crawl(crawl_slug)
 
     if not project:
-        flash("Project '%s' was not found." % project_name, 'error')
+        flash("Project '%s' was not found." % project_slug, 'error')
         abort(404)
     elif not crawl:
-        flash("Crawl '%s' was not found." % crawl_name, 'error')
+        flash("Crawl '%s' was not found." % crawl.name, 'error')
         abort(404)
 
     return render_template('crawl.html', crawl=crawl)
 
 
-@app.route('/<project_name>/crawls/<crawl_name>/delete', methods=['POST'])
-def delete_crawl(project_name, crawl_name):
-    crawl = get_crawl(crawl_name)
+@app.route('/<project_slug>/crawls/<crawl_slug>/delete', methods=['POST'])
+def delete_crawl(project_slug, crawl_slug):
+    crawl = get_crawl(crawl_slug)
     db.session.delete(crawl)
     db.session.commit()
     flash('%s has successfully been deleted.' % crawl.name, 'success')
-    return redirect(url_for('project', project_name=project_name))
+    return redirect(url_for('project', project_slug=project_slug))
 
 
-@app.route('/<project_name>/crawls/<crawl_name>/edit', methods=['POST', 'GET'])
-def edit_crawl(project_name, crawl_name):
-    project = get_project(project_name)
-    crawl = Crawl.query.filter_by(project_id=project.id, name=crawl_name).first()
+@app.route('/<project_slug>/crawls/<crawl_slug>/edit', methods=['POST', 'GET'])
+def edit_crawl(project_slug, crawl_slug):
+    project = get_project(project_slug)
+    crawl = Crawl.query.filter_by(project_id=project.id, name=crawl_slug).first()
     form = EditCrawlForm()
     if form.validate_on_submit():
         if form.name.data:
             crawl.name = form.name.data
+            crawl.slug = text.urlify(form.name.data)
         if form.description.data:
             crawl.description = form.description.data
         if form.crawler.data == 'nutch':
@@ -279,7 +283,7 @@ def edit_crawl(project_name, crawl_name):
             crawl.data_model_id = ''
         elif form.crawler.data == 'ache':
             crawl.crawler = form.crawler.data
-        if form.seeds_list.data: 
+        if form.seeds_list.data:
             seed_filename = secure_filename(form.seeds_list.data.filename)
             form.seeds_list.data.save(SEED_FILES + seed_filename)
             crawl.seeds_list = SEED_FILES + seed_filename
@@ -287,18 +291,18 @@ def edit_crawl(project_name, crawl_name):
             crawl.data_model_id = form.data_model.data.id
         db.session.commit()
         flash('%s has successfully been changed.' % crawl.name, 'success')
-        return redirect(url_for('project', project_name=project_name))
+        return redirect(url_for('project', project_slug=project_slug))
 
     return render_template('edit_crawl.html', form=form)
 
 
-@app.route('/<project_name>/crawls/<crawl_name>/run', methods=['POST'])
-def run_crawl(project_name, crawl_name):
-    key = project_name + '-' + crawl_name
+@app.route('/<project_slug>/crawls/<crawl_slug>/run', methods=['POST'])
+def run_crawl(project_slug, crawl_slug):
+    key = project_slug + '-' + crawl_slug
     if CRAWLS_RUNNING.has_key(key):
         return "Crawl is already running."
     else:
-        crawl = get_crawl(crawl_name)
+        crawl = get_crawl(crawl_slug)
         seeds_list = crawl.seeds_list
         if crawl.crawler=="ache":
             model = get_crawl_model(crawl)
@@ -316,9 +320,9 @@ def run_crawl(project_name, crawl_name):
             abort(400)
 
 
-@app.route('/<project_name>/crawls/<crawl_name>/stop', methods=['POST'])
-def stop_crawl(project_name, crawl_name):
-    key = project_name + '-' + crawl_name
+@app.route('/<project_slug>/crawls/<crawl_slug>/stop', methods=['POST'])
+def stop_crawl(project_slug, crawl_slug):
+    key = project_slug + '-' + crawl_slug
     crawl_instance = CRAWLS_RUNNING.get(key)
     if crawl_instance is not None:
         crawl_instance.stop()
@@ -328,16 +332,16 @@ def stop_crawl(project_name, crawl_name):
         abort(400)
 
 
-@app.route('/<project_name>/crawls/<crawl_name>/refresh', methods=['POST'])
-def refresh(project_name, crawl_name):
+@app.route('/<project_slug>/crawls/<crawl_slug>/refresh', methods=['POST'])
+def refresh(project_slug, crawl_slug):
 
-    project = get_project(project_name)
-
+    project = get_project(project_slug)
+    crawl = get_crawl(crawl_slug)
     ### Domain
-    domain_plot = get_plot(crawl_name + "-domain")
-    crawled = get_data_source(project.id, crawl_name + "-crawledpages")
-    relevant = get_data_source(project.id, crawl_name + "-relevantpages")
-    frontier = get_data_source(project.id, crawl_name + "-frontierpages")
+    domain_plot = get_plot(crawl_slug + "-domain")
+    crawled = get_data_source(project.id, crawl.name + "-crawledpages")
+    relevant = get_data_source(project.id, crawl.name + "-relevantpages")
+    frontier = get_data_source(project.id, crawl.name + "-frontierpages")
     #domain_sources = dict(crawled=crawled, relevant=relevant)
     domain_sources = dict(crawled=crawled, relevant=relevant, frontier=frontier)
 
@@ -347,8 +351,8 @@ def refresh(project_name, crawl_name):
 
 
     ### Harvest
-    harvest_plot = get_plot(crawl_name + "-harvest")
-    harvest_source = get_data_source(project.id, crawl_name + "-harvest")
+    harvest_plot = get_plot(crawl.name + "-harvest")
+    harvest_source = get_data_source(project.id, crawl.name + "-harvest")
 
     harvest = Harvest(harvest_source, harvest_plot)
     harvest.push_to_server()
@@ -357,27 +361,27 @@ def refresh(project_name, crawl_name):
     return "pushed"
 
 
-@app.route('/<project_name>/crawls/<crawl_name>/dashboard')
-def crawl_dash(project_name, crawl_name):
+@app.route('/<project_slug>/crawls/<crawl_slug>/dashboard')
+def crawl_dash(project_slug, crawl_slug):
 
-    project = get_project(project_name)
-    crawl = get_crawl(crawl_name)
+    project = get_project(project_slug)
+    crawl = get_crawl(crawl_slug)
 
-    key = project_name + '-' + crawl_name
+    key = project_slug + '-' + crawl_slug
     crawl_instance = CRAWLS_RUNNING.get(key)
 
     if crawl.crawler == 'ache':
         # TODO put all this is a function create_ache_dashboard
 
         ### Domain
-        domain_plot = get_plot(crawl_name + "-domain")
+        domain_plot = get_plot(crawl.name + "-domain")
         if domain_plot.autoload_tag and plot_exists(domain_plot):
             domain_tag = domain_plot.autoload_tag
 
         else:
-            crawled = get_data_source(project.id, crawl_name + "-crawledpages")
-            relevant = get_data_source(project.id, crawl_name + "-relevantpages")
-            frontier = get_data_source(project.id, crawl_name + "-frontierpages")
+            crawled = get_data_source(project.id, crawl.name + "-crawledpages")
+            relevant = get_data_source(project.id, crawl.name + "-relevantpages")
+            frontier = get_data_source(project.id, crawl.name + "-frontierpages")
             domain_sources = dict(crawled=crawled, relevant=relevant, frontier=frontier)
             #domain_sources = dict(crawled=crawled, relevant=relevant)
 
@@ -387,12 +391,12 @@ def crawl_dash(project_name, crawl_name):
 
 
         ### Harvest
-        harvest_plot = get_plot(crawl_name + "-harvest")
+        harvest_plot = get_plot(crawl.name + "-harvest")
         if harvest_plot.autoload_tag:
             harvest_tag = harvest_plot.autoload_tag
 
         else:
-            harvest_source = get_data_source(project.id, crawl_name + "-harvest")
+            harvest_source = get_data_source(project.id, crawl.name + "-harvest")
             harvest = Harvest(harvest_source, harvest_plot)
             harvest_tag = harvest.create_and_store()
         ###
@@ -404,9 +408,9 @@ def crawl_dash(project_name, crawl_name):
 
 
 
-@app.route('/<project_name>/crawls/<crawl_name>/status', methods=['GET'])
-def status_crawl(project_name, crawl_name):
-    key = project_name + '-' + crawl_name
+@app.route('/<project_slug>/crawls/<crawl_slug>/status', methods=['GET'])
+def status_crawl(project_slug, crawl_slug):
+    key = project_slug + '-' + crawl_slug
     crawl_instance = CRAWLS_RUNNING.get(key)
     if crawl_instance is not None:
         return crawl_instance.status()
@@ -418,9 +422,9 @@ def status_crawl(project_name, crawl_name):
 # Plot & Dashboard
 # -----------------------------------------------------------------------------
 
-@app.route('/<project_name>/add_dashboard', methods=['GET', 'POST'])
-def add_dashboard(project_name):
-    project = Project.query.filter_by(name=project_name).first()
+@app.route('/<project_slug>/add_dashboard', methods=['GET', 'POST'])
+def add_dashboard(project_slug):
+    project = get_project(project_slug)
     crawls = Crawl.query.filter_by(project_id=project.id)
     dashboards = Dashboard.query.filter_by(project_id=project.id)
     form = DashboardForm(request.form)
@@ -431,16 +435,16 @@ def add_dashboard(project_name):
         db.session.add(data)
         db.session.commit()
         flash("Dashboard '%s' was successfully registered" % form.name.data, 'success')
-        return redirect(url_for('dash', project_name=project.name, \
+        return redirect(url_for('dash', project_slug=project.slug, \
                         dashboard_name=form.name.data))
 
     return render_template('add_dashboard.html', project=project, crawls=crawls,
                             form=form, dashboards=dashboards)
 
 
-@app.route('/<project_name>/dashboards/<dashboard_name>')
-def dash(project_name, dashboard_name):
-    project = Project.query.filter_by(name=project_name).first()
+@app.route('/<project_slug>/dashboards/<dashboard_name>')
+def dash(project_slug, dashboard_name):
+    project = get_project(project_slug)
     crawls = Crawl.query.filter_by(project_id=project.id)
     dashboards = Dashboard.query.filter_by(project_id=project.id)
     dashboard = Dashboard.query.filter_by(name=dashboard_name).first()
@@ -449,10 +453,10 @@ def dash(project_name, dashboard_name):
         flash("Dashboard '%s' was not found." % dashboard_name, 'error')
         abort(404)
     elif not project:
-        flash("Project '%s' was not found." % project_name, 'error')
+        flash("Project '%s' was not found." % project_slug, 'error')
         abort(404)
     elif dashboard.project_id != project.id:
-        flash("Dashboard is not part of project '%s'." % project_name, 'error')
+        flash("Dashboard is not part of project '%s'." % project_slug, 'error')
         abort(404)
 
     return render_template('dash.html', project=project, crawls=crawls, \
@@ -479,11 +483,11 @@ def contact():
 # Compare (Image Space)
 # ------------------------------------------------------------------------
 
-@app.route('/<project_name>/image_space/<image_space_name>/<image_name>/compare/')
-def compare(project_name, image_space_name, image_name):
+@app.route('/<project_slug>/image_space/<image_space_slug>/<image_name>/compare/')
+def compare(project_slug, image_space_slug, image_name):
 
-    project = get_project(project_name)
-    image_space = ImageSpace.query.filter_by(name=image_space_name).first()
+    project = get_project(project_slug)
+    image_space = ImageSpace.query.filter_by(slug=image_space_slug).first()
     # TODO change to query by image_space. Requires db changes.
     images = get_images()
     img = get_image(image_name)
@@ -518,27 +522,27 @@ def compare(project_name, image_space_name, image_name):
                             # external_matches=external_matches
                              )
 
-@app.route('/static/<image_space_name>/images/<image_name>')
-def image_source(image_space_name, image_name):
-    img_dir = os.path.join(IMAGE_SPACE_PATH, image_space_name, 'images_blurred/')
+@app.route('/static/<image_space_slug>/images/<image_name>')
+def image_source(image_space_slug, image_name):
+    img_dir = os.path.join(IMAGE_SPACE_PATH, image_space_slug, 'images_blurred/')
     img_filename = image_name
 
     return send_from_directory(img_dir, img_filename)
 
 
-@app.route('/<project_name>/image_space/<image_space_name>/')
-def image_table(project_name, image_space_name):
-    #images = get_images_in_space(project_name, image_space_name)
-    project = get_project(project_name)
-    image_space = ImageSpace.query.filter_by(name=image_space_name).first()
+@app.route('/<project_slug>/image_space/<image_space_slug>/')
+def image_table(project_slug, image_space_slug):
+    #images = get_images_in_space(project_slug, image_space_name)
+    project = get_project(project_slug)
+    image_space = ImageSpace.query.filter_by(name=image_space_slug).first()
     images = get_images()
     return render_template('image_table.html', images=images, project=project, image_space=image_space)
 
 
-@app.route('/<project_name>/image_space/<image_space_name>/<image_name>')
-def inspect(project_name, image_space_name, image_name):
+@app.route('/<project_slug>/image_space/<image_space_slug>/<image_name>')
+def inspect(project_slug, image_space_slug, image_name):
     img = get_image(image_name)
-    image_space = ImageSpace.query.filter_by(name=image_space_name).first()
+    image_space = ImageSpace.query.filter_by(slug=image_space_slug).first()
 
     exif_info = dict(zip(('EXIF_BodySerialNumber', 'EXIF_LensSerialNumber',
               'Image_BodySerialNumber', 'MakerNote_InternalSerialNumber',

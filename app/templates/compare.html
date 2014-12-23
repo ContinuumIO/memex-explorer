@@ -85,7 +85,7 @@ $( document ).ready(function() {
         alt="{{ img }}"
         height="200" width="200"
         class="thumbnail">
-     <h4><a href="{{ url_for('compare', project_name=project.name, image_space_name=image_space.name, image_name=img.img_file) }}">{{ img }}</a></h4>
+     <h4><a href="{{ url_for('compare', project_slug=project.slug, image_space_name=image_space.name, image_name=img.img_file) }}">{{ img }}</a></h4>
 
    </div>
   {% endfor %}
@@ -98,10 +98,12 @@ $( document ).ready(function() {
   {% for img in external_matches %}
        <div class="col-xs-6 col-sm-3">
         <img src="{{ url_for('static', filename = img[0]) }}" height="200" width="200" class="thumbnail" alt="{{ img[1] }}">
-        <h4>{{ img[1] }} <small>(from {{ img[2] }})<small></h4>
+        <h4>{{ img[1] }} <small>(from {{ img[2] }})</small></h4>
       </div>
   {% endfor %}
   </div>
 {% endif %} #}
 
 {% endblock content %}
+
+</div>

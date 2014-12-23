@@ -65,6 +65,7 @@ class Project(db.Model):
     __tablename__ = "project"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
+    slug = db.Column(db.String(64), unique=True)
     description = db.Column(db.Text)
     icon = db.Column(db.String(64))
 
@@ -73,6 +74,7 @@ class Crawl(db.Model):
     __tablename__ = "crawl"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
+    slug = db.Column(db.String(64), unique=True)
     description = db.Column(db.Text)
     crawler = db.Column(db.Text)
     config = db.Column(db.Text)
@@ -117,6 +119,7 @@ class ImageSpace(db.Model):
     __tablename__ = "image_space"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
+    slug = db.Column(db.String(64), unique=True)
     images_location = db.Column(db.Text)
     description = db.Column(db.Text)
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
