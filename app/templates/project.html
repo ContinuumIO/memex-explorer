@@ -8,12 +8,16 @@
 <div class='row'>
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
   <h1>{{ project.name }}
-    <button id="playButton" type="button" class="btn btn-control">
-        <i class="fa fa-close"></i>
-    </button>
-    <button id="playButton" type="button" class="btn btn-control">
+    <form onsubmit='return confirm("Are you sure you want to delete this project?");' class='form-button'>
+        <button formmethod='post' title="Delete Project" formaction="{{ url_for('delete_project', project_name=project.name) }}" id="removeButton" type="submit" class="btn btn-control">
+            <span class="fa fa-close"></span>
+        </button>
+    </form>
+    <a href="{{ url_for('edit_project', project_name=project.name) }}">
+    <button id="editButton" title="Edit Project" type="button" class="btn btn-control">
         <i class="fa fa-edit"></i>
-    </button></h1>
+    </button></a>
+    </h1>
   <p>{{ project.description }}</p>
 </div>
 </div>
@@ -25,63 +29,89 @@
 
 <div class='row'>
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-{% if crawls.count() or dashboards.count() or images.count() %}
-    <h3>Apps in {{ project.name }}</h3>
-    <ul class="list-group">
-        {%  for w in crawls if crawls %}
-        <li class="list-group-item">
-            <a href="{{ url_for('crawl', project_name=project.name, crawl_name=w.name) }}"><i class="fa fa-search"></i>  {{ w.name }}</a>
-        </li>
-        {% endfor %}
-        {% for x in dashboards if dashboards %}
-        <li class="list-group-item">
-            <a href="{{ url_for('dash', project_name=project.name, dashboard_name=x.name) }}"><i class="fa fa-line-chart"></i> {{ x.name }}</a>
-        </li>
-        {% endfor %}
-        {% for x in images if images %}
-        <li class="list-group-item">
-            <a href="#"><i class="fa fa-image"></i> {{ x.name }}</a>
-        </li>
-        {% endfor %}
-        </ul>
-{% else %}
-    <h3> No apps install in {{ project.name }}</h3>
-{% endif %}
-    </div>
-</div>
+    <div class="row">
+        <div class="col-sm-3">
+            <h3><a href="{{ url_for('crawls', project_name=project.name) }}">
+              <i class="fa fa-search"> &nbsp; </i>Crawls</a> &nbsp;&nbsp;&nbsp; <a href="{{ url_for('add_crawl', project_name=project.name) }}"><i class="fa fa-plus-square"></i></h3>
 
-<div class='row'>
-    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-        <h3> Add apps to {{ project.name }}</h3>
-        <div class='col-sm-3 text-center'>
-         <a href="{{ url_for('add_crawl', project_name=project.name) }}" class='app-icon'>
-         <h1><i class="fa fa-search"></i></h1>
-            <h4>Crawls</h4>
-         </a>
+            {%  if crawls and crawls[0] %}
+            <ul class="list-group">
+                {%  for w in crawls %}
+                <li class="list-group-item">
+                    <a href="{{ url_for('crawl', project_name=project.name, crawl_name=w.name) }}"><i class="fa fa-search"></i>  {{ w.name }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <p>No Crawls Registered.</p>
+            {% endif %}
         </div>
-        <div class='col-sm-3 text-center'>
-         <a href="#" class='app-icon'>
-         <h1><i class="fa fa-line-chart"></i></h1>
-            <h4>Dashboards</h4>
-         </a>
+
+        <div class="col-sm-3">
+            <h3><a href="#">
+              <i class="fa fa-line-chart"> &nbsp; </i>Dashboards</a> &nbsp;&nbsp;&nbsp; <a href="{{ url_for('add_dashboard', project_name=project.name) }}"><i class="fa fa-plus-square"></i></h3>
+            {%  if dashboards and dashboards[0] %}
+            <ul class="list-group">
+                {% for x in dashboards %}
+                <li class="list-group-item">
+                    <a href="{{ url_for('dash', project_name=project.name, dashboard_name=x.name) }}"><i class="fa fa-line-chart"></i> {{ x.name }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <p>No Dashboards Registered.</p>
+            {%  endif %}
         </div>
-        <div class='col-sm-3 text-center'>
-         <a href="#" class='app-icon'>
-         <h1><i class="fa fa-database"></i></h1>
-            <h4>Data Sources</h4>
-         </a>
+
+        <div class="col-sm-3">
+             <h3><a href="#">
+              <i class="fa fa-image"> &nbsp; </i>Image Spaces</a> &nbsp;&nbsp;&nbsp; <a href="#"><i class="fa fa-plus-square"></i></h3>
+            {%  if image_spaces and image_spaces[0] %}
+            <ul class="list-group">
+                {% for x in image_spaces %}
+                <li class="list-group-item">
+                    <a href="#"><i class="fa fa-image"></i> {{ x.name }}</a>
+                </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>No Image Spaces Registered.</p>
+            {% endif %}
         </div>
-        <div class='col-sm-3 text-center'>
-         <a href="{{ url_for('add_model', project_name=project.name) }}" class='app-icon'>
-         <h1><i class="fa fa-archive"></i></h1>
-            <h4>Data Models</h4>
-         </a>
+    </div>
+    <div class="row">
+
+         <div class="col-sm-3">
+             <h3><a href="#">
+              <i class="fa fa-database"> &nbsp; </i>Data Sources</a> &nbsp;&nbsp;&nbsp; <a href="#"><i class="fa fa-plus-square"></i></h3>
+            {%  if data_sources and data_sources[0] %}
+            <ul class="list-group">
+                {% for x in data_sources %}
+                <li class="list-group-item">
+                    <a href="#"><i class="fa fa-database"></i> {{ x.name }}</a>
+                </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>No Data Sources Registered.</p>
+            {% endif %}
         </div>
-        <div class='col-sm-3 text-center'>
-         <a href="#" class='app-icon'>
-         <h1><i class="fa fa-image"></i></h1>
-            <h4>Image Space</h4>
-         </a>
+
+
+         <div class="col-sm-3">
+             <h3><a href="#">
+              <i class="fa fa-archive"> &nbsp; </i>Data Models</a> &nbsp;&nbsp;&nbsp; <a href="#"><i class="fa fa-plus-square"></i></h3>
+            {%  if models and models[0] %}
+            <ul class="list-group">
+                {% for x in models %}
+                <li class="list-group-item">
+                    <a href="#"><i class="fa fa-archive"></i> {{ x.name }}</a>
+                </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>No Data Models Registered.</p>
+            {% endif %}
         </div>
     </div>
 </div>

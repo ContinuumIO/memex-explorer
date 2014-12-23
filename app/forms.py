@@ -57,3 +57,22 @@ class ProjectForm(Form):
 class DataModelForm(Form):
     name = StringField('Name', validators = [DataRequired()])
     filename = FileField()
+
+
+# Forms for edit views.
+
+
+class EditProjectForm(Form):
+    name = StringField('Name')
+    description = TextAreaField('Description')
+    icon = StringField('Icon')
+
+
+class EditCrawlForm(Form):
+    name = StringField('Name')
+    description = TextAreaField('Description')
+    crawler = SelectField('Crawler', choices=[('',''),('nutch','Nutch'), \
+                         ('ache','Ache')])
+    seeds_list = FileField('Seeds List')
+    data_model = QuerySelectField('Data Model', query_factory=data_models, \
+                                  allow_blank=True, get_label='name')

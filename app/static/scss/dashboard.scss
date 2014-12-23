@@ -382,6 +382,15 @@ ul.inline-icons{
   list-style:none;
 }
 
+.form-button{
+  display:inline-block;
+}
+
+#editButton, #removeButton, #seedButton{
+    min-height:40px;
+    min-width:40px;
+  }
+
 .accordion-links{
   padding:10px;
   border:1px solid #E8E8E8;

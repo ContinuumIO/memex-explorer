@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% include "sidebar.html" %}
+
+<div class='row'>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+<h2>Edit Project</h2><br>
+  <form class="form-horizontal" action="" method="post" name="register" enctype="multipart/form-data">
+      {{form.hidden_tag()}}
+
+      <div class="form-group">
+        <label class="col-sm-2 control-label">{{form.name.label}}</label>
+        <div class="col-sm-10">
+           {{ form.name|safe }}
+        </div>
+        {% for error in form.errors.name %}
+        <span style="color: red;">[{{error}}]</span>
+        {% endfor %}
+     </div>
+
+     <div class="form-group">
+        <label class="col-sm-2 control-label">{{form.description.label}}</label>
+        <div class="col-sm-10">
+           {{ form.description|safe }}
+        </div>
+        {% for error in form.errors.description %}
+        <span style="color: red;">[{{error}}]</span>
+        {% endfor %}
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-2 control-label">{{form.icon.label}}</label>
+        <div class="col-sm-10">
+           {{ form.icon|safe }}
+        </div>
+        {% for error in form.errors.icon %}
+        <span style="color: red;">[{{error}}]</span>
+        {% endfor %}
+        <p>Choose your icon <a href="http://fortawesome.github.io/Font-Awesome/icons/" target="_blank">here.</a></p>
+     </div>
+
+      <div class="form-group">
+        <div class="col-sm-offset-1 col-sm-4" align="center">
+           <button type="submit" class="btn btn-primary">Submit Changes</button>
+        </div>
+     </div>
+
+  </form>
+</div>
+</div>
+
+{% endblock %}
