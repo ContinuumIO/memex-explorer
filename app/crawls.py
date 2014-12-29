@@ -49,13 +49,13 @@ class NutchCrawl(object):
         self.crawl_dir = os.path.join(CRAWLS_PATH, crawl_dir)
         self.img_dir = os.path.join(IMAGE_SPACE_PATH, crawl_dir)
         #TODO Switch from "2" to parameter.
-        # For now let's set up number_of_rounds to 2.
-        self.number_of_rounds = "2"
+        # For now let's set up number_of_rounds to 1.
+        self.number_of_rounds = "1"
         #self.number_of_rounds = numberOfRounds
         self.proc = None
-        self.create_dir = subprocess.Popen(['mkdir', self.crawl_dir])
 
     def start(self):
+        subprocess.Popen(['mkdir', self.crawl_dir]).wait()
         self.proc = subprocess.Popen(['crawl', self.seed_dir, self.crawl_dir, self.number_of_rounds])
         self.proc.poll()
         return self.proc.pid
@@ -93,4 +93,11 @@ class NutchCrawl(object):
             with open(os.path.join(self.crawl_dir,'stats_stderr.txt'), 'w') as stderr:
                 stats_proc = subprocess.Popen(['nutch', 'readdb', os.path.join(self.crawl_dir, 'crawldb'), '-stats'],
                                               stdout=stdout, stderr=stderr)
-        return stats_proc.stdout
+                # Wait until process finishes
+                stats_proc.wait()
+        num_lines = sum(1 for line in open('stats_stdout.txt'))
+        with open(os.path.join(self.crawl_dir, 'stats_stdout.txt'), 'r') as stdout:
+            stats_output = stdout.readlines()
+                lines=[3,num_lines-1]
+                
+        return stats_output
