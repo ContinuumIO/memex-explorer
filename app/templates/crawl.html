@@ -57,6 +57,26 @@ $( document ).ready(function() {
             timeout: 2000
     });
     })();
+
+    $('#imageDump').on('click', function(){
+        $.ajax({
+          type: "POST",
+          url: "/{{ project.slug }}/crawls/{{ crawl.slug }}/dump",
+          success: console.log("crawlImagesDumped")
+        });
+    });
+
+    $('#stats').on('click', function(){
+        $.ajax({
+          type: "GET",
+          url: "/{{ project.slug }}/crawls/{{ crawl.slug }}/stats",
+          success: function(data) {
+                $( '#stats-data' ).text( data );
+                console.log("stats-data" + data);
+            },
+        });
+    });
+
 });
 
 </script>
@@ -102,24 +122,16 @@ $( document ).ready(function() {
 
 <div class='row'>
   <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-    <div role="tabpanel">
-      <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#description" aria-controls="description" role="tab" data-toggle="tab">Description</a></li>
-        <li role="presentation"><a href="#statistics" aria-controls="statistics" role="tab" data-toggle="tab">Summary Statistics</a></li>
-<!--         <li role="presentation"><a href="#explorer" aria-controls="explorer" role="tab" data-toggle="tab">Data Explorer</a></li>
- -->        <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Crawl Settings</a></li>
-        <li role="presentation"><a href="#index" aria-controls="index" role="tab" data-toggle="tab">Crawl Index</a></li>
-      </ul>
-      <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="description">
-            <p>The muchtreasured and intricately embroidered ancient Irish facecloth attributed to Solomon of Droma and Manus Tomaltach og MacDonogh, authors of the Book of Ballymote, was then carefully produced and called forth prolonged admiration. No need to dwell on the legendary beauty of the cornerpieces, the acme of art, wherein one can distinctly discern each of the four evangelists in turn presenting to each of the four masters his evangelical symbol, a bogoak sceptre, a North American puma (a far nobler king of beasts than the British article, be it said in passing), a Kerry calf and a golden eagle from Carrantuohill.</p>
-        </div>
-        <div role="tabpanel" class="tab-pane" id="statistics">...</div>
-        <div role="tabpanel" class="tab-pane" id="explorer">...</div>
-        <div role="tabpanel" class="tab-pane" id="settings">...</div>
-        <div role="tabpanel" class="tab-pane" id="index">...</div>
-      </div>
-    </div>
+        <button id="stats" type="button" title="Get crawl stats" class="btn btn-default btn-duo center">
+           Stats
+        </button>
+
+        <button id="imageDump" type="button" title="Dump crawled images" class="btn btn-default btn-duo center">
+           Images
+        </button>
+
+    <p>Stats: <span id="stats-data"></span></p>
+
   </div>
 </div>
 {% endblock content %}
