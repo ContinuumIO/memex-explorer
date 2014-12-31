@@ -12,6 +12,7 @@ import logging
 import json
 import datetime as dt
 import subprocess
+import traceback
 
 # Third-party Libraries
 # ---------------------
@@ -25,6 +26,8 @@ from blaze import resource, discover, Data, into, compute
 from pandas import DataFrame
 from bokeh.plotting import ColumnDataSource
 
+import exifread
+
 # Local Imports
 # -------------
 
@@ -33,7 +36,8 @@ from .models import Crawl, DataSource, Dashboard, Plot, Project, Image, ImageSpa
                     DataModel
 from .db_api import (get_project, get_crawl, get_crawls, get_dashboards, get_data_source,
                      get_images, get_image, get_matches, db_add_crawl, get_plot,
-                     db_init_ache, get_crawl_model, get_models, get_image_space)
+                     db_init_ache, get_crawl_model, get_model, get_models, db_add_image_space_from_crawl,
+                     db_process_exif, get_image_space, db_add_model)
 
 from .rest_api import api
 
@@ -56,7 +60,7 @@ from .viz.harvest_rate import HarvestRate
 
 
 # Dictionary of crawls by key(project_slug-crawl_name)
-CRAWLS_RUNNING = {}
+CRAWLS = {}
 
 
 @app.context_processor
@@ -188,14 +192,36 @@ def add_project():
 def add_crawl(project_slug):
     form = CrawlForm()
     if form.validate_on_submit():
+        if form.new_model_name.data:
+            registered_model = DataModel.query.filter_by(name=form.new_model_name.data).first()
+            if registered_model:
+                flash('Data model name already exists, please choose another name', 'error')
+                return render_template('add_crawl.html', form=form)
+            model_directory = MODEL_FILES + form.new_model_name.data
+            os.mkdir(model_directory)
+            model_file = secure_filename(form.new_model_file.data.filename)
+            model_features = secure_filename(form.new_model_features.data.filename)
+            form.new_model_file.data.save(model_directory + '/' + model_file)
+            form.new_model_features.data.save(model_directory + '/' + model_features)
+            db_add_model(form.new_model_name.data)
+            model = get_model(name=form.new_model_name.data)
+        elif form.data_model.data:
+            model = get_model(id=form.data_model.data.id)
+        else:
+            model = None
         seed_filename = secure_filename(form.seeds_list.data.filename)
-        form.seeds_list.data.save(SEED_FILES + seed_filename)
+        if form.crawler.data == "ache":
+            form.seeds_list.data.save(SEED_FILES + seed_filename)
+        elif form.crawler.data == "nutch":
+            seed_folder = text.urlify(form.name.data)
+            subprocess.Popen(['mkdir', os.path.join(SEED_FILES, seed_folder)]).wait()
+            form.seeds_list.data.save(os.path.join(SEED_FILES, seed_folder, seed_filename))
         # TODO allow upload configuration
         #config_filename = secure_filename(form.config.data.filename)
         #form.config.data.save(CONFIG_FILES + config_filename)
         project = get_project(project_slug)
-        crawl = db_add_crawl(project, form, seed_filename)
-        subprocess.Popen(['mkdir', os.path.join(CRAWLS_PATH, crawl.name)])
+        crawl = db_add_crawl(project, form, seed_filename, model)
+        subprocess.Popen(['mkdir', os.path.join(CRAWLS_PATH, crawl.name)]).wait()
 
         if crawl.crawler == 'ache':
             db_init_ache(project, crawl)
@@ -205,34 +231,12 @@ def add_crawl(project_slug):
             pass
 
         flash('%s has successfully been registered!' % form.name.data, 'success')
-        return redirect(url_for('crawl', project_slug=get_project(project_slug),
-                                         crawl_name=form.name.data))
+        return redirect(url_for('crawl', project_slug=project.slug,
+                                         crawl_slug=crawl.slug))
+    else:
+        print(form.errors)
 
     return render_template('add_crawl.html', form=form)
-
-
-@app.route('/<project_slug>/add_model', methods=['GET', 'POST'])
-def add_model(project_slug):
-    form = DataModelForm()
-    if form.validate_on_submit():
-        registered_model = DataModel.query.filter_by(name=form.name.data).first()
-        if registered_model:
-            flash('Data model name already exists, please choose another name', 'error')
-            return render_template('add_data_model.html', form=form)
-        files = request.files.getlist("files")
-        os.mkdir(MODEL_FILES + form.name.data)
-        for x in files:
-            x.save(MODEL_FILES + form.name.data + '/' + x.filename)
-        model = DataModel(name=form.name.data,
-                          filename=MODEL_FILES + form.name.data)
-
-        db.session.add(model)
-        db.session.commit()
-        flash('Model has successfully been registered!', 'success')
-        return redirect(url_for('project',
-                                project_slug=get_project(project_slug).name))
-
-    return render_template('add_data_model.html', form=form)
 
 
 @app.route('/<project_slug>/crawls')
@@ -305,37 +309,38 @@ def edit_crawl(project_slug, crawl_slug):
 @app.route('/<project_slug>/crawls/<crawl_slug>/run', methods=['POST'])
 def run_crawl(project_slug, crawl_slug):
     key = project_slug + '-' + crawl_slug
-    if CRAWLS_RUNNING.has_key(key):
+    if CRAWLS.has_key(key):
         return "Crawl is already running."
     else:
-        crawl = get_crawl(crawl_slug)
-        seeds_list = crawl.seeds_list
-        if crawl.crawler=="ache":
-            model = get_crawl_model(crawl)
-            crawl_instance = AcheCrawl(crawl_name=crawl.name, seeds_file=seeds_list, model_name=model.name,
-                                       conf_name=crawl.config)
-            pid = crawl_instance.start()
-            CRAWLS_RUNNING[key] = crawl_instance
-            return "Crawl %s running" % crawl.name
-        elif crawl.crawler=="nutch":
-            crawl_instance = NutchCrawl(seed_dir=seeds_list, crawl_dir=crawl.name)
-            pid = crawl_instance.start()
-            CRAWLS_RUNNING[key] = crawl_instance
-            return "Crawl %s running" % crawl.name
-        else:
-            abort(400)
+        try:
+            crawl = get_crawl(crawl_slug)
+            seeds_list = crawl.seeds_list
+            if crawl.crawler == "ache":
+                model = get_crawl_model(crawl)
+                crawl_instance = AcheCrawl(crawl_name=crawl.name, seeds_file=seeds_list,
+                                           model_name=model.name, conf_name=crawl.config)
+                pid = crawl_instance.start()
+                CRAWLS[key] = crawl_instance
+                return "Crawl %s running" % crawl.name
+            elif crawl.crawler == "nutch":
+                crawl_instance = NutchCrawl(seed_dir=seeds_list, crawl_dir=crawl.name)
+                pid = crawl_instance.start()
+                CRAWLS[key] = crawl_instance
+                return "Crawl %s running" % crawl.name
+        except Exception as e:
+            traceback.print_exc()
+            return "Error"
 
 
 @app.route('/<project_slug>/crawls/<crawl_slug>/stop', methods=['POST'])
 def stop_crawl(project_slug, crawl_slug):
     key = project_slug + '-' + crawl_slug
-    crawl_instance = CRAWLS_RUNNING.get(key)
+    crawl_instance = CRAWLS.get(key)
     if crawl_instance is not None:
         crawl_instance.stop()
-        del CRAWLS_RUNNING[key]
         return "Crawl stopped"
     else:
-        abort(400)
+        return "No such crawl"
 
 
 @app.route('/<project_slug>/crawls/<crawl_slug>/refresh', methods=['POST'])
@@ -374,7 +379,7 @@ def crawl_dash(project_slug, crawl_slug):
     crawl = get_crawl(crawl_slug)
 
     key = project_slug + '-' + crawl_slug
-    crawl_instance = CRAWLS_RUNNING.get(key)
+    crawl_instance = CRAWLS.get(key)
 
     if crawl.crawler == 'ache':
         # TODO put all this is a function create_ache_dashboard
@@ -418,12 +423,61 @@ def crawl_dash(project_slug, crawl_slug):
 @app.route('/<project_slug>/crawls/<crawl_slug>/status', methods=['GET'])
 def status_crawl(project_slug, crawl_slug):
     key = project_slug + '-' + crawl_slug
-    crawl_instance = CRAWLS_RUNNING.get(key)
+    crawl_instance = CRAWLS.get(key)
     if crawl_instance is not None:
-        return crawl_instance.status()
+        status = crawl_instance.get_status()
+        return status
     else:
-        return "Stopped"
+        return "Crawl not started"
 
+
+@app.route('/<project_slug>/crawls/<crawl_slug>/stats', methods=['GET'])
+def stats_crawl(project_slug, crawl_slug):
+    key = project_slug + '-' + crawl_slug
+    crawl_instance = CRAWLS.get(key)
+    if crawl_instance is not None:
+        return crawl_instance.stats()
+    else:
+        crawl = get_crawl(crawl_slug)
+        seeds_list = crawl.seeds_list
+        if crawl.crawler=="ache":
+            model = get_crawl_model(crawl)
+            crawl_instance = AcheCrawl(crawl_name=crawl.name, seeds_file=seeds_list, model_name=model.name,
+                                       conf_name=crawl.config)
+            #TODO get ache stats
+            #crawl_instance.stats()
+            print(crawl_instance)
+            return "No stats for ACHE crawls"
+
+        elif crawl.crawler=="nutch":
+            crawl_instance = NutchCrawl(seed_dir=seeds_list, crawl_dir=crawl.name)
+            print("nutch instance" + str(crawl_instance))
+            stats_output = crawl_instance.stats()
+            print("crawl stats:" + stats_output)
+            return stats_output
+
+
+@app.route('/<project_slug>/crawls/<crawl_slug>/dump', methods=['POST'])
+def dump_images(project_slug, crawl_slug):
+    project = get_project(project_slug)
+    key = project_slug + '-' + crawl_slug
+    crawl = get_crawl(crawl_slug)
+    crawl_instance = CRAWLS.get(key)
+    if crawl_instance is not None and crawl.crawler=="ache":
+        return "No image dump for ACHE crawls"
+    elif crawl_instance is not None and crawl.crawler=="nutch":
+        crawl_instance.dump_images()
+        image_space = db_add_image_space_from_crawl(crawl=crawl, project=project)
+        images = os.listdir(crawl_instance.img_dir)
+        for image in images:
+            image_path = os.path.join(crawl_instance.img_dir, image)
+            with open(image_path, 'rb') as f:
+                exif_data = exifread.process_file(f)
+                db_process_exif(exif_data, image, image_space)
+        print("Images dumped for NUTCH crawl %s" % crawl.name)
+        return redirect(url_for('image_table', project_slug=project.slug, image_space_slug=crawl.slug))
+    else:
+        return "Could not dump images"
 
 
 # Plot & Dashboard
@@ -492,11 +546,10 @@ def contact():
 
 @app.route('/<project_slug>/image_space/<image_space_slug>/<image_name>/compare/')
 def compare(project_slug, image_space_slug, image_name):
-
     project = get_project(project_slug)
     image_space = ImageSpace.query.filter_by(slug=image_space_slug).first()
     # TODO change to query by image_space. Requires db changes.
-    images = get_images()
+    images = get_image_space(image_space_slug)
     img = get_image(image_name)
     exif_info = dict(zip(('EXIF_BodySerialNumber', 'EXIF_LensSerialNumber',
               'Image_BodySerialNumber', 'MakerNote_InternalSerialNumber',
@@ -529,20 +582,18 @@ def compare(project_slug, image_space_slug, image_name):
                             # external_matches=external_matches
                              )
 
-@app.route('/static/<image_space_slug>/images/<image_name>')
+@app.route('/<image_space_slug>/images/<image_name>')
 def image_source(image_space_slug, image_name):
-    img_dir = os.path.join(IMAGE_SPACE_PATH, image_space_slug, 'images_blurred/')
+    img_dir = os.path.join(IMAGE_SPACE_PATH, image_space_slug, 'images')
     img_filename = image_name
-
     return send_from_directory(img_dir, img_filename)
 
 
 @app.route('/<project_slug>/image_space/<image_space_slug>/')
 def image_table(project_slug, image_space_slug):
-    #images = get_images_in_space(project_slug, image_space_name)
     project = get_project(project_slug)
     image_space = ImageSpace.query.filter_by(name=image_space_slug).first()
-    images = get_images()
+    images = get_images(image_space.slug)
     return render_template('image_table.html', images=images, project=project, image_space=image_space)
 
 

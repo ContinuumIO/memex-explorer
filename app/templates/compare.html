@@ -60,7 +60,7 @@ $( document ).ready(function() {
   <div class="row vertical-align clear-bottom">
     <div class="col-xs-7">
       <script src="{{ url_for('static', filename='js/dropzone.js') }}"></script>
-      <img src="{{ url_for('image_source', image_space_name=image_space.name, image_name=image.img_file) }}" class="img-responsive" alt="Generic placeholder thumbnail">
+      <img src="{{ url_for('image_source', image_space_slug=image_space.slug, image_name=image.img_file) }}" class="img-responsive" alt="Generic placeholder thumbnail">
     </div>
     <div class="col-xs-5">
       <div>
@@ -79,13 +79,13 @@ $( document ).ready(function() {
   <div class="row">
     {% for img in internal_matches %}
     <div class="col-xs-6 col-sm-3">
-      <img src="{{ url_for('image_source', image_space_name=image_space.name, image_name=img.img_file) }}"
+      <img src="{{ url_for('image_source', image_space_slug=image_space.slug, image_name=img.img_file) }}"
         data-id="{{ img.id }}"
         data-match="{{ img.match }}"
         alt="{{ img }}"
         height="200" width="200"
         class="thumbnail">
-     <h4><a href="{{ url_for('compare', project_slug=project.slug, image_space_name=image_space.name, image_name=img.img_file) }}">{{ img }}</a></h4>
+     <h4><a href="{{ url_for('compare', project_slug=project.slug, image_space_slug=image_space.slug, image_name=img.img_file) }}">{{ img }}</a></h4>
 
    </div>
   {% endfor %}

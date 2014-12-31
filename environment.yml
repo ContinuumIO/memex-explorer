@@ -22,3 +22,4 @@ dependencies:
     - supervisor==3.0
     - unicodecsv==0.9.4
     - webhelpers==1.3
+    - exifread

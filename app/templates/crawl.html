@@ -14,58 +14,85 @@ $( document ).ready(function() {
         location.reload(true);
     });
 
-    function playSuccess() {
-        console.log("Run OK")
-        // TODO disable button?
-        pollStatusNow();
+
+    var ME = ME || {};
+    ME.polling = true;
+
+    function show_error(){
+            ME.polling = false;
+            // alert("Error: could not start crawl.")
+            $( '#status' ).text( "Error (could not start crawl)" );
     }
 
-    function stopSuccess() {
-        console.log("Stop OK");
-        // TODO disable button?
-        pollStatusNow();
-    }
+    $('#playButton').on('click', function() {
 
-    function pollStatusNow() {
-        $.ajax({
-            url: "/{{ project.slug }}/crawls/{{ crawl.slug }}/status",
-            type: "GET",
-            success: function(data) {
-                $( '#status' ).text( data );
-                console.log("polling now " + data);
-            },
-            timeout: 2000
-        });
-    }
+        $( '#status' ).text( "Starting..." );
 
-    $('#playButton').on('click', function(){
         $.ajax({
           type: "POST",
-          url: "/{{ project.slug }}/crawls/{{ crawl.slug }}/run",
-          success: playSuccess
+            url: "{{ url_for('run_crawl', project_slug=project.slug, crawl_slug=crawl.slug) }}",
+          success: function(retval) {
+            if (retval == "Error") show_error();
+            else $( '#status' ).text(retval);
+          },
+          failure: function() {
+            show_error();
+          }
         });
     });
 
     $('#stopButton').on('click', function(){
+
+        $( '#status' ).text( "Stopping..." );
+
         $.ajax({
           type: "POST",
-          url: "/{{ project.slug }}/crawls/{{ crawl.slug }}/stop",
-          success: stopSuccess
+            url: "{{ url_for('stop_crawl', project_slug=project.slug, crawl_slug=crawl.slug) }}",
+          success: function(retval) {
+            if (retval == "Error") show_error();
+            else $( '#status' ).text(retval);
+          },
+          failure: function() {
+            show_error();
+          }
         });
     });
 
     (function pollStatus() {
+
+      // If polling has been turned off, break the loop
+      if (!ME.polling) return;
+
         $.ajax({
-            url: "/{{ project.slug }}/crawls/{{ crawl.slug }}/status",
+            url: "{{ url_for('status_crawl', project_slug=project.slug, crawl_slug=crawl.slug) }}",
             type: "GET",
-            success: function(data) {
-                $( '#status' ).text( data );
-                console.log("polling " + data);
-            },
-            complete: setTimeout(function() {pollStatus()}, 5000),
+            success: function(data) { $('#status').text( data ) },
+            complete: setTimeout(pollStatus, 5000),
             timeout: 2000
-    });
+        });
     })();
+
+    $('#imageDump').on('click', function(){
+        $.ajax({
+          type: "POST",
+          url: "/{{ project.slug }}/crawls/{{ crawl.slug }}/dump",
+          success: console.log("crawlImagesDumped")
+        }).done(function() {
+          window.location.href = "/{{ project.slug }}/image_space/{{ crawl.slug }}"
+        });
+    });
+
+    $('#stats').on('click', function(){
+        $.ajax({
+          type: "GET",
+          url: "/{{ project.slug }}/crawls/{{ crawl.slug }}/stats",
+          success: function(data) {
+                $( '#stats-data' ).text( data );
+                console.log("stats-data" + data);
+            },
+        });
+    });
+
 });
 
 </script>
@@ -77,12 +104,12 @@ $( document ).ready(function() {
 <div class='row'>
   <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     <h1>{{ crawl.name }}</h1>
-    <p>Status: <span id="status">Unknown</span></p>
+    <p>Crawl Status: <span id="status">Unknown</span></p>
   </div>
 </div>
 <div class='row'>
         <div class='col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 controls'>
-            <div class='col-md-2'>
+            <div class='col-xs-2'>
               <button id="playButton" title="Start Crawl" type="button" class="btn btn-control">
                   <i class="fa fa-play"></i>
               </button>
@@ -90,7 +117,7 @@ $( document ).ready(function() {
                   <span class="fa fa-stop"></span>
               </button>
               </div>
-              <div class='col-md-2'>
+              <div class='col-xs-2'>
               <!-- <button id="seedButton" type="button" class="btn btn-control">
                   <i class="fa fa-file-o"></i>
               </button> -->
@@ -129,24 +156,27 @@ $( document ).ready(function() {
 
 <div class='row'>
   <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-    <div role="tabpanel">
-      <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#description" aria-controls="description" role="tab" data-toggle="tab">Description</a></li>
-        <li role="presentation"><a href="#statistics" aria-controls="statistics" role="tab" data-toggle="tab">Summary Statistics</a></li>
-<!--         <li role="presentation"><a href="#explorer" aria-controls="explorer" role="tab" data-toggle="tab">Data Explorer</a></li>
- -->        <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Crawl Settings</a></li>
-        <li role="presentation"><a href="#index" aria-controls="index" role="tab" data-toggle="tab">Crawl Index</a></li>
-      </ul>
-      <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="description">
-            <p>The muchtreasured and intricately embroidered ancient Irish facecloth attributed to Solomon of Droma and Manus Tomaltach og MacDonogh, authors of the Book of Ballymote, was then carefully produced and called forth prolonged admiration. No need to dwell on the legendary beauty of the cornerpieces, the acme of art, wherein one can distinctly discern each of the four evangelists in turn presenting to each of the four masters his evangelical symbol, a bogoak sceptre, a North American puma (a far nobler king of beasts than the British article, be it said in passing), a Kerry calf and a golden eagle from Carrantuohill.</p>
-        </div>
-        <div role="tabpanel" class="tab-pane" id="statistics">...</div>
-        <div role="tabpanel" class="tab-pane" id="explorer">...</div>
-        <div role="tabpanel" class="tab-pane" id="settings">...</div>
-        <div role="tabpanel" class="tab-pane" id="index">...</div>
-      </div>
+        <button id="stats" type="button" title="Get crawl stats" class="btn btn-default btn-duo center">
+           Stats
+        </button>
+
+        <button id="imageDump" type="button" title="Dump crawled images" class="btn btn-default btn-duo center">
+           Images
+        </button>
+
+      <h3>Description</h3>
+      <p>The muchtreasured and intricately embroidered ancient Irish facecloth attributed to Solomon of Droma and Manus Tomaltach og MacDonogh, authors of the Book of Ballymote, was then carefully produced and called forth prolonged admiration. No need to dwell on the legendary beauty of the cornerpieces, the acme of art, wherein one can distinctly discern each of the four evangelists in turn presenting to each of the four masters his evangelical symbol, a bogoak sceptre, a North American puma (a far nobler king of beasts than the British article, be it said in passing), a Kerry calf and a golden eagle from Carrantuohill.</p>
+
+      <h3>Summary Statistics</h3>
+      <p><span id="stats-data"></span></p>
+      <h3>Crawl Settings</h3>
+      <p>...</p>
+      <h3>Crawl Index</h3>
+      <p>...</p>
     </div>
+
+
   </div>
+</div>
 </div>
 {% endblock content %}

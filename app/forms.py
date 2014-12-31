@@ -20,10 +20,13 @@ class CrawlForm(Form):
     crawler = SelectField('Crawler', choices=[('nutch','Nutch'), \
                          ('ache','Ache')],
                           validators=[DataRequired()])
-    config = FileField('Configuration', validators=[DataRequired()])
+    # config = FileField('Configuration', DataRequired()])
     seeds_list = FileField('Seeds List', validators=[DataRequired()])
     data_model = QuerySelectField('Data Model', query_factory=data_models, \
                                   allow_blank=True, get_label='name')
+    new_model_file = FileField()
+    new_model_features = FileField()
+    new_model_name = StringField()
 
 
 class MonitorDataForm(Form):

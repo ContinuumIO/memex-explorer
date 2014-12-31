@@ -45,5 +45,5 @@ LANG_DETECT_PATH = os.path.join(BASEDIR, 'resources/profiles/')
 
 CRAWLS_PATH = os.path.join(BASEDIR, 'resources/crawls/')
 
-IMAGE_SPACE_PATH = "/mnt/data/static/"
-
+IMAGE_SPACE_PATH= os.path.join(BASEDIR, 'resources/image_space/')
+#IMAGE_SPACE_PATH = "/mnt/data/static/"
