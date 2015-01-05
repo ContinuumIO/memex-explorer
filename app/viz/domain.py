@@ -6,6 +6,8 @@ from __future__ import division
 import pandas as pd
 from blaze import into
 from bokeh.plotting import *
+from bokeh.embed import components
+from bokeh.resources import INLINE
 from bokeh.models import ColumnDataSource, DataRange1d, FactorRange
 from tld import get_tld
 from functools import partial
@@ -13,6 +15,11 @@ from functools import partial
 from app import db
 from plot import PlotManager
 from ..config import CRAWLS_PATH
+
+
+GREEN = "#47a838"
+DARK_GRAY = "#2e2e2e"
+LIGHT_GRAY = "#6e6e6e"
 
 class Domain(PlotManager):
 
@@ -57,12 +64,9 @@ class Domain(PlotManager):
         source = into(ColumnDataSource, df)
         return source
 
-
-    def create_and_store(self):
+    def create(self):
 
         self.source = self.update_source()
-        output_server(self.doc_name)
-        curdoc().autostore = False
 
         xdr = DataRange1d(sources=[self.source.columns("crawled")])
         if self.sort == "frontier":
@@ -75,25 +79,21 @@ class Domain(PlotManager):
 
         if self.sort == 'frontier':
             p.rect(y='index', x='frontier_half', height=0.75, width='frontier',
-                   color="#676767", source = self.source, legend="frontier")
+                   color=LIGHT_GRAY, source = self.source, legend="frontier")
         p.rect(y='index', x='crawled_half', height=0.75, width='crawled',
-               color="#F15656", source = self.source, legend="crawled")
+               color=DARK_GRAY, source = self.source, legend="crawled")
         p.rect(y='index', x='relevant_half', height=0.75, width='relevant',
-               color="#4FC070", source = self.source, legend="relevant")
+               color=GREEN, source = self.source, legend="relevant")
 
         p.ygrid.grid_line_color = None
         p.xgrid.grid_line_color = '#8592A0'
         p.axis.major_label_text_font_size = "8pt"
 
-        cursession().store_document(curdoc())
-        autoload_tag = autoload_server(p, cursession())
-
         # Save ColumnDataSource model id to database model 
         self.plot.source_id = self.source._id
-
-        # Save autoload_server tag as well
-        self.plot.autoload_tag = autoload_tag
         db.session.flush()
         db.session.commit()
         
-        return autoload_server(p, cursession())
+        script, div = components(p, INLINE)
+
+        return (script, div)

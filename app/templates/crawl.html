@@ -2,8 +2,17 @@
 {% set active_page = "overview" %}
 
 {%- block extrahead %}
+
+{% for script in scripts %}
+ {{ script | safe }}
+{% endfor %}
+
 <script>
 $( document ).ready(function() {
+
+    $('#reload').on('click', function(){
+        location.reload(true);
+    });
 
 
     var ME = ME || {};
@@ -146,6 +155,24 @@ $( document ).ready(function() {
     });
 });
 </script>
+<div class='row'>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        {% if divs %}
+        {% for div in divs %}
+            <div class='col-sm-6'>
+                {{ div | safe }}
+            </div>
+        {% endfor %}
+        {% else %}
+        <h1>There are no plots to show.</h1>
+       {% endif %}
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <!-- <button type="button" id="reload" class="btn btn-primary">Refresh</button> -->
+            <button type="button" id="reload">Refresh</button>
+        </div>
+    </div>
+</div>
+
 <div class='row'>
   <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         <button id="stats" type="button" title="Get crawl stats" class="btn btn-default btn-duo center">

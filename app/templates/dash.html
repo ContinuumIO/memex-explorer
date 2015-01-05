@@ -2,17 +2,23 @@
 {% set active_page = "overview" %}
 
 {%- block extrahead %}
+
+{% for script in scripts %}
+ {{ script | safe }}
+{% endfor %}
+
 <script>
 $( document ).ready(function() {
 
 
 
     $('#reload').on('click', function(){
-        $.ajax({
-          type: "POST",
-          url: "/{{ project.slug }}/crawls/{{ crawl.slug }}/refresh",
-          success: function() {console.log('success')}
-        });
+        // $.ajax({
+        //   type: "POST",
+        //   url: "/{{ project.slug }}/crawls/{{ crawl.slug }}/refresh",
+        //   success: function() {console.log('success')}
+        // });
+        location.reload(true);
     });
 
 });
@@ -28,11 +34,10 @@ $( document ).ready(function() {
 
 <div class='row'>
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-        {% if plots[0] %}
-        {% for x in plots %}
+        {% if divs %}
+        {% for div in divs %}
             <div class='col-sm-6'>
-                <!-- In plot_hack branch was x instead of x.plot?-->
-                {{ x | safe }}
+                {{ div | safe }}
             </div>
         {% endfor %}
         {% else %}

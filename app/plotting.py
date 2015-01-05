@@ -5,6 +5,8 @@ from .viz.harvest import Harvest
 from .viz.termite import Termite    
 from .models import DataSource
 
+from .db_api import (get_plot, get_data_source)
+
 PLOT_NAMES = ('Domain Relevance',
               'Domain Crawled',
               'Domain Frontier',
@@ -56,3 +58,33 @@ def plot_builder(crawl, plot):
         script, div = t.create_plot()
 
     return script, div
+
+
+def default_ache_dash(project, crawl):
+
+    ### Domain
+    domain_plot = get_plot(crawl.name + "-domain")
+
+    crawled = get_data_source(project.id, crawl.name + "-crawledpages")
+    relevant = get_data_source(project.id, crawl.name + "-relevantpages")
+    frontier = get_data_source(project.id, crawl.name + "-frontierpages")
+    domain_sources = dict(crawled=crawled, relevant=relevant, frontier=frontier)
+
+    domain = Domain(domain_sources, domain_plot)
+    domain_script, domain_div = domain.create()
+    ###
+
+
+    ### Harvest
+    harvest_plot = get_plot(crawl.name + "-harvest")
+
+    harvest_source = get_data_source(project.id, crawl.name + "-harvest")
+
+    harvest = Harvest(harvest_source, harvest_plot)
+    harvest_script, harvest_div  = harvest.create()
+    ###
+
+    scripts = (domain_script, harvest_script)
+    divs = (domain_div, harvest_div)
+
+    return scripts, divs
