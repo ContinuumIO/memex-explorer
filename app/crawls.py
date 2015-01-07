@@ -1,20 +1,41 @@
 import subprocess
 import os
+from datetime import datetime
+
+from abc import ABCMeta, abstractmethod
 
 from .config import SEED_FILES, MODEL_FILES, CONFIG_FILES, CRAWLS_PATH, LANG_DETECT_PATH, IMAGE_SPACE_PATH
 
-class AcheCrawl(object):
+class Crawl(object):
+    __metaclass__ = ABCMeta
+
+    def __init__(self):
+
+        self.crawl_name = crawl_name
+        self.status = ""
+
+        # Handle to crawl process
+        self.proc = None
+
+        # Common statistics to record across crawls, with suitable defaults
+        self.start_time = datetime.now()
+        self.pages_crawled = 0
+        self.harvest_rate = 0
+
+
+    @abstractmethod
+    def statistics():
+        return (self.start_time, self.pages_crawled, self.harvest_rate)
+
+
+class AcheCrawl(Crawl):
 
     def __init__(self, crawl_name, seeds_file, model_name, conf_name):
-        self.crawl_name = crawl_name
         self.config = os.path.join(CONFIG_FILES, conf_name)
         self.seeds_file = os.path.join(SEED_FILES, seeds_file)
         self.model_dir = os.path.join(MODEL_FILES, model_name)
         self.crawl_dir = os.path.join(CRAWLS_PATH, crawl_name)
-        self.proc = None
-        # TODO record start and stop variables
-        #self.start_timestamp
-        #self.stop_timestamp
+        super(AcheCrawl, self).__init__()
 
     def start(self):
         subprocess.Popen(['mkdir', self.crawl_dir]).wait()
@@ -42,7 +63,7 @@ class AcheCrawl(object):
         return self.status
 
 
-class NutchCrawl(object):
+class NutchCrawl(Crawl):
 
     def __init__(self, seed_dir, crawl_dir):
         self.seed_dir =  os.path.join(SEED_FILES, seed_dir)
@@ -52,11 +73,8 @@ class NutchCrawl(object):
         # For now let's set up number_of_rounds to 1.
         self.number_of_rounds = "1"
         #self.number_of_rounds = numberOfRounds
-        self.status = ""
-        self.proc = None
-        # TODO record start and stop variables
-        #self.start_timestamp
-        #self.stop_timestamp
+        super(NutchCrawl, self).__init__()
+
 
     def start(self):
         subprocess.Popen(['mkdir', self.crawl_dir]).wait()
