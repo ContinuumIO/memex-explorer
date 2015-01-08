@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/continuumio/memex-explorer.png?label=ready&title=Ready)](https://waffle.io/continuumio/memex-explorer)
 memex-explorer
 ============
 
