@@ -261,7 +261,7 @@ def crawl(project_slug, crawl_slug):
 
     if crawl.crawler == 'ache':
         try:
-            scripts, divs = default_ache_dash(project, crawl)
+            scripts, divs = default_ache_dash(crawl)
         except PlotsNotReadyException as e:
             traceback.print_exc()
             return render_template('crawl.html', crawl=crawl, model=model)
@@ -385,7 +385,7 @@ def crawl_dash(project_slug, crawl_slug):
     crawl_instance = CRAWLS.get(key)
 
     if crawl.crawler == 'ache':
-        scripts, divs = default_ache_dash(project, crawl)
+        scripts, divs = default_ache_dash(crawl)
         return render_template('dash.html', scripts=scripts,
                                             divs=divs, crawl=crawl)
 
