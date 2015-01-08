@@ -13,10 +13,10 @@ def get_project(project_slug):
     return Project.query.filter_by(slug=project_slug).first()
 
 
-def get_crawl(crawl_slug):
-    """Return the first crawl that matches `crawl_name`.
+def get_crawl(project, crawl_slug):
+    """Return the crawl from the project that matches the `crawl_slug`.
     """
-    return Crawl.query.filter_by(slug=crawl_slug).first()
+    return Crawl.query.filter_by(project_id=project.id, crawl_slug=crawl_slug).first()
 
 
 def get_crawls(project_id):
@@ -54,13 +54,14 @@ def get_images(image_space_slug):
     return image_space.images
 
 
-def get_data_source(project_id, data_source_name):
-    """Return the data source under `project_id` that matches `data_source_name`.
+def get_data_source(crawl, data_source_name):
+    """Return the data source from a crawl by `data_source_name`.
     """
-    return DataSource.query.filter_by(project_id=project_id, name=data_source_name).first()
+    data_source = crawl.data_sources['data_source_name']
+    return data_source
 
 
-def get_plot(plot_name):
+def get_plot(crawl, plot_name):
     """Return the plot that matches `plot_name`.
     """
     return Plot.query.filter_by(name=plot_name).first()
