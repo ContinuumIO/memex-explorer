@@ -249,7 +249,7 @@ def crawls(project_slug):
 @app.route('/<project_slug>/crawls/<crawl_slug>')
 def crawl(project_slug, crawl_slug):
     project = get_project(project_slug)
-    crawl = get_crawl(crawl_slug)
+    crawl = get_crawl(project.id, crawl_slug)
     model = get_model(id=crawl.data_model_id)
 
     if not project:
