@@ -249,7 +249,7 @@ def crawls(project_slug):
 @app.route('/<project_slug>/crawls/<crawl_slug>')
 def crawl(project_slug, crawl_slug):
     project = get_project(project_slug)
-    crawl = get_crawl(project.id, crawl_slug)
+    crawl = get_crawl(project, crawl_slug)
     model = get_model(id=crawl.data_model_id)
 
     if not project:
@@ -315,7 +315,7 @@ def run_crawl(project_slug, crawl_slug):
     project = get_project(project_slug)
     key = project_slug + '-' + crawl_slug
     try:
-        crawl = get_crawl(crawl_slug)
+        crawl = get_crawl(project, crawl_slug)
         seeds_list = crawl.seeds_list
         if crawl.crawler == "ache":
             model = get_crawl_model(crawl)
@@ -351,7 +351,7 @@ def stop_crawl(project_slug, crawl_slug):
 def refresh(project_slug, crawl_slug):
 
     project = get_project(project_slug)
-    crawl = get_crawl(project.id, crawl_slug)
+    crawl = get_crawl(project, crawl_slug)
     ### Domain
     crawled = get_data_source(crawl, "crawledpages")
     relevant = get_data_source(crawl, "relevantpages")
@@ -379,7 +379,7 @@ def refresh(project_slug, crawl_slug):
 def crawl_dash(project_slug, crawl_slug):
 
     project = get_project(project_slug)
-    crawl = get_crawl(project.id, crawl_slug)
+    crawl = get_crawl(project, crawl_slug)
 
     key = project_slug + '-' + crawl_slug
     crawl_instance = CRAWLS.get(key)
@@ -413,7 +413,7 @@ def stats_crawl(project_slug, crawl_slug):
     if crawl_instance is not None:
         return jsonify(crawl_instance.statistics())
     else:
-        crawl = get_crawl(project.id, crawl_slug)
+        crawl = get_crawl(project, crawl_slug)
         seeds_list = crawl.seeds_list
         if crawl.crawler == "ache":
             model = get_crawl_model(crawl)
@@ -433,7 +433,7 @@ def stats_crawl(project_slug, crawl_slug):
 def dump_images(project_slug, crawl_slug):
     project = get_project(project_slug)
     key = project_slug + '-' + crawl_slug
-    crawl = get_crawl(project.id, crawl_slug)
+    crawl = get_crawl(project, crawl_slug)
     crawl_instance = CRAWLS.get(key)
     if crawl_instance is not None and crawl.crawler=="ache":
         return "No image dump for ACHE crawls"
