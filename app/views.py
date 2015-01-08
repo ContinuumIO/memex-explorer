@@ -356,7 +356,7 @@ def refresh(project_slug, crawl_slug):
     crawled = get_data_source(crawl, "crawledpages")
     relevant = get_data_source(crawl, "relevantpages")
     frontier = get_data_source(crawl, "frontierpages")
-    domain_plot = get_plot(crawled)
+    domain_plot = get_plot(crawl, "domain")
     #domain_sources = dict(crawled=crawled, relevant=relevant)
     domain_sources = dict(crawled=crawled, relevant=relevant, frontier=frontier)
 
@@ -364,10 +364,9 @@ def refresh(project_slug, crawl_slug):
     domain.push_to_server()
     ###
 
-
     ### Harvest
+    harvest_source = get_data_source(crawl, "harvest")
     harvest_plot = get_plot(crawl, "harvest")
-    harvest_source = get_data_source(project.id, crawl.name + "-harvest")
 
     harvest = Harvest(harvest_source, harvest_plot)
     harvest.push_to_server()
@@ -387,8 +386,6 @@ def crawl_dash(project_slug, crawl_slug):
 
     if crawl.crawler == 'ache':
         scripts, divs = default_ache_dash(project, crawl)
-
-
         return render_template('dash.html', scripts=scripts,
                                             divs=divs, crawl=crawl)
 
