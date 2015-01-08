@@ -63,7 +63,6 @@ data_monitor/
 data_preprocessed/
 seeds/
 models/
-configs/
 crawls/
 image_space
 
