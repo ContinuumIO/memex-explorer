@@ -57,8 +57,11 @@ def get_images(image_space_slug):
 def get_data_source(crawl, data_source_name):
     """Return the data source from a crawl by `data_source_name`.
     """
-    data_source = crawl.data_sources['data_source_name']
-    return data_source
+    data_sources = crawl.data_sources
+
+    for data in data_sources:
+        if data.name == data_source_name:
+            return data
 
 
 def get_plot(crawl, plot_name):
