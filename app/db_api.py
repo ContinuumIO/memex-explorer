@@ -16,7 +16,7 @@ def get_project(project_slug):
 def get_crawl(project, crawl_slug):
     """Return the crawl from the project that matches the `crawl_slug`.
     """
-    return Crawl.query.filter_by(project_id=project.id, crawl_slug=crawl_slug).first()
+    return Crawl.query.filter_by(project_id=project.id, slug=crawl_slug).first()
 
 
 def get_crawls(project_id):
