@@ -61,8 +61,8 @@ def get_data_source(crawl, data_source_name):
     return data_source
 
 
-def get_plot(crawl, plot_name):
-    """Return the plot that matches `plot_name`.
+def get_plot(data_source):
+    """Return the plot from a data source.
     """
     return Plot.query.filter_by(name=plot_name).first()
 
@@ -159,24 +159,27 @@ def db_add_crawl(project, form, seed_filename, model=None):
 
 
 def db_init_ache(project, crawl):
-    key = crawl.name
-    crawled_data_uri = os.path.join(crawl.name, 'data_monitor/crawledpages.csv')
-    crawled_data = DataSource(name=key + '-crawledpages',
+    """ When an ache crawl is registered, we need to add in the database: the data sources associated with that
+    crawl (crawledpages, relevantpages and frontierpages), and the plots that are going to be available for that crawl
+    (domain and harvest).
+    """
+    crawled_data_uri = 'data_monitor/crawledpages.csv'
+    crawled_data = DataSource(name='crawledpages',
                               data_uri=crawled_data_uri,
                               project_id=project.id)
 
-    relevant_data_uri = os.path.join(crawl.name, 'data_monitor/relevantpages.csv')
-    relevant_data = DataSource(name=key + '-relevantpages',
+    relevant_data_uri = 'data_monitor/relevantpages.csv'
+    relevant_data = DataSource(name='relevantpages',
                                data_uri=relevant_data_uri,
                                project_id=project.id)
 
-    frontier_data_uri = os.path.join(crawl.name, 'data_monitor/frontierpages.csv')
-    frontier_data = DataSource(name=key + '-frontierpages',
+    frontier_data_uri = 'data_monitor/frontierpages.csv'
+    frontier_data = DataSource(name='frontierpages',
                                data_uri=frontier_data_uri,
                                project_id=project.id)
 
-    harvest_data_uri = os.path.join(crawl.name, 'data_monitor/harvestinfo.csv')
-    harvest_data = DataSource(name=key + '-harvest',
+    harvest_data_uri = 'data_monitor/harvestinfo.csv'
+    harvest_data = DataSource(name='harvest',
                               data_uri=harvest_data_uri,
                               project_id=project.id)
 
@@ -191,13 +194,15 @@ def db_init_ache(project, crawl):
     db.session.add(harvest_data)
 
     # Add domain plot to db
-    domain_plot = Plot(name=key + '-' + 'domain',
+    domain_plot = Plot(name='domain',
                        project_id=project.id,
+                       crawl_id=crawl.id,
                        )
 
     # Add harvest plot to db
-    harvest_plot = Plot(name=key + '-' + 'harvest',
+    harvest_plot = Plot(name='harvest',
                         project_id=project.id,
+                        crawl_id=crawl.id,
                         )
 
     crawled_data.plots.append(domain_plot)
