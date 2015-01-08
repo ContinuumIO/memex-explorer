@@ -61,10 +61,10 @@ def get_data_source(crawl, data_source_name):
     return data_source
 
 
-def get_plot(data_source):
-    """Return the plot from a data source.
+def get_plot(crawl, plot_name):
+    """Return the plot from a crawl by name.
     """
-    return Plot.query.filter_by(name=plot_name).first()
+    return Plot.query.filter_by(crawl_id=crawl.id, name=plot_name).first()
 
 
 def get_image_in_image_space(image_space, image_name):
