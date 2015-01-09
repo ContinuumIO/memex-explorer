@@ -13,10 +13,10 @@ def get_project(project_slug):
     return Project.query.filter_by(slug=project_slug).first()
 
 
-def get_crawl(crawl_slug):
-    """Return the first crawl that matches `crawl_name`.
+def get_crawl(project, crawl_slug):
+    """Return the crawl from the project that matches the `crawl_slug`.
     """
-    return Crawl.query.filter_by(slug=crawl_slug).first()
+    return Crawl.query.filter_by(project_id=project.id, slug=crawl_slug).first()
 
 
 def get_crawls(project_id):
@@ -54,16 +54,20 @@ def get_images(image_space_slug):
     return image_space.images
 
 
-def get_data_source(project_id, data_source_name):
-    """Return the data source under `project_id` that matches `data_source_name`.
+def get_data_source(crawl, data_source_name):
+    """Return the data source from a crawl by `data_source_name`.
     """
-    return DataSource.query.filter_by(project_id=project_id, name=data_source_name).first()
+    data_sources = crawl.data_sources
+
+    for data in data_sources:
+        if data.name == data_source_name:
+            return data
 
 
-def get_plot(plot_name):
-    """Return the plot that matches `plot_name`.
+def get_plot(crawl, plot_name):
+    """Return the plot from a crawl by name.
     """
-    return Plot.query.filter_by(name=plot_name).first()
+    return Plot.query.filter_by(crawl_id=crawl.id, name=plot_name).first()
 
 
 def get_image_in_image_space(image_space, image_name):
@@ -158,24 +162,27 @@ def db_add_crawl(project, form, seed_filename, model=None):
 
 
 def db_init_ache(project, crawl):
-    key = crawl.name
-    crawled_data_uri = os.path.join(crawl.name, 'data_monitor/crawledpages.csv')
-    crawled_data = DataSource(name=key + '-crawledpages',
+    """ When an ache crawl is registered, we need to add in the database: the data sources associated with that
+    crawl (crawledpages, relevantpages and frontierpages), and the plots that are going to be available for that crawl
+    (domain and harvest).
+    """
+    crawled_data_uri = 'data_monitor/crawledpages.csv'
+    crawled_data = DataSource(name='crawledpages',
                               data_uri=crawled_data_uri,
                               project_id=project.id)
 
-    relevant_data_uri = os.path.join(crawl.name, 'data_monitor/relevantpages.csv')
-    relevant_data = DataSource(name=key + '-relevantpages',
+    relevant_data_uri = 'data_monitor/relevantpages.csv'
+    relevant_data = DataSource(name='relevantpages',
                                data_uri=relevant_data_uri,
                                project_id=project.id)
 
-    frontier_data_uri = os.path.join(crawl.name, 'data_monitor/frontierpages.csv')
-    frontier_data = DataSource(name=key + '-frontierpages',
+    frontier_data_uri = 'data_monitor/frontierpages.csv'
+    frontier_data = DataSource(name='frontierpages',
                                data_uri=frontier_data_uri,
                                project_id=project.id)
 
-    harvest_data_uri = os.path.join(crawl.name, 'data_monitor/harvestinfo.csv')
-    harvest_data = DataSource(name=key + '-harvest',
+    harvest_data_uri = 'data_monitor/harvestinfo.csv'
+    harvest_data = DataSource(name='harvest',
                               data_uri=harvest_data_uri,
                               project_id=project.id)
 
@@ -190,13 +197,15 @@ def db_init_ache(project, crawl):
     db.session.add(harvest_data)
 
     # Add domain plot to db
-    domain_plot = Plot(name=key + '-' + 'domain',
+    domain_plot = Plot(name='domain',
                        project_id=project.id,
+                       crawl_id=crawl.id,
                        )
 
     # Add harvest plot to db
-    harvest_plot = Plot(name=key + '-' + 'harvest',
+    harvest_plot = Plot(name='harvest',
                         project_id=project.id,
+                        crawl_id=crawl.id,
                         )
 
     crawled_data.plots.append(domain_plot)

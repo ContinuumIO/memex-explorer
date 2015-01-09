@@ -256,7 +256,7 @@ def crawls(project_slug):
 @app.route('/<project_slug>/crawls/<crawl_slug>')
 def crawl(project_slug, crawl_slug):
     project = get_project(project_slug)
-    crawl = get_crawl(crawl_slug)
+    crawl = get_crawl(project, crawl_slug)
     model = get_model(id=crawl.data_model_id)
 
     if not project:
@@ -268,7 +268,7 @@ def crawl(project_slug, crawl_slug):
 
     if crawl.crawler == 'ache':
         try:
-            scripts, divs = default_ache_dash(project, crawl)
+            scripts, divs = default_ache_dash(crawl)
         except PlotsNotReadyException as e:
             traceback.print_exc()
             return render_template('crawl.html', crawl=crawl, model=model)
@@ -292,7 +292,7 @@ def delete_crawl(project_slug, crawl_slug):
 @app.route('/<project_slug>/crawls/<crawl_slug>/edit', methods=['POST', 'GET'])
 def edit_crawl(project_slug, crawl_slug):
     project = get_project(project_slug)
-    crawl = Crawl.query.filter_by(project_id=project.id, name=crawl_slug).first()
+    crawl = Crawl.query.filter_by(project_id=project.id, slug=crawl_slug).first()
     form = EditCrawlForm()
     if form.validate_on_submit():
         if form.name.data:
@@ -323,7 +323,7 @@ def run_crawl(project_slug, crawl_slug):
     project = get_project(project_slug)
     key = project_slug + '-' + crawl_slug
     try:
-        crawl = get_crawl(crawl_slug)
+        crawl = get_crawl(project, crawl_slug)
         seeds_list = crawl.seeds_list
         if crawl.crawler == "ache":
             model = get_crawl_model(crawl)
@@ -359,12 +359,12 @@ def stop_crawl(project_slug, crawl_slug):
 def refresh(project_slug, crawl_slug):
 
     project = get_project(project_slug)
-    crawl = get_crawl(crawl_slug)
+    crawl = get_crawl(project, crawl_slug)
     ### Domain
-    domain_plot = get_plot(crawl_slug + "-domain")
-    crawled = get_data_source(project.id, crawl.name + "-crawledpages")
-    relevant = get_data_source(project.id, crawl.name + "-relevantpages")
-    frontier = get_data_source(project.id, crawl.name + "-frontierpages")
+    crawled = get_data_source(crawl, "crawledpages")
+    relevant = get_data_source(crawl, "relevantpages")
+    frontier = get_data_source(crawl, "frontierpages")
+    domain_plot = get_plot(crawl, "domain")
     #domain_sources = dict(crawled=crawled, relevant=relevant)
     domain_sources = dict(crawled=crawled, relevant=relevant, frontier=frontier)
 
@@ -372,10 +372,9 @@ def refresh(project_slug, crawl_slug):
     domain.push_to_server()
     ###
 
-
     ### Harvest
-    harvest_plot = get_plot(crawl.name + "-harvest")
-    harvest_source = get_data_source(project.id, crawl.name + "-harvest")
+    harvest_source = get_data_source(crawl, "harvest")
+    harvest_plot = get_plot(crawl, "harvest")
 
     harvest = Harvest(harvest_source, harvest_plot)
     harvest.push_to_server()
@@ -388,15 +387,13 @@ def refresh(project_slug, crawl_slug):
 def crawl_dash(project_slug, crawl_slug):
 
     project = get_project(project_slug)
-    crawl = get_crawl(crawl_slug)
+    crawl = get_crawl(project, crawl_slug)
 
     key = project_slug + '-' + crawl_slug
     crawl_instance = CRAWLS.get(key)
 
     if crawl.crawler == 'ache':
-        scripts, divs = default_ache_dash(project, crawl)
-
-
+        scripts, divs = default_ache_dash(crawl)
         return render_template('dash.html', scripts=scripts,
                                             divs=divs, crawl=crawl)
 
@@ -424,7 +421,7 @@ def stats_crawl(project_slug, crawl_slug):
     if crawl_instance is not None:
         return jsonify(crawl_instance.statistics())
     else:
-        crawl = get_crawl(crawl_slug)
+        crawl = get_crawl(project, crawl_slug)
         seeds_list = crawl.seeds_list
         if crawl.crawler == "ache":
             model = get_crawl_model(crawl)
@@ -444,7 +441,7 @@ def stats_crawl(project_slug, crawl_slug):
 def dump_images(project_slug, crawl_slug):
     project = get_project(project_slug)
     key = project_slug + '-' + crawl_slug
-    crawl = get_crawl(crawl_slug)
+    crawl = get_crawl(project, crawl_slug)
     crawl_instance = CRAWLS.get(key)
     if crawl_instance is not None and crawl.crawler=="ache":
         return "No image dump for ACHE crawls"

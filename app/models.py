@@ -162,6 +162,7 @@ class Plot(db.Model):
     endpoint = db.Column(db.String(64), index=True, unique=True)
     plot = db.Column(db.String(64), index=True)
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
+    crawl_id = db.Column(db.Integer, db.ForeignKey('crawl.id'))
     source_id = db.Column(db.String(64))
     autoload_tag = db.Column(db.Text)
 
