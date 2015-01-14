@@ -291,7 +291,7 @@ def crawl(project_slug, crawl_slug):
 def delete_crawl(project_slug, crawl_slug):
     project = get_project(project_slug)
     crawl = get_crawl(project, crawl_slug)
-    shutil.rmtree(CRAWLS_PATH + str(crawl.id))
+    shutil.rmtree(os.path.join(CRAWLS_PATH + str(crawl.id)))
     db.session.delete(crawl)
     db.session.commit()
     flash('%s has successfully been deleted.' % crawl.name, 'success')
