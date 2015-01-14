@@ -17,6 +17,8 @@ dependencies:
     - flask-sqlalchemy==2.0
     - flask-migrate
     - flask-restful
+    - flask-testing
+    - robobrowser
     - tld==0.7.2
     - WTForms==2.0.1
     - supervisor==3.0
