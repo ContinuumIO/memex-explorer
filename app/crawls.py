@@ -6,22 +6,17 @@
 
 import os
 from subprocess import Popen, PIPE
-import shlex
 from datetime import datetime
 
-from abc import ABCMeta, abstractmethod, abstractproperty
-
-import thread
-import threading
-import time
+from abc import ABCMeta
 
 # Local Imports
 # -------------
 
-from . import db
+
 from .config import SEED_FILES, MODEL_FILES, CONFIG_FILES, CRAWLS_PATH, LANG_DETECT_PATH, IMAGE_SPACE_PATH
 from .db_api import get_data_source, get_model, set_crawl_status
-from .utils import make_dir, make_dirs, run_proc
+from .utils import make_dirs, run_proc
 
 
 #  EXCEPTIONS

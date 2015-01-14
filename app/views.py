@@ -8,9 +8,6 @@ from __future__ import absolute_import, division, print_function
 # ----------------
 
 import os
-import logging
-import json
-import datetime as dt
 import subprocess
 import traceback
 import shutil
@@ -19,13 +16,9 @@ import shutil
 # ---------------------
 
 from flask import (redirect, flash, render_template, request, url_for,
-                   send_from_directory, jsonify, session, abort)
+                   send_from_directory, jsonify, abort)
 from werkzeug import secure_filename
 from webhelpers import text
-
-from blaze import resource, discover, Data, into, compute
-from pandas import DataFrame
-from bokeh.plotting import ColumnDataSource
 
 import exifread
 
@@ -34,24 +27,17 @@ import exifread
 
 from . import app, db
 
-from .config import (ADMINS, DEFAULT_MAIL_SENDER, BASEDIR, SEED_FILES, 
-                     CONFIG_FILES, MODEL_FILES, CRAWLS_PATH, IMAGE_SPACE_PATH,
+from .config import (ADMINS, DEFAULT_MAIL_SENDER, BASEDIR, SEED_FILES, MODEL_FILES, CRAWLS_PATH, IMAGE_SPACE_PATH,
                      UPLOAD_DIR)
 
 from .mail import send_email
-from .auth import requires_auth
-from .models import (Crawl, DataSource, Plot, Project, Image,
-                     ImageSpace, DataModel)
+from .models import Crawl, Project, ImageSpace, DataModel
 from .utils import make_dir
-from .db_api import (get_project, get_crawl, get_crawls, get_data_source,
-                     get_images, get_image, get_matches, db_add_crawl, get_plot,
+from .db_api import (get_project, get_crawl, get_crawls, get_data_source, get_image, get_matches, db_add_crawl, get_plot,
                      db_init_ache, get_crawl_model, get_model, get_models, get_crawl_image_space,
-                     db_process_exif, get_image_space, db_add_model, get_uploaded_image_names, get_image_in_image_space,
-                     get_image_space_from_name)
+                     db_process_exif, get_image_space, db_add_model)
 
-from .forms import (CrawlForm, MonitorDataForm, PlotForm, ContactForm,
-                    DashboardForm, ProjectForm, DataModelForm, EditProjectForm,
-                    EditCrawlForm)
+from .forms import CrawlForm, ContactForm, ProjectForm, EditProjectForm, EditCrawlForm
 
 from .crawls import AcheCrawl, NutchCrawl
 
@@ -59,7 +45,7 @@ from .plotting import default_ache_dash, PlotsNotReadyException
 from .viz.domain import Domain
 from .viz.harvest import Harvest
 
-from .images import allowed_file, lost_camera_retreive, image_retrieve, serve_upload_page, process_exif
+from .images import allowed_file, process_exif
 
 # Dictionary of crawls by key(project_slug-crawl_name)
 CRAWLS = {}
@@ -133,11 +119,6 @@ def about_page():
 @app.route('/<project_slug>')
 def project(project_slug):
 
-    # return render_template('project.html', project=project, crawls=crawls,
-    #                                        dashboards=dashboards)
-
-    # `project`, `crawls`, and `dashboards` handled by the context processor.
-    #   See `context() defined above.`
     return render_template('project.html')
 
 
@@ -273,10 +254,6 @@ def crawl(project_slug, crawl_slug):
             traceback.print_exc()
             return render_template('crawl.html', crawl=crawl,
                 status=status_crawl(project_slug, crawl_slug), model=model)
-
-
-        relevant_path = url_for('relevant_pages', project_slug=project.slug,
-                crawl_slug=crawl.slug)
 
         return render_template('crawl.html', scripts=scripts,
                 status=status_crawl(project_slug, crawl_slug), divs=divs,
@@ -474,8 +451,7 @@ def dump_images(project_slug, crawl_slug):
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     form = ContactForm(request.form)
-    crawls = Crawl.query.all()
-
+    
     if form.validate_on_submit():
         subject = ' -- '.join([form.issue.data, form.name.data])
         sender = DEFAULT_MAIL_SENDER
@@ -538,13 +514,9 @@ def uploaded_image(image_name):
 
 @app.route('/<project_slug>/crawls/<crawl_slug>/seeds')
 def relevant_pages(project_slug, crawl_slug):
-
     project = get_project(project_slug)
     crawl = get_crawl(project, crawl_slug)
-
     relevant = get_data_source(crawl, "relevantpages")
-    # relevant_path = CRAWLS_PATH + relevant.data_uri
-
     return send_from_directory(os.path.join(CRAWLS_PATH, crawl.id), relevant.data_uri)
 
 

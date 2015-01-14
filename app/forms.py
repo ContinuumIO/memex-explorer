@@ -7,7 +7,6 @@ from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from plotting import PLOT_TYPES
 from models import DataModel
 
-from . import app, db
 
 
 def data_models():

@@ -1,7 +1,5 @@
-from flask import current_app
 from flask.ext.mail import Message
 from app import app, mail
-from threading import Thread
 
 # http://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-xi-email-support
 
