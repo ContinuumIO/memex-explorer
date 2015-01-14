@@ -568,12 +568,15 @@ def image_table(project_slug, image_space_slug):
 def upload(project_slug):
     image_names = os.listdir(UPLOAD_DIR)
     image_pages = [ {"name":filename, "url":url_for('compare', project_slug=project_slug,  image_name=filename) } \
-
                     for filename in image_names]
-    if request.method == 'GET':
-        return render_template('upload.html', image_pages=image_pages)
-    elif request.method == 'POST':
+    if request.method == 'POST':
         uploaded_file = request.files['file']
+        existing_file = get_uploaded_image_names()
+        if uploaded_file.filename in existing_file:
+            response = jsonify(dict(
+                error="Image already exists by that name."))
+            response.status_code = 500
+            return response
         if uploaded_file and allowed_file(uploaded_file.filename):
             filename = secure_filename(uploaded_file.filename)
             full_path = os.path.join(app.config['UPLOAD_DIR'], filename)
@@ -582,8 +585,6 @@ def upload(project_slug):
                 exif_data = exifread.process_file(f)
                 process_exif(exif_data, 'uploaded_images', filename)
                 return jsonify(url=url_for('compare', project_slug=project_slug, image_name=filename))
-
-
         else:
             allowed = ', '.join(app.config['ALLOWED_EXTENSIONS'])
             response = jsonify(dict(
@@ -591,3 +592,4 @@ def upload(project_slug):
             response.status_code = 500
             return response
 
+    return render_template('upload.html', image_pages=image_pages)
