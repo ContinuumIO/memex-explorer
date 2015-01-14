@@ -252,7 +252,12 @@ $( document ).ready(function() {
       <p>{{ crawl.description }}</p>
       {% endif %}
       <h3>Summary Statistics</h3>
-        <span id="stats-data">Getting crawl statistics...</span>
+        <div class='col-sm-12'>
+            <div class='col-sm-8'>
+                <span id="stats-data">Getting crawl statistics...</span>
+            </div>
+        </div>
+        <br>
       {% if crawl.crawler == 'ache' %}
       <h3>Crawl Model</h3>
       <p> {{ model.name }}</p>

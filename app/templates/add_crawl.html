@@ -41,28 +41,29 @@
      </div>
      <br> 
    <div class="form-group">
-       <label class="col-sm-2 control-label">New <br>Model</label>
-      <div class='col-sm-3'>
-          <div class='col-sm-2'>
-              <br>
-          <input id="radio1" class="model_options" name="model_radio" type="radio" value="new">
-          </div>
-          <div class='col-sm-6'>
+       <label class="col-sm-2 control-label">New Model
+           <br>
+      </label>
+      <div class='col-sm-1'>
+          <br><input id="radio1" class="model_options" name="model_radio" type="radio" value="new">
+      </div>
+      <div class='col-sm-9'>
+          <div class='col-sm-4'>
         Name: {{form.new_model_name(class_="model_options")}}
         Model: {{form.new_model_file(class_="model_options")|safe}}
         Features: {{form.new_model_features(class_="model_options")|safe}}
+        <br>
     </div>
       </div>
-      <label class="col-sm-2 control-label">Existing <br>Model</label>
-      <div class="col-sm-3">
-          <div class='col-sm-2'>
+      <label class="col-sm-2 control-label">Existing Model</label>
+           <div class='col-sm-1'>
           <br>
         <input id="radio2" class="model_radio model_options" name="model_radio" type="radio" value="existing">
     </div>
-      <div class="col-sm-10">
+
+      <div class="col-sm-3" style="margin-left:15px;">
           <br> {{form.data_model(class_="form-control model_options")}}
       </div>
-  </div>
       {% for error in form.errors.data_model %}
       <span style="color: red;">[{{error}}]</span>
       {% endfor %}
@@ -92,7 +93,7 @@
      </div>
 
       <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-9" align="center">
+        <div class="col-sm-offset-2 col-sm-10" align="center">
            <button type="submit" class="btn btn-primary">Register</button>
         </div>
      </div>
