@@ -74,8 +74,5 @@ class EditProjectForm(Form):
 class EditCrawlForm(Form):
     name = StringField('Name')
     description = TextAreaField('Description')
-    crawler = SelectField('Crawler', choices=[('',''),('nutch','Nutch'), \
-                         ('ache','Ache')])
     seeds_list = FileField('Seeds List')
-    data_model = QuerySelectField('Data Model', query_factory=data_models, \
-                                  allow_blank=True, get_label='name')
+

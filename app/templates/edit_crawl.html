@@ -13,7 +13,7 @@
       <div class="form-group">
         <label class="col-sm-2 control-label">{{form.name.label}}</label>
         <div class="col-sm-10">
-           {{ form.name|safe }}
+            <input id="name" name="name" type="text" value="{{ crawl.name }}">
         </div>
         {% for error in form.errors.name %}
         <span style="color: red;">[{{error}}]</span>
@@ -23,7 +23,7 @@
      <div class="form-group">
         <label class="col-sm-2 control-label">{{form.description.label}}</label>
         <div class="col-sm-10">
-           {{ form.description|safe }}
+            <textarea id="description" name="description">{{ crawl.description }}</textarea>
         </div>
         {% for error in form.errors.description %}
         <span style="color: red;">[{{error}}]</span>
@@ -31,25 +31,6 @@
       </div>
 
       <div class="form-group">
-        <label class="col-sm-2 control-label">{{form.crawler.label}}</label>
-        <div class="col-sm-6">
-          {{form.crawler(class_="form-control")}}
-        </div>
-        {% for error in form.errors.crawler %}
-        <span style="color: red;">[{{error}}]</span>
-        {% endfor %}
-     </div>
-    <div class="form-group">
-      <label class="col-sm-2 control-label">{{form.data_model.label}}</label>
-      <div class="col-sm-6">
-        {{form.data_model(class_="form-control")}}
-      </div>
-      {% for error in form.errors.data_model %}
-      <span style="color: red;">[{{error}}]</span>
-      {% endfor %}
-   </div>
-
-    <div class="form-group">
         <label class="col-sm-2 control-label">{{form.seeds_list.label}}</label>
         <div class="col-sm-10">
           {{ form.seeds_list|safe }}
