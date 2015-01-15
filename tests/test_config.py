@@ -12,15 +12,16 @@ ADMINS = []
 # ------
 
 HOST = '0.0.0.0'
-PORT = 5000
-DEBUG = True
-SECRET_KEY = 'some_secret'
+# PORT = 8943
+LIVESERVER_PORT = 8943
+TESTING = True
+SECRET_KEY = 'test_secret'
 
 # Database
 # --------
 
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASEDIR, 'resources/app.db')
-SQLALCHEMY_MIGRATE_REPO = os.path.join(BASEDIR, 'db_repository')
+# Use in-memory sqlite3 instance
+SQLALCHEMY_DATABASE_URI = "sqlite://"
 
 # Email
 # -----
@@ -51,3 +52,10 @@ IMAGE_SPACE_PATH= os.path.join(BASEDIR, 'resources/image_space/')
 UPLOAD_DIR = os.path.join(IMAGE_SPACE_PATH, 'uploaded_images/')
 
 ALLOWED_EXTENSIONS = set(('txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'))
+
+
+# Test Conditions
+# ---------------
+
+# Disable CSRF tokens
+WTF_CSRF_ENABLED = False

@@ -34,10 +34,6 @@ import exifread
 
 from . import app, db
 
-from .config import (ADMINS, DEFAULT_MAIL_SENDER, BASEDIR, SEED_FILES, 
-                     CONFIG_FILES, MODEL_FILES, CRAWLS_PATH, IMAGE_SPACE_PATH,
-                     UPLOAD_DIR)
-
 from .mail import send_email
 from .auth import requires_auth
 from .models import (Crawl, DataSource, Plot, Project, Image,
@@ -106,14 +102,14 @@ def application_error(e):
     # TODO
     # http://flask.pocoo.org/docs/0.10/errorhandling/#application-errors
 
-    # sender = DEFAULT_MAIL_SENDER
-    # send_email(subject=subject, sender=sender, recipients=ADMINS, text_body=text_body, html_body=text_body)
+    # sender = app.config['DEFAULT_MAIL_SENDER']
+    # send_email(subject=subject, sender=sender, recipients=app.config['ADMINS'], text_body=text_body, html_body=text_body)
     return render_template('500.html'), 500
 
 
 @app.route('/favicon.ico')
 def favicon():
-    return send_from_directory(os.path.join(BASEDIR, 'static'),
+    return send_from_directory(os.path.join(app.config['BASEDIR'], 'static'),
                                'favicon.ico', mimetype='image/x-icon')
 
 
@@ -209,7 +205,7 @@ def add_crawl(project_slug):
                 return render_template('add_crawl.html', form=form)
             db_add_model(project, form.new_model_name.data)
             model = get_model(name=form.new_model_name.data)
-            model_directory = MODEL_FILES + str(model.id)
+            model_directory = app.config['MODEL_FILES'] + str(model.id)
             make_dir(model_directory)
             model_file = secure_filename(form.new_model_file.data.filename)
             model_features = secure_filename(form.new_model_features.data.filename)
@@ -221,16 +217,16 @@ def add_crawl(project_slug):
             model = None
         seed_filename = secure_filename(form.seeds_list.data.filename)
         if form.crawler.data == "ache":
-            form.seeds_list.data.save(SEED_FILES + seed_filename)
+            form.seeds_list.data.save(app.config['SEED_FILES'] + seed_filename)
         elif form.crawler.data == "nutch":
             seed_folder = text.urlify(form.name.data)
-            subprocess.Popen(['mkdir', os.path.join(SEED_FILES, seed_folder)]).wait()
-            form.seeds_list.data.save(os.path.join(SEED_FILES, seed_folder, seed_filename))
+            subprocess.Popen(['mkdir', os.path.join(app.config['SEED_FILES'], seed_folder)]).wait()
+            form.seeds_list.data.save(os.path.join(app.config['SEED_FILES'], seed_folder, seed_filename))
         # TODO allow upload configuration
         #config_filename = secure_filename(form.config.data.filename)
-        #form.config.data.save(CONFIG_FILES + config_filename)
+        #form.config.data.save(app.config['CONFIG_FILES'] + config_filename)
         crawl = db_add_crawl(project, form, seed_filename, model)
-        subprocess.Popen(['mkdir', os.path.join(CRAWLS_PATH, str(crawl.id))]).wait()
+        subprocess.Popen(['mkdir', os.path.join(app.config['CRAWLS_PATH'], str(crawl.id))]).wait()
 
         if crawl.crawler == 'ache':
             db_init_ache(project, crawl)
@@ -242,8 +238,6 @@ def add_crawl(project_slug):
         flash('%s has successfully been registered!' % form.name.data, 'success')
         return redirect(url_for('crawl', project_slug=project.slug,
                                          crawl_slug=crawl.slug))
-    else:
-        print(form.errors)
 
     return render_template('add_crawl.html', form=form)
 
@@ -291,7 +285,7 @@ def crawl(project_slug, crawl_slug):
 def delete_crawl(project_slug, crawl_slug):
     project = get_project(project_slug)
     crawl = get_crawl(project, crawl_slug)
-    shutil.rmtree(os.path.join(CRAWLS_PATH + str(crawl.id)))
+    shutil.rmtree(os.path.join(app.config['CRAWLS_PATH'] + str(crawl.id)))
     db.session.delete(crawl)
     db.session.commit()
     flash('%s has successfully been deleted.' % crawl.name, 'success')
@@ -311,8 +305,8 @@ def edit_crawl(project_slug, crawl_slug):
             crawl.description = form.description.data
         if form.seeds_list.data:
             seed_filename = secure_filename(form.seeds_list.data.filename)
-            form.seeds_list.data.save(SEED_FILES + seed_filename)
-            crawl.seeds_list = SEED_FILES + seed_filename
+            form.seeds_list.data.save(app.config['SEED_FILES'] + seed_filename)
+            crawl.seeds_list = app.config['SEED_FILES'] + seed_filename
         db.session.commit()
         flash('%s has successfully been changed.' % crawl.name, 'success')
         return redirect(url_for('project', project_slug=project_slug))
@@ -448,14 +442,12 @@ def dump_images(project_slug, crawl_slug):
             crawl_instance = NutchCrawl(crawl)
         image_space = get_crawl_image_space(crawl=crawl, project=project)
         crawl_instance.dump_images(image_space)
-        images = os.listdir(os.path.join(IMAGE_SPACE_PATH, str(image_space.id), 'images'))
+        images = os.listdir(os.path.join(app.config['IMAGE_SPACE_PATH'], str(image_space.id), 'images'))
         for image in images:
-            image_path = os.path.join(IMAGE_SPACE_PATH, str(image_space.id), 'images', image)
-            print(image_path)
+            image_path = os.path.join(app.config['IMAGE_SPACE_PATH'], str(image_space.id), 'images', image)
             with open(image_path, 'rb') as f:
                 exif_data = exifread.process_file(f)
                 db_process_exif(exif_data, crawl_slug, image, image_space)
-        print("Images dumped for NUTCH crawl %s" % crawl.name)
         return redirect(url_for('image_table', project_slug=project.slug, image_space_slug=crawl.slug))
     else:
         return "Could not dump images"
@@ -471,9 +463,9 @@ def contact():
 
     if form.validate_on_submit():
         subject = ' -- '.join([form.issue.data, form.name.data])
-        sender = DEFAULT_MAIL_SENDER
+        sender = app.config['DEFAULT_MAIL_SENDER']
         text_body = form.description.data
-        send_email(subject=subject, sender=sender, recipients=ADMINS,
+        send_email(subject=subject, sender=sender, recipients=app.config['ADMINS'],
                    text_body=text_body, html_body=text_body)
         flash('Thank you for contacting us! We will be in touch shortly.', 'success')
         return redirect(url_for('index'))
@@ -509,7 +501,7 @@ def compare(project_slug, image_name):
 
 @app.route('/<image_directory>/images/<image_name>')
 def image_source(image_directory, image_name):
-    img_dir = os.path.join(IMAGE_SPACE_PATH, image_directory, 'images')
+    img_dir = os.path.join(app.config['IMAGE_SPACE_PATH'], image_directory, 'images')
     img_filename = image_name
     return send_from_directory(img_dir, img_filename)
 
@@ -517,7 +509,7 @@ def image_source(image_directory, image_name):
 @app.route('/<project_slug>/image_space/<image_space_slug>/<image_name>/delete', methods=['POST'])
 def delete_image(project_slug, image_space_slug, image_name):
     image = get_image(image_name) 
-    os.remove(IMAGE_SPACE_PATH + image_space_slug + '/images/' + image.filename)
+    os.remove(app.config['IMAGE_SPACE_PATH'] + image_space_slug + '/images/' + image.filename)
     db.session.delete(image) 
     db.session.commit()
     flash('%s has successfully been deleted.' % image.filename, 'success')
@@ -536,9 +528,9 @@ def relevant_pages(project_slug, crawl_slug):
     crawl = get_crawl(project, crawl_slug)
 
     relevant = get_data_source(crawl, "relevantpages")
-    # relevant_path = CRAWLS_PATH + relevant.data_uri
+    # relevant_path = app.config['CRAWLS_PATH'] + relevant.data_uri
 
-    return send_from_directory(os.path.join(CRAWLS_PATH, crawl.id), relevant.data_uri)
+    return send_from_directory(os.path.join(app.config['CRAWLS_PATH'], crawl.id), relevant.data_uri)
 
 
 @app.route('/<project_slug>/image_space')
@@ -553,13 +545,12 @@ def image_table(project_slug, image_space_slug):
     project = get_project(project_slug)
     image_space = ImageSpace.query.filter_by(name=image_space_slug).first()
     images = image_space.images.all()
-    print(images)
     return render_template('image_table.html', images=images, project=project, image_space=image_space)
 
 
 @app.route('/<project_slug>/upload_image', methods=['GET', 'POST'])
 def upload(project_slug):
-    image_names = os.listdir(UPLOAD_DIR)
+    image_names = os.listdir(app.config['UPLOAD_DIR'])
     image_pages = [ {"name":filename, "url":url_for('compare', project_slug=project_slug,  image_name=filename) } \
 
                     for filename in image_names]
