@@ -60,7 +60,7 @@
 
   </div>
 <script type="text/javascript">
-    $('#removeButton').click(function(){
+$('#removeButton').click(function(){
     swal({
         title: "Are you sure?",
         text: "You will not be able to recover this crawl!",
@@ -74,9 +74,9 @@
     },
     function(isConfirm){
         if (isConfirm){
-          $('<form action="/{{ project.slug }}/crawls/{{ crawl.slug }}/delete" method="post"></form>').submit();
+            $('<form action="/{{ project.slug }}/crawls/{{ crawl.slug }}/delete" method="post"></form>').submit();
         } else {
-          swal("Cancelled", "You cancelled the delete process", "error");
+            swal("Cancelled", "You cancelled the delete process", "error");
         }
     });
 });
