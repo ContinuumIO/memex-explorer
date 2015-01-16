@@ -22,7 +22,7 @@ class CrawlForm(Form):
                           validators=[DataRequired()])
     # config = FileField('Configuration', DataRequired()])
     seeds_list = FileField('Seeds List', validators=[DataRequired()])
-    crawl_model = QuerySelectField('Data Model', query_factory=crawl_models, \
+    crawl_model = QuerySelectField('Crawl Model', query_factory=crawl_models, \
                                   allow_blank=True, get_label='name')
     new_model_file = FileField()
     new_model_features = FileField()

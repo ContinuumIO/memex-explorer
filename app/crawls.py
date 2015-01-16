@@ -86,7 +86,7 @@ class AcheCrawl(Crawl):
         self.crawl = crawl
         self.config = os.path.join(CONFIG_FILES, crawl.config)
         self.seeds_file = os.path.join(SEED_FILES, crawl.seeds_list)
-        model = get_model(id=crawl.data_model_id)
+        model = get_model(id=crawl.crawl_model_id)
         self.model_dir = os.path.join(MODEL_FILES, str(model.id))
         self.crawl_dir = os.path.join(CRAWLS_PATH, str(crawl.id))
         self.status = crawl.status

@@ -3,7 +3,7 @@ var CrawlForm, crawl_form,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 CrawlForm = (function(_super) {
-  var crawler, data_model, model_options, new_model_features, new_model_file, new_model_name, radio1, radio2;
+  var crawl_model, crawler, model_options, new_model_features, new_model_file, new_model_name, radio1, radio2;
 
   __extends(CrawlForm, _super);
 
@@ -13,7 +13,7 @@ CrawlForm = (function(_super) {
 
   crawler = $('#crawler');
 
-  data_model = $('#data_model');
+  crawl_model = $('#crawl_model');
 
   new_model_file = $("#new_model_file");
 
@@ -41,14 +41,14 @@ CrawlForm = (function(_super) {
   });
 
   radio1.change(function() {
-    data_model.prop("disabled", true);
+    crawl_model.prop("disabled", true);
     new_model_file.prop("disabled", false);
     new_model_features.prop("disabled", false);
     return new_model_name.prop("disabled", false);
   });
 
   radio2.change(function() {
-    data_model.prop("disabled", false);
+    crawl_model.prop("disabled", false);
     new_model_file.prop("disabled", true);
     new_model_features.prop("disabled", true);
     return new_model_name.prop("disabled", true);

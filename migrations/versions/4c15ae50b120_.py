@@ -49,5 +49,14 @@ def downgrade():
             sa.ForeignKeyConstraint(['project_id'], [u'project.id'], ),
             sa.PrimaryKeyConstraint('id')
             )
-    op.drop_table('crawl_model')
+    naming_convention = {
+        "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+    }
+    with op.batch_alter_table("crawl", naming_convention=naming_convention) as batch_op:
+        batch_op.add_column(sa.Column('data_model_id', sa.Integer(), nullable=True))
+        batch_op.drop_constraint('fk_crawl_crawl_model_id_crawl_model', type_='foreignkey')
+        batch_op.create_foreign_key('crawl', 'data_model', ['data_model_id'], ['id'])
+        batch_op.drop_column('crawl_model_id')
+    op.drop_table('data_model')
     ### end Alembic commands ###
+
