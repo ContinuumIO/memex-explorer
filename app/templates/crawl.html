@@ -7,143 +7,7 @@
  {{ script | safe }}
 {% endfor %}
 
-<script>
-$( document ).ready(function() {
-
-    $('[data-toggle="tooltip"]').tooltip();
-
-    $('#reload').on('click', function(){
-        location.reload(true);
-    });
-
-    var ME = ME || {};
-    ME.polling = true;
-
-    function show_error(){
-            ME.polling = false;
-            // alert("Error: could not start crawl.")
-            $( '#status' ).text( "Error (could not start crawl)" );
-    }
-
-    $('#playButton').on('click', function() {
-
-        $( '#status' ).text( "Starting..." );
-
-        this.disabled = true;
-        $('#stopButton').removeAttr("disabled");
-
-        $.ajax({
-          type: "POST",
-            url: "{{ url_for('run_crawl', project_slug=project.slug, crawl_slug=crawl.slug) }}",
-          success: function(retval) {
-            if (retval == "Error") show_error();
-            else $( '#status' ).text(retval);
-          },
-          failure: function() {
-            show_error();
-          }
-        });
-    });
-
-    $('#stopButton').on('click', function(){
-
-        $( '#status' ).text( "Stopping..." );
-        this.disabled = true;
-
-        $.ajax({
-          type: "POST",
-            url: "{{ url_for('stop_crawl', project_slug=project.slug, crawl_slug=crawl.slug) }}",
-          success: function(retval) {
-            if (retval == "Error") show_error();
-            else $( '#status' ).text(retval);
-          },
-          failure: function() {
-            show_error();
-          }
-        });
-        $.ajax({ type: "GET", url: "/{{ project.slug }}/crawls/{{ crawl.slug }}/stats",
-          success: function(data) {
-                console.log("stats-data" + data);
-                if (data.nutch) {
-                  $.ajax({
-                    type: "POST",
-                    url: "/{{ project.slug }}/crawls/{{ crawl.slug }}/update_stats",
-                    contentType: 'application/json',
-                    data: JSON.stringify({crawled: data.num_crawled, crawler: 'nutch'}),
-                  });
-                } else {
-                  $.ajax({
-                    type: "POST",
-                    url: "/{{ project.slug }}/crawls/{{ crawl.slug }}/update_stats",
-                    contentType: 'application/json',
-                    data: JSON.stringify({crawled: data.num_crawled, harvest: data.harvest_rate, crawler:'ache'}),
-                  });
-                }
-            },
-          failure: function() {
-                  $( '#stats-data' ).html(
-                  '<h4>(Statistics are not yet available for this crawl.)</h4>'
-                    );
-          }
-        });
-    });
-
-    (function pollStatus() {
-
-      // If polling has been turned off, break the loop
-      if (!ME.polling) return;
-
-        $.ajax({
-            url: "{{ url_for('status_crawl', project_slug=project.slug, crawl_slug=crawl.slug) }}",
-            type: "GET",
-            success: function(data) { $('#status').text( data ) },
-            complete: setTimeout(pollStatus, 5000),
-            timeout: 2000
-        });
-    })();
-
-    $('#imageDump').on('click', function(){
-        $.ajax({
-          type: "POST",
-          url: "/{{ project.slug }}/crawls/{{ crawl.slug }}/dump",
-          success: console.log("crawlImagesDumped")
-        }).done(function() {
-          window.location.href = "/{{ project.slug }}/image_space/{{ crawl.slug }}"
-        });
-    }); 
-
-    function statsPoll(){ 
-          $.ajax({ type: "GET", url: "/{{ project.slug }}/crawls/{{ crawl.slug }}/stats",
-          success: function(data) {
-                console.log("stats-data" + data);
-                if (data.nutch) {
-                  $( '#stats-data' ).html(
-                      '<div class="col-sm-12"><table class="table table-striped"><tr><th>Site(s) crawled</th></tr><tr><td>' 
-                      + data.num_crawled 
-                      + '</td></tr></table>'
-                    );
-                } else {
-                  $( '#stats-data' ).html(
-                      '<div class="col-sm-12"><table class="table table-striped"><tr><th>Harvest Rate</th><th>Site(s) crawled</th></tr><tr><td>' 
-                      + data.harvest_rate 
-                      + '</td><td>' 
-                      + data.num_crawled 
-                      +'</td></tr></table></div>'
-                    );
-                }
-            },
-          failure: function() {
-                  $( '#stats-data' ).html(
-                  '<h4>(Statistics are not yet available for this crawl.)</h4>'
-                    );
-          }
-        })
-    };
-
-    var statsInterval = setInterval(function(){statsPoll()}, 10000);
-});
-
-</script>
+<script src="{{ url_for('static', filename='js/crawl.js') }}"></script>
 
 {% endblock %}
 
@@ -196,7 +60,7 @@ $( document ).ready(function() {
 
   </div>
 <script type="text/javascript">
-    $('#removeButton').click(function(){
+$('#removeButton').click(function(){
     swal({
         title: "Are you sure?",
         text: "You will not be able to recover this crawl!",
@@ -210,9 +74,9 @@ $( document ).ready(function() {
     },
     function(isConfirm){
         if (isConfirm){
-          $('<form action="/{{ project.slug }}/crawls/{{ crawl.slug }}/delete" method="post"></form>').submit();
+            $('<form action="/{{ project.slug }}/crawls/{{ crawl.slug }}/delete" method="post"></form>').submit();
         } else {
-          swal("Cancelled", "You cancelled the delete process", "error");
+            swal("Cancelled", "You cancelled the delete process", "error");
         }
     });
 });
