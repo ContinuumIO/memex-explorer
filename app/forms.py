@@ -5,13 +5,13 @@ from wtforms.validators import DataRequired, Email
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
 from plotting import PLOT_TYPES
-from models import DataModel
+from models import CrawlModel
 
 from . import app, db
 
 
-def data_models():
-    return DataModel.query.all()
+def crawl_models():
+    return CrawlModel.query.all()
 
 
 class CrawlForm(Form):
@@ -22,7 +22,7 @@ class CrawlForm(Form):
                           validators=[DataRequired()])
     # config = FileField('Configuration', DataRequired()])
     seeds_list = FileField('Seeds List', validators=[DataRequired()])
-    data_model = QuerySelectField('Data Model', query_factory=data_models, \
+    crawl_model = QuerySelectField('Crawl Model', query_factory=crawl_models, \
                                   allow_blank=True, get_label='name')
     new_model_file = FileField()
     new_model_features = FileField()
@@ -57,7 +57,7 @@ class ProjectForm(Form):
     description = TextAreaField('Description')
     icon = StringField('Icon')
 
-class DataModelForm(Form):
+class CrawlModelForm(Form):
     name = StringField('Name', validators = [DataRequired()])
     filename = FileField()
 

@@ -1,7 +1,7 @@
 from . import app, db
 import os
 from .config import SEED_FILES, CONFIG_FILES, MODEL_FILES, CRAWLS_PATH, IMAGE_SPACE_PATH
-from .models import Project, Crawl, Image, DataSource, Plot, DataModel, ImageSpace
+from .models import Project, Crawl, Image, DataSource, Plot, CrawlModel, ImageSpace
 from webhelpers import text
 
 MATCHES = app.MATCHES
@@ -34,14 +34,14 @@ def get_models():
     """
     Return all models that match 'project_id'
     """
-    return DataModel.query.all()
+    return CrawlModel.query.all()
 
 
 def get_model(**kwargs):
     if 'name' in kwargs:
-        return DataModel.query.filter_by(name=kwargs['name']).first()
+        return CrawlModel.query.filter_by(name=kwargs['name']).first()
     elif 'id' in kwargs:
-        return DataModel.query.filter_by(id=kwargs['id']).first()
+        return CrawlModel.query.filter_by(id=kwargs['id']).first()
     else:
         raise Exception("Must supply either a record name or ID.")
 
@@ -83,7 +83,7 @@ def get_image(image_name):
 def get_crawl_model(crawl):
     """Return the page classifier model used by that crawl.
     """
-    return DataModel.query.filter_by(id=crawl.data_model_id).first()
+    return CrawlModel.query.filter_by(id=crawl.crawl_model_id).first()
 
 def set_crawl_status(crawl, status):
     crawl.status = status
@@ -129,16 +129,16 @@ def get_matches(project_id, image_name):
 
 
 def db_add_model(project, name):
-    model = DataModel(name=name, project_id=project.id)
+    model = CrawlModel(name=name, project_id=project.id)
     db.session.add(model)
     db.session.commit()
 
 
 def db_add_crawl(project, form, seed_filename, model=None):
     try:
-        data_model = model.id
+        crawl_model = model.id
     except:
-        data_model = None
+        crawl_model = None
 
     if form.crawler.data == "nutch":
         # TODO check if "/" is necessary
@@ -152,7 +152,7 @@ def db_add_crawl(project, form, seed_filename, model=None):
                   description=form.description.data,
                   crawler=form.crawler.data,
                   project_id=project.id,
-                  data_model_id=data_model,
+                  crawl_model_id=crawl_model,
                   config = 'config_default',
                   seeds_list = seed_list,
                   slug=text.urlify(form.name.data),

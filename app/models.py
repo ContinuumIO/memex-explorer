@@ -19,7 +19,7 @@ class Project(db.Model):
     icon = db.Column(db.String(64))
     crawls = db.relationship('Crawl', backref='project', lazy='dynamic')
     image_spaces = db.relationship('ImageSpace', backref='project', lazy='dynamic')
-    data_models = db.relationship('DataModel', backref='project', lazy='dynamic')
+    crawl_models = db.relationship('CrawlModel', backref='project', lazy='dynamic')
 
     def __repr__(self):
         return '<Project %r>' % (self.name)
@@ -36,7 +36,7 @@ class Crawl(db.Model):
     config = db.Column(db.String(64))
     seeds_list = db.Column(db.String(64))
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
-    data_model_id = db.Column(db.Integer, db.ForeignKey('data_model.id'))
+    crawl_model_id = db.Column(db.Integer, db.ForeignKey('crawl_model.id'))
     image_space = db.relationship('ImageSpace', backref='crawl', uselist=False)
     data_sources = db.relationship('DataSource', backref='crawl', lazy='dynamic')
     pages_crawled = db.Column(db.BigInteger)
@@ -46,14 +46,14 @@ class Crawl(db.Model):
         return '<Crawl %r>' % (self.name)
 
 
-class DataModel(db.Model):
-    __tablename__ = "data_model"
+class CrawlModel(db.Model):
+    __tablename__ = "crawl_model"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, unique=True)
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
 
     def __repr__(self):
-        return '<DataModel %r>' % (self.name)
+        return '<CrawlModel %r>' % (self.name)
 
 
 class DataSource(db.Model):

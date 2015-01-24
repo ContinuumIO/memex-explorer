@@ -41,7 +41,7 @@ from .config import (ADMINS, DEFAULT_MAIL_SENDER, BASEDIR, SEED_FILES,
 from .mail import send_email
 from .auth import requires_auth
 from .models import (Crawl, DataSource, Plot, Project, Image,
-                     ImageSpace, DataModel)
+                     ImageSpace, CrawlModel)
 from .utils import make_dir
 from .db_api import (get_project, get_crawl, get_crawls, get_data_source,
                      get_images, get_image, get_matches, db_add_crawl, get_plot,
@@ -50,8 +50,7 @@ from .db_api import (get_project, get_crawl, get_crawls, get_data_source,
                      get_image_space_from_slug, image_name_increment)
 
 from .forms import (CrawlForm, MonitorDataForm, PlotForm, ContactForm,
-                    DashboardForm, ProjectForm, DataModelForm, EditProjectForm,
-                    EditCrawlForm)
+                    DashboardForm, ProjectForm, EditProjectForm, EditCrawlForm)
 
 from .crawls import AcheCrawl, NutchCrawl
 
@@ -203,7 +202,7 @@ def add_crawl(project_slug):
             flash('Crawl name already exists, please choose another name', 'error')
             return render_template('add_crawl.html', form=form)
         if form.new_model_name.data:
-            registered_model = DataModel.query.filter_by(name=form.new_model_name.data).first()
+            registered_model = CrawlModel.query.filter_by(name=form.new_model_name.data).first()
             if registered_model:
                 flash('Data model name already exists, please choose another name', 'error')
                 return render_template('add_crawl.html', form=form)
@@ -215,8 +214,8 @@ def add_crawl(project_slug):
             model_features = secure_filename(form.new_model_features.data.filename)
             form.new_model_file.data.save(model_directory + '/' + model_file)
             form.new_model_features.data.save(model_directory + '/' + model_features)
-        elif form.data_model.data:
-            model = get_model(id=form.data_model.data.id)
+        elif form.crawl_model.data:
+            model = get_model(id=form.crawl_model.data.id)
         else:
             model = None
         seed_filename = secure_filename(form.seeds_list.data.filename)
@@ -257,7 +256,7 @@ def crawls(project_slug):
 def crawl(project_slug, crawl_slug):
     project = get_project(project_slug)
     crawl = get_crawl(project, crawl_slug)
-    model = get_model(id=crawl.data_model_id)
+    model = get_model(id=crawl.crawl_model_id)
 
     if not project:
         flash("Project '%s' was not found." % project_slug, 'error')
