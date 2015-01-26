@@ -553,7 +553,10 @@ def image_space(project_slug):
 def image_table(project_slug, image_space_slug):
     project = get_project(project_slug)
     image_space = ImageSpace.query.filter_by(name=image_space_slug).first()
-    images = image_space.images.all()
+    try:
+        images = image_space.images.all()
+    except AttributeError:
+        images = []
     return render_template('image_table.html', images=images, project=project, image_space=image_space)
 
 
