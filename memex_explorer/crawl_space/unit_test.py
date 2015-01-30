@@ -75,7 +75,7 @@ class TestViews(UnitTestSkeleton):
              'crawler': 'ache',
              'seeds_list': self.seeds},
             **self.slugs)
-        assert not response.context['form'].errors
+        assert_form_errors(response, 'name')
 
     def test_add_crawl_bad_crawler(self):
         response = self.post('base:crawl_space:add_crawl',
