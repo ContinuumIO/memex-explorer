@@ -1,6 +1,9 @@
+import os
+
 # Test
 from memex.test_utils.unit_test_utils import UnitTestSkeleton, form_errors, get_object
 from django.test import TestCase
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 # App
 from crawl_space.forms import AddCrawlForm
@@ -35,6 +38,7 @@ class TestViews(UnitTestSkeleton):
             seeds_list = "ERROR",
             project = cls.test_project)
         cls.test_crawl.save()
+        cls.seeds = SimpleUploadedFile('ht.seeds', bytes('This is some content.\n', 'utf-8'))
 
 
     @property
@@ -42,7 +46,6 @@ class TestViews(UnitTestSkeleton):
         return {'name': 'Cat Crawl',
              'description': 'Find all the cats.',
              'crawler': 'ache'}
-    
 
     @property
     def slugs(self):
@@ -63,16 +66,16 @@ class TestViews(UnitTestSkeleton):
 
     def test_add_crawl_no_data(self):
         response = self.post('base:crawl_space:add_crawl', **self.slugs)
-        assert_form_errors(response, 'name', 'description', 'crawler')
+        assert_form_errors(response, 'name', 'description', 'crawler', 'seeds_list')
 
 
     def test_add_crawl_no_name(self):
         response = self.post('base:crawl_space:add_crawl',
             {'description': 'Find all the cats.',
-             'crawler': 'ache'},
+             'crawler': 'ache',
+             'seeds_list': self.seeds},
             **self.slugs)
-        assert_form_errors(response, 'name')
-
+        assert not response.context['form'].errors
 
     def test_add_crawl_bad_crawler(self):
         response = self.post('base:crawl_space:add_crawl',
