@@ -1,5 +1,7 @@
 from django.views import generic
 from django.apps import apps
+from django.http import HttpResponse
+import json
 
 from base.models import Project
 from crawl_space.models import Crawl
@@ -21,6 +23,12 @@ class AddCrawlView(generic.edit.CreateView):
 class CrawlView(generic.DetailView):
     model = Crawl
     template_name = "crawl_space/crawl.html"
+
+    def post(self, request, *args, **kwargs):
+        return HttpResponse(json.dumps(dict(
+                args=args,
+                kwargs=kwargs)),
+            content_type="application/json")
 
     def get_object(self):
         return Crawl.objects.get(
