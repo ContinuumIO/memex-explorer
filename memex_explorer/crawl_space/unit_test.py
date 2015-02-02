@@ -40,6 +40,8 @@ class TestViews(UnitTestSkeleton):
             project = cls.test_project)
         cls.test_crawl.save()
 
+    def get_seeds(self):
+         return SimpleUploadedFile('ht.seeds', bytes('This is some content.\n', 'utf-8'))
 
     @property
     def form_data(self):
@@ -70,31 +72,41 @@ class TestViews(UnitTestSkeleton):
         assert_form_errors(response, 'name', 'description', 'crawler', 'seeds_list')
 
 
-    # def test_add_crawl_no_name(self):
-    #     form_data = self.form_data
-    #     form_data.pop('name')
-    #     response = self.post('base:crawl_space:add_crawl',
-    #         form_data,
-    #         **self.slugs)
-    #     assert_form_errors(response, 'name')
+    def test_add_crawl_no_name(self):
+        response = self.post('base:crawl_space:add_crawl',
+            {'description': 'Find all the cats.',
+             'crawler': 'ache',
+             'seeds_list': self.get_seeds()},
+            **self.slugs)
+        assert_form_errors(response, 'name')
+
+    def test_add_crawl_bad_crawler(self):
+        response = self.post('base:crawl_space:add_crawl',
+            {'name': 'Cat Crawl',
+             'description': 'Find all the cats.',
+             'seeds_list': self.get_seeds(),
+             'crawler': 'fake!'},
+            **self.slugs)
+        assert_form_errors(response, 'crawler')
 
 
-
-    # def test_add_crawl_bad_crawler(self):
-    #     form_data = self.form_data
-    #     form_data['crawler'] = "error"
-    #     response = self.post('base:crawl_space:add_crawl',
-    #         form_data,
-    #         # content_type="multipart/form-data",
-    #         **self.slugs)
-    #     assert_form_errors(response, 'crawler')
-
+    def test_add_crawl_no_seeds(self):
+        response = self.post('base:crawl_space:add_crawl',
+            {'name': 'Cat Crawl',
+             'description': 'Find all the cats.',
+             'crawler': 'ache'},
+            **self.slugs)
+        assert_form_errors(response, 'seeds_list')
 
     def test_add_crawl_success(self):
         response = self.post('base:crawl_space:add_crawl',
-            self.form_data,
+            {'name': 'Cat Crawl',
+             'description': 'Find all the cats.',
+             'seeds_list': self.get_seeds(),
+             'crawler': 'ache'},
             **self.slugs)
         assert 'crawl_space/crawl.html' in response.template_name
+
 
         # Crawl name, slug is as expected
         crawl = get_object(response)
