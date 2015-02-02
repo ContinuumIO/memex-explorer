@@ -109,4 +109,3 @@ RQ_QUEUES = {
         'DEFAULT_TIMEOUT': 360,
     }
 }
-

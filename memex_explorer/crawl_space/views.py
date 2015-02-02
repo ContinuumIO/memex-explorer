@@ -1,6 +1,10 @@
 import json
 import django_rq
 
+from redis.exceptions import ConnectionError
+
+from django.conf import settings
+
 from django.views import generic
 from django.apps import apps
 from django.http import HttpResponse
@@ -11,6 +15,8 @@ from django.views.decorators.csrf import csrf_exempt
 from base.models import Project
 from crawl_space.models import Crawl
 from crawl_space.forms import AddCrawlForm
+
+from crawl_space.crawls import AcheCrawl
 
 
 class AddCrawlView(generic.edit.CreateView):
@@ -37,9 +43,20 @@ class CrawlView(generic.DetailView):
 
     def post(self, request, *args, **kwargs):
         if request.POST['action'] == "start":
-            crawl = self.get_object()
+            # from ipsh import ipsh; ipsh()
+            crawl_model = self.get_object()
             queue = django_rq.get_queue('default')
-            queue.enqueue(print, '\n\nsomething\n\n')
+
+
+            ache_crawl = AcheCrawl(crawl_model)
+            try:
+                queue.enqueue(ache_crawl.crawl)
+            except ConnectionError as e:
+                return HttpResponse(json.dumps(dict(
+                        status="error",
+                        error="start the redis server")),
+                    content_type="application/json")
+
 
 
         # TESTING reflect POST request

@@ -12,7 +12,7 @@ $( document ).ready(function() {
       data: {"action": "start"},
       success: function(response) {
         console.log(response);
-        if (response.state != "Error") $( '#status' ).text(response.state);
+        if (response.status != "error") $( '#status' ).text(response.status);
         else console.log(response)},
       failure: function() {
           $( '#status' ).text( "Error (could not start crawl)" );
