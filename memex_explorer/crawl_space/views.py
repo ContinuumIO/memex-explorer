@@ -1,7 +1,12 @@
+import json
+import django_rq
+
 from django.views import generic
 from django.apps import apps
 from django.http import HttpResponse
-import json
+
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 from base.models import Project
 from crawl_space.models import Crawl
@@ -24,11 +29,27 @@ class CrawlView(generic.DetailView):
     model = Crawl
     template_name = "crawl_space/crawl.html"
 
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+
     def post(self, request, *args, **kwargs):
+        if request.POST['action'] == "start":
+            crawl = self.get_object()
+            queue = django_rq.get_queue('default')
+            queue.enqueue(print, '\n\nsomething\n\n')
+
+
+        # TESTING reflect POST request
         return HttpResponse(json.dumps(dict(
                 args=args,
-                kwargs=kwargs)),
+                kwargs=kwargs,
+                post=request.POST)),
             content_type="application/json")
+
+
 
     def get_object(self):
         return Crawl.objects.get(
