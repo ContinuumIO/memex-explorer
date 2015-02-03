@@ -3,8 +3,6 @@ import django_rq
 
 from redis.exceptions import ConnectionError
 
-from django.conf import settings
-
 from django.views import generic
 from django.apps import apps
 from django.http import HttpResponse

@@ -1,4 +1,5 @@
 import os
+import errno
 
 from django.db import models
 from base.models import Project, alphanumeric_validator
@@ -12,15 +13,24 @@ from django.core.urlresolvers import reverse
 #     def __str__(self):
 #         return self.name
 
-from django.conf import settings as app_settings
+from crawl_space.settings import CRAWL_PATH, SEEDS_TMP_DIR
 
 class Crawl(models.Model):
 
-    def get_upload_path(instance, filename):
-        return os.path.join(instance.slug, filename)
+
+    def ensure_crawl_path(instance):
+        crawl_path = os.path.join(CRAWL_PATH, slugify(str(instance.pk)))
+        try:
+            os.makedirs(crawl_path)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
+
+        return crawl_path
 
     def get_seeds_upload_path(instance, filename):
-        return os.path.join(instance.slug, 'seeds', filename)
+        return os.path.join(SEEDS_TMP_DIR, filename)
+
 
     CRAWLER_CHOICES = (
         ('nutch', "Nutch"),
@@ -46,8 +56,19 @@ class Crawl(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
-        super(Crawl, self).save(*args, **kwargs)
+
+        # If this is the first time the model is saved, then the seeds
+        #    file needs to be moved from SEEDS_TMP_DIR/filename to the
+        #    crawl directory.
+        if self.pk is None:
+            ensure_crawl_path()
+            self.slug = slugify(self.name)
+            # Need to save first to obtain the pk attribute.
+            super().save(*args, **kwargs)
+
+        else:
+            self.slug = slugify(self.name)
+            super().save(*args, **kwargs)
 
 
     def get_absolute_url(self):

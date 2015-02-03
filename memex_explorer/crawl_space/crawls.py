@@ -4,8 +4,8 @@
 # Standard Library
 # ----------------
 
-# import os
-# from subprocess import Popen, PIPE
+import os
+import subprocess
 # import shlex
 # from datetime import datetime
 
@@ -15,11 +15,10 @@ from abc import ABCMeta, abstractmethod
 # Local Imports
 # -------------
 
-# from . import db
-# from .config import SEED_FILES, MODEL_FILES, CONFIG_FILES, CRAWLS_PATH, LANG_DETECT_PATH, IMAGE_SPACE_PATH
-# from .db_api import get_data_source, get_model, set_crawl_status
-# from .utils import make_dir, make_dirs, run_proc
+from crawl_space.settings import (LANG_DETECT_PATH, CRAWL_PATH,
+                                  MODEL_PATH, CONFIG_PATH)
 
+# from .utils import make_dir, make_dirs, run_proc
 
 #  EXCEPTIONS
 # ============
@@ -33,10 +32,6 @@ class NutchException(CrawlException):
 class AcheException(CrawlException):
     pass
 
-
-# Constants
-from django.conf import settings
-LANG_DETECT_PATH = settings.LANG_DETECT_PATH
 
 
 #  CLASSES
@@ -66,7 +61,9 @@ class Crawl(metaclass=ABCMeta):
 
     def __init__(self, crawl):
         """Initialize common crawl attributes."""
-        self.id = crawl.id
+        c = self.crawl = crawl
+
+
 
     # name 
     # slug 
@@ -94,8 +91,19 @@ class Crawl(metaclass=ABCMeta):
 class AcheCrawl(Crawl):
 
     def __init__(self, crawl):
-        # TODO
+        """ACHE specific attributes."""
+
         super().__init__(crawl)
+
+        c = self.crawl
+        self.config = os.path.join(CONFIG_PATH, c.config)
+        self.crawl_dir = os.path.join(CRAWL_PATH, str(c.id))
+        self.seeds_file = crawl.seeds_list.path
+        from ipsh import ipsh; ipsh()
+
+        self.model_dir = os.path.join(MODEL_PATH, str(model.id))
+        self.crawl_dir = os.path.join(CRAWLS_PATH, str(crawl.id))
+        self.status = crawl.status
 
     def crawl(self):
         self.proc = subprocess.Popen(["ache", "startCrawl",
