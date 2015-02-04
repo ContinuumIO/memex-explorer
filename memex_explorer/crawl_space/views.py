@@ -1,5 +1,7 @@
+import os
 import json
 import django_rq
+
 
 from redis.exceptions import ConnectionError
 
@@ -16,6 +18,7 @@ from crawl_space.forms import AddCrawlForm, AddDataModelForm
 
 from crawl_space.crawls import AcheCrawl
 
+from crawl_space.utils import touch
 
 class AddCrawlView(generic.edit.CreateView):
     form_class = AddCrawlForm
@@ -41,20 +44,37 @@ class CrawlView(generic.DetailView):
 
     def post(self, request, *args, **kwargs):
         if request.POST['action'] == "start":
-            # from ipsh import ipsh; ipsh()
             crawl_model = self.get_object()
             queue = django_rq.get_queue('default')
 
-
             ache_crawl = AcheCrawl(crawl_model)
             try:
-                queue.enqueue(ache_crawl.crawl)
+                queue.enqueue(ache_crawl.start)
+                crawl_model.status = "starting"
+                crawl_model.save()
             except ConnectionError as e:
                 return HttpResponse(json.dumps(dict(
                         status="error",
                         error="start the redis server")),
                     content_type="application/json")
 
+                
+        elif request.POST['action'] == "stop":
+            crawl_path = self.get_object().get_crawl_path()
+            touch(os.path.join(crawl_path, 'stop'))
+            return HttpResponse(json.dumps(dict(
+                    status="stopping")),
+                content_type="application/json")
+
+
+        elif request.POST['action'] == "status":
+            crawl_model = self.get_object()
+            return HttpResponse(json.dumps(dict(
+                    status=crawl_model.status,
+                    harvest_rate=crawl_model.harvest_rate,
+                    pages_crawled=crawl_model.pages_crawled,
+                    )),
+                content_type="application/json")
 
 
         # TESTING reflect POST request
