@@ -3,7 +3,7 @@
   <div class="accordion" id="accordion2">
     <div class="accordion-group">
       <div class="accordion-heading sidebar-buttons">
-       <a href="#">
+        <a href="{% url 'base:crawl_space:crawls' slug=project.slug %}">
         Crawls
       </a>
       <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne"  style='float:right;'><i class="fa fa-list"></i></a>
@@ -17,7 +17,7 @@
       {% endfor %}
       {% endif %}
       <div class="accordion-inner">
-        <a href="#">+ Add Crawl</a>
+        <a href="{% url 'base:crawl_space:add_crawl' slug=project.slug %}">+ Add Crawl</a>
       </div>
     </div>
   </div>

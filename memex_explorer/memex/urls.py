@@ -6,4 +6,3 @@ urlpatterns = patterns('',
     url(r'', include('base.urls', namespace="base")),
     url(r'^admin/', include(admin.site.urls)),
 )
-

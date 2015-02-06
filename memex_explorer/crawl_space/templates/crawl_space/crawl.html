@@ -8,7 +8,7 @@
 {% endblock %}
 {% block extrafooter %}
     <script src="{% static 'base/js/bokeh.min.js' %}"></script>
-    <script src="{% static 'base/js/crawl_form.js' %}"></script>
+    <script src="{% static 'base/js/crawl.js' %}"></script>
 {% endblock %}
 
 
@@ -45,7 +45,7 @@
     <div class='col-xs-4'>
       <button id="playButton" title="Start Crawl" type="button" class="btn btn-control"
         data-container="body"
-        {% if status == "Running crawl" or status == "Crawl was stopped" %}
+        {% if crawl.status == "running" or crawl.status == "stopped" %}
         disabled
         {% endif %}
         data-toggle="tooltip" data-placement="bottom">
@@ -53,7 +53,7 @@
       </button>
       <button id="stopButton" title="Stop Crawl" type="button" class="btn btn-control"
         data-container="body"
-        {% if crawl.crawler == "ache" and status != "Running crawl" %}
+        {% if crawl.status != "running" %}
         disabled
         {% endif %}
         data-toggle="tooltip" data-placement="bottom">

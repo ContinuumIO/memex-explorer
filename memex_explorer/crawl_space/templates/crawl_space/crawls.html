@@ -1,0 +1,63 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+
+{% include "base/sidebar.html" %}
+
+<div class='row'>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <h1>Crawls</h1>
+    </div>
+    {% for crawl in object_list %}
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <a href="{{ crawl.get_absolute_url }}">
+            <p>{{ crawl.name }}</p>
+        </a>
+        <p>{{ crawl.description }}</p>
+    <div class="col-sm-6">
+        {% if crawl.crawler == 'nutch' %}
+        <table class="table table-striped">
+            <tr>
+                <th>Images</th>
+                <th>Pages Crawled</th>
+            </tr>
+            <tr>
+                {% if crawl.image_space %}
+
+                    <td>None</td>
+                    {#TODO <td>{{ crawl.image_space.images.all() | length }}</td> #}
+                {% else %}
+                    <td>None</td>
+                {% endif %}
+                <td>{{ crawl.pages_crawled }}</td>
+            </tr>
+        </table>
+        {% else %}
+        <table class="table table-striped">
+            <tr>
+                <th>Pages Crawled</th>
+                <th>Harvest Rate</th>
+            </tr>
+            <tr>
+                <td>{{ crawl.pages_crawled }}</td>
+                <td>{{ crawl.harvest_rate }}</td>
+            </tr>
+        </table>
+        {% endif %}
+    </div>
+    </div>
+
+
+
+    {% empty %}
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <p>There are no crawls associated with this project.</p>
+        </div>
+
+
+
+    {% endfor %}
+</div>
+
+{% endblock %}
