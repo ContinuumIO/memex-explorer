@@ -3,11 +3,16 @@
 {% block title %}Add Data Model{% endblock %}
 
 {% block content %}
+<div class='row'>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 <form action="" method="post" enctype="multipart/form-data">
     <h1>Add Crawl Model</h1>
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Add Data Model" />
+    <br>
+    <button type="submit" class="btn btn-primary">Register</button>
 </form>
+</div>
+</div>
 {% endblock %}
 

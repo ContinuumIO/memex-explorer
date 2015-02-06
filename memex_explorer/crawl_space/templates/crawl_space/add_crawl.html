@@ -3,11 +3,22 @@
 {% block title %}Add Crawl{% endblock %}
 
 {% block content %}
+
+<div class='row'>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 <form action="" method="post" enctype="multipart/form-data">
     <h1>Add Crawl</h1>
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Create Crawl" />
+    <button type="submit" class="btn btn-primary">Add Crawl</button>
 </form>
+</div>
+</div>
+
+{% load staticfiles %}
+{% block extrafooter %}
+<script src="{% static 'base/js/crawl_form.js' %}"></script>
+{% endblock %}
+
 {% endblock %}
 
