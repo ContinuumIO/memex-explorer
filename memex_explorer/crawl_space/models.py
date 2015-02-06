@@ -92,8 +92,8 @@ def validate_features_file(value):
         raise ValidationError("Features file must be named 'pageclassifier.features'.")
 
 
-class DataModel(RefreshableModel):
 
+class CrawlModel(models.Model):
 
     def get_upload_path(instance, filename):
         return os.path.join('models', instance.name, filename)
@@ -172,7 +172,8 @@ class Crawl(RefreshableModel):
     pages_crawled = models.BigIntegerField(default=0)
     harvest_rate = models.FloatField(default=0)
     project = models.ForeignKey(Project)
-    data_model = models.ForeignKey(DataModel)
+    crawl_model = models.ForeignKey(CrawlModel, null=True, blank=True, 
+        default=None)
 
     def __str__(self):
         return self.name
@@ -210,7 +211,6 @@ class Crawl(RefreshableModel):
 
         self.slug = slugify(self.name)
         super().save(*args, **kwargs)
-
 
     def get_absolute_url(self):
         return reverse('base:crawl_space:crawl',

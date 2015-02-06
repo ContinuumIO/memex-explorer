@@ -1,17 +1,17 @@
 from django.forms import ModelForm, RadioSelect, Select
 
-from crawl_space.models import Crawl, DataModel
+from crawl_space.models import Crawl, CrawlModel
 
 
 class AddCrawlForm(ModelForm):
     class Meta:
         model = Crawl
-        fields = ['name', 'description', 'crawler', 'seeds_list', 'data_model']
-        widgets = {'crawler': RadioSelect, 'data_model': Select}
+        fields = ['name', 'description', 'crawler', 'seeds_list', 'crawl_model']
+        widgets = {'crawler': RadioSelect, 'crawl_model': Select}
 
 
-class AddDataModelForm(ModelForm):
+class AddCrawlModelForm(ModelForm):
     class Meta:
-        model = DataModel
+        model = CrawlModel
         fields = ['name', 'model', 'features']
 
