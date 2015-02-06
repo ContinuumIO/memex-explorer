@@ -1,43 +1,43 @@
 <div class="col-sm-3 col-md-2 sidebar">
-    <a href="{% url 'base:project' slug=project.slug %}"><h2><i class='fa {{ project.icon }}'></i><br>{{ project.name }}</h2></a>
-    <div class="accordion" id="accordion2">
-      <div class="accordion-group">
-        <div class="accordion-heading sidebar-buttons">
-           <a href="#">
-          Crawls
-          </a>
-         <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne"  style='float:right;'><i class="fa fa-list"></i></a>
-        </div>
-        <div id="collapseOne" class="accordion-body collapse accordion-links">
-        {% if crawls %}
-        {% for w in crawls%}
-          <div class="accordion-inner">
-            <a href="#">{{ w.name }}</a>
-          </div>
-        {% endfor %}
-        {% endif %}
-          <div class="accordion-inner">
-            <a href="#">+ Add Crawl</a>
-          </div>
-        </div>
+  <a href="{% url 'base:project' slug=project.slug %}"><h2><i class='fa {{ project.icon }}'></i><br>{{ project.name }}</h2></a>
+  <div class="accordion" id="accordion2">
+    <div class="accordion-group">
+      <div class="accordion-heading sidebar-buttons">
+        <a href="{% url 'base:crawl_space:crawls' slug=project.slug %}">
+        Crawls
+      </a>
+      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne"  style='float:right;'><i class="fa fa-list"></i></a>
+    </div>
+    <div id="collapseOne" class="accordion-body collapse accordion-links">
+      {% if crawls %}
+      {% for w in crawls%}
+      <div class="accordion-inner">
+        <a href="#">{{ w.name }}</a>
       </div>
-      <div class="accordion-group">
-        <div class="accordion-heading sidebar-buttons">
-          <a href="#">
-            Image Spaces
-          </a>
-          <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseFive" style='float:right;'><i class="fa fa-list"></i></a>
-        </div>
-        <div id="collapseFive" class="accordion-body collapse accordion-links">
-        {% for x in image_spaces %}
-          <div class="accordion-inner">
-            <a href="#">{{ x.name }}</a>
-          </div>
-        {% endfor %}
-        {# <div class="accordion-inner">
-            <a href="#">+ Add Image Space</a> #}
-          </div>
-        </div>
+      {% endfor %}
+      {% endif %}
+      <div class="accordion-inner">
+        <a href="{% url 'base:crawl_space:add_crawl' slug=project.slug %}">+ Add Crawl</a>
       </div>
     </div>
+  </div>
+  <div class="accordion-group">
+    <div class="accordion-heading sidebar-buttons">
+      <a href="#">
+        Image Spaces
+      </a>
+      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseFive" style='float:right;'><i class="fa fa-list"></i></a>
+    </div>
+    <div id="collapseFive" class="accordion-body collapse accordion-links">
+      {% for x in image_spaces %}
+      <div class="accordion-inner">
+        <a href="#">{{ x.name }}</a>
+      </div>
+      {% endfor %}
+      {# <div class="accordion-inner">
+      <a href="#">+ Add Image Space</a> #}
+    </div>
+  </div>
+</div>
+</div>
 </div>

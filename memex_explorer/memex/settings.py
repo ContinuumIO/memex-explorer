@@ -37,7 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'base',
-    'crawl_space',
+    'crawl_space'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -92,3 +92,6 @@ STATIC_URL = '/static/'
 
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'resources')
+
+MEDIA_URL = '/resources/'

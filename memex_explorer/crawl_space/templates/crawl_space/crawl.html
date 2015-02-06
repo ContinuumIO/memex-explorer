@@ -1,0 +1,136 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block title %}Crawl {{ crawl.name }}{% endblock %}
+
+
+{% block extrahead %}
+    <link href="{% static 'base/css/bokeh.min.css' %}" rel="stylesheet">
+{% endblock %}
+{% block extrafooter %}
+    <script src="{% static 'base/js/bokeh.min.js' %}"></script>
+    <script src="{% static 'base/js/crawl.js' %}"></script>
+{% endblock %}
+
+
+{% block content %}
+
+{% include "base/sidebar.html" %}
+
+  <!-- Crawl Header -->
+<div class='row'>
+  <div class="col-sm-offset-3 col-md-offset-2 col-sm-7 col-md-8 main">
+
+  <!-- Crawl Title -->
+    <h1>{{ crawl.name }} <small>({{ crawl.crawler }})
+    <!-- Crawl Settings -->
+    <a id="settings"
+       href="#TODO"
+       data-container="body"
+       data-toggle="tooltip" data-placement="top">
+      <span class="fa fa-cogs text-muted"></span>
+    </a></small>
+    </h1>
+
+  <!-- Crawl Status -->
+    <h4>Crawl Status: <span id="status">{{ crawl.status }}</span></h4>
+  </div>
+</div>
+
+
+<!-- Buttons -->
+<div class='row'>
+  <div class='col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 controls'>
+
+    <!-- Crawl actions (Start, Stop) -->
+    <div class='col-xs-4'>
+      <button id="playButton" title="Start Crawl" type="button" class="btn btn-control"
+        data-container="body"
+        {% if crawl.status == "running" or crawl.status == "stopped" %}
+        disabled
+        {% endif %}
+        data-toggle="tooltip" data-placement="bottom">
+        <span class="fa fa-play"></span>
+      </button>
+      <button id="stopButton" title="Stop Crawl" type="button" class="btn btn-control"
+        data-container="body"
+        {% if crawl.status != "running" %}
+        disabled
+        {% endif %}
+        data-toggle="tooltip" data-placement="bottom">
+        <span class="fa fa-stop"></span>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<div class='row'>
+  <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    {% if divs %}
+
+        {% for div in divs %}
+        <div class='col-sm-6'>
+          {{ div | safe }}
+        </div>
+        {% endfor %}
+    {% endif %}
+  </div>
+</div>
+
+
+
+<div class='row'>
+  <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    {% if crawl.crawler == 'ache' and divs %}
+    <a class="btn btn-default btn-padded center"
+    href="#TODO">
+    Download Relevant Pages</a>
+    {% endif %}
+    {% if crawl.crawler == 'nutch' %}
+    <button id="imageDump" type="button" title="Dump crawled images" class="btn btn-default btn-duo center">
+      <a>Get Images</a>
+    </button>
+    {% endif %}
+    <h3>Description</h3>
+    <p>{{ crawl.description }}</p>
+  </div>
+</div>
+
+
+
+<div class='row'>
+  <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+  <h3>Summary Statistics</h3>
+<!--   <div class='row'>
+  <div class="col-sm-12 col-md-5">
+ -->  <table data-toggle="table">
+    <thead>
+      <tr>
+        <th>Pages Crawled</th>
+        <th>Harvest Rate</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span id="stats-pages">{{ crawl.pages_crawled }}</span></td>
+        <td><span id="stats-harvest">{{ crawl.harvest_rate }}</span></td>
+      </tr>
+    </tbody>
+  </table>
+<!--   </div>
+  </div>
+ -->  </div>
+</div>
+
+
+
+
+<div class='row'>
+  <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    {% if crawl.crawler == 'ache' %}
+    <h3>Crawl Model</h3>
+    <p> {{ model.name }}</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}

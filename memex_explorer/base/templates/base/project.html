@@ -28,23 +28,18 @@
   <p>{{ project.description }}</p>
 </div>
 </div>
-<!-- <div class='row'>
-    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-        <h2>Add a new application to your project:</h2>
-    </div>
-</div> -->
 
 <div class='row'>
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         <div class="col-sm-4">
-            <h4><a href="#">
-              <i class="fa fa-search"> &nbsp; </i>Crawls</a> &nbsp;&nbsp;&nbsp; <a href="#"><i class="fa fa-plus-square"></i></h4>
+            <h4><a href="crawl/all">
+              <i class="fa fa-search"> &nbsp; </i>Crawls</a> &nbsp;&nbsp;&nbsp; <a href="crawl/add_crawl"><i class="fa fa-plus-square"></i></h4>
 
-            {% if crawls %}
+            {% if project.crawl_set.all %}
             <ul class="list-group">
-                {%  for w in crawls %}
+                {%  for w in project.crawl_set.all %}
                 <li class="list-group-item">
-                    <a href="#"><i class="fa fa-search"></i>  {{ w.name }}</a>
+                    <a href="{{ w.get_absolute_url }}"><i class="fa fa-search"></i>  {{ w.name }}</a>
                 </li>
                 {% endfor %}
             </ul>

@@ -215,33 +215,6 @@ div.data-sample {
   max-width: 100%;
   overflow-x: scroll;
 }
-div:not(.bk-plot-wrapper) > {
-  table {
-    margin: 20px 0 30px 0;
-    border: 1px solid #333333;
-    border-collapse: collapse;
-    &.dataframe {
-      thead tr:nth-child(1) {
-        background: #efefef;
-      }
-      th, td {
-        text-align: center;
-      }
-    }
-    &.datasource-details {
-      tr:nth-child(1) {
-        background: #efefef;
-      }
-    }
-    tr {
-      border: 1px solid #333333;
-    }
-    th, td {
-      padding: 3px 10px;
-      border: 1px solid #333333;
-    }
-  }
-}
 
 .row{
   p{

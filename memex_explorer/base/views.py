@@ -30,4 +30,3 @@ class AddProjectView(generic.edit.CreateView):
 class ProjectView(generic.DetailView):
     model = Project
     template_name = "base/project.html"
-

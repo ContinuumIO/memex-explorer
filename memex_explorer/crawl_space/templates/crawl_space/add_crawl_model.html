@@ -1,13 +1,13 @@
 {% extends "base/base.html" %}
 
-{% block title %}Add Crawl{% endblock %}
+{% block title %}Add Data Model{% endblock %}
 
 {% block content %}
 <form action="" method="post" enctype="multipart/form-data">
-    <h1>Add Crawl</h1>
+    <h1>Add Crawl Model</h1>
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Create Crawl" />
+    <input type="submit" value="Add Data Model" />
 </form>
 {% endblock %}
 

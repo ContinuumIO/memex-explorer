@@ -11,7 +11,7 @@ def alphanumeric_validator():
 class Project(models.Model):
     name = models.CharField(max_length=64, unique=True,
         validators=[alphanumeric_validator()])
-    slug = models.SlugField(max_length=64)
+    slug = models.SlugField(max_length=64, unique=True)
     description = models.TextField()
     icon = models.CharField(max_length=64)
 

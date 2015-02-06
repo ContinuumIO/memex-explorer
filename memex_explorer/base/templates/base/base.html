@@ -15,33 +15,20 @@
     <title>{% block title %}Memex Explorer{% endblock %}</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="{% static "base/css/dataTables.css" %}" rel="stylesheet">
-    <link href="{% static "base/css/bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static 'base/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'base/css/bootstrap-table.min.css' %}" rel="stylesheet">
+    <link href="{% static 'base/css/dataTables.css' %}" rel="stylesheet">
 
-    <link href="{% static "base/css/bokeh.min.css" %}" rel="stylesheet">
-    <link href="{% static "base/css/sweet-alert.css" %}" rel="stylesheet" type="text/css" >
-    <link href="{% static "base/css/custom.css" %}" rel="stylesheet" type="text/css" >
+    <link href="{% static 'base/css/sweet-alert.css' %}" rel="stylesheet" type="text/css" >
 
-    <link href="{% static "base/css/font-awesome.min.css" %}" rel="stylesheet">
-    <script src="{% static "base/js/jquery.min.js" %}"></script>
+    <link href="{% static 'base/css/font-awesome.min.css' %}" rel="stylesheet">
+    <script src="{% static 'base/js/jquery.min.js' %}"></script>
 
     <!-- Custom styles for this template -->
-    <link href="{% static "base/css/dashboard.css" %}" rel="stylesheet">
-
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]>
-      <script src="{% static "base/js/ie8-responsive-file-warning.js" %}"></script>
-      <script src="{% static "base/js/ie-emulation-modes-warning.js" %}"></script>
-    <![endif]-->
+    <link href="{% static 'base/css/custom.css' %}" rel="stylesheet">
+    <link href="{% static 'base/css/dashboard.css' %}" rel="stylesheet">
 
     {% block extrahead %}{% endblock %}
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
 
   </head>
 
@@ -142,16 +129,14 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="{% static "base/js/jquery.dataTables.min.js" %}"></script>
-    <script src="{% static "base/js/dataTables.bootstrap.js" %}"></script>
-    <script src="{% static "base/js/bootstrap.min.js" %}"></script>
-    <script src="{% static "base/js/bokeh.min.js" %}"></script>
-    <script src="{% static "base/js/sweet-alert.min.js" %}"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="{% static "base/js/ie10-viewport-bug-workaround.js" %}"></script>
-    <script src="{% static "base/js/underscore-min.js" %}"></script>
-    <script src="{% static "base/js/backbone-min.js" %}"></script>
-    <script src="{% static "base/js/app.js" %}"></script>
+    <script src="{% static 'base/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'base/js/dataTables.bootstrap.js' %}"></script>
+    <script src="{% static 'base/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'base/js/bootstrap-table.min.js' %}"></script>
+    <script src="{% static 'base/js/sweet-alert.min.js' %}"></script>
+
+    <script src="{% static 'base/js/underscore-min.js' %}"></script>
+    <script src="{% static 'base/js/backbone-min.js' %}"></script>
     {% block extrafooter %}{% endblock %}
 
   </body>
