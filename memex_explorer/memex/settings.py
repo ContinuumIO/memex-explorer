@@ -37,8 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'base',
-    'crawl_space',
-    'django_rq'
+    'crawl_space'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -96,16 +95,3 @@ TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 MEDIA_ROOT = os.path.join(BASE_DIR, 'resources')
 
 MEDIA_URL = '/resources/'
-
-
-# Redis queue configuration
-
-RQ_QUEUES = {
-    'default': {
-        'HOST': 'localhost',
-        'PORT': 6379,
-        'DB': 0,
-        # 'PASSWORD': 'some-password',
-        'DEFAULT_TIMEOUT': 360,
-    }
-}

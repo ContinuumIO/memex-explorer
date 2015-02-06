@@ -194,10 +194,17 @@ class Crawl(RefreshableModel):
             #   and update the FileField accordingly:
             #   https://code.djangoproject.com/ticket/15590#comment:10
 
-            dst = os.path.join(crawl_path, 'seeds')
+            # Nutch requires a seed directory, not a seed file
+            if self.crawler == 'nutch':
+                seed_dir = os.mkdir(os.path.join(crawl_path, 'seeds'))
+                dst = os.path.join(crawl_path, 'seeds/seeds')
+                shutil.move(self.seeds_list.path, dst)
+                self.seeds_list.name = seed_dir
 
-            shutil.move(self.seeds_list.path, dst)
-            self.seeds_list.name = dst
+            else:
+                dst = os.path.join(crawl_path, 'seeds')
+                shutil.move(self.seeds_list.path, dst)
+                self.seeds_list.name = dst
 
             # Continue saving as normal
 
