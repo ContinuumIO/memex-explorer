@@ -16,11 +16,11 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
 from base.models import Project
-from apps.crawl_space.models import Crawl, CrawlModel
-from apps.crawl_space.forms import AddCrawlForm, AddCrawlModelForm
+from crawl_space.models import Crawl, CrawlModel
+from crawl_space.forms import AddCrawlForm, AddCrawlModelForm
 
 
-from apps.crawl_space.utils import touch
+from crawl_space.utils import touch
 
 
 class ProjectObjectMixin(ContextMixin):

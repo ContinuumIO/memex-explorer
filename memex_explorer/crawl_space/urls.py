@@ -20,7 +20,7 @@ project/<project_slug>/
 
 from django.conf.urls import patterns, url
 
-from apps.crawl_space import views
+from crawl_space import views
 
 urlpatterns = patterns('',
     url(r'^add_crawl/$', views.AddCrawlView.as_view(),

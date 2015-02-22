@@ -4,7 +4,7 @@ from django.forms import ModelForm, RadioSelect, Select
 from crispy_forms.layout import Layout, Fieldset, Submit
 from crispy_forms.bootstrap import InlineRadios, FormActions
 
-from apps.crawl_space.models import Crawl, CrawlModel
+from crawl_space.models import Crawl, CrawlModel
 
 from django.core.exceptions import ValidationError
 

@@ -9,14 +9,14 @@ from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
 
 from base.models import Project, alphanumeric_validator
-from apps.crawl_space.utils import ensure_exists
+from crawl_space.utils import ensure_exists
 
 
 def validate_model_file(value):
     if value != 'pageclassifier.model':
         raise ValidationError("Model file must be named 'pageclassifier.model'.")
 
-from apps.crawl_space.settings import (MODEL_PATH, CRAWL_PATH,
+from crawl_space.settings import (MODEL_PATH, CRAWL_PATH,
                                        SEEDS_TMP_DIR, MODELS_TMP_DIR)
 
 def validate_features_file(value):
