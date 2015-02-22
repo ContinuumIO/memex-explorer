@@ -70,7 +70,7 @@ class CrawlView(ProjectObjectMixin, DetailView):
             crawl_slug = self.kwargs['crawl_slug']
 
             call = ["python",
-                    "apps/crawl_space/crawl_supervisor.py",
+                    "crawl_space/crawl_supervisor.py",
                     "--project", project_slug,
                     "--crawl", crawl_slug]
 

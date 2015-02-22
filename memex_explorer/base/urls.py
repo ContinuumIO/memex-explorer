@@ -39,7 +39,7 @@ urlpatterns = patterns('',
 from django.conf import settings
 
 inject_urls = [
-    url(project_slug, include('apps.%s.urls' % app, namespace=app))
+    url(project_slug, include('%s.urls' % app, namespace=app))
     for app in settings.EXPLORER_APPS
 ]
 
