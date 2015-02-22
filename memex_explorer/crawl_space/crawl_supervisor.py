@@ -12,13 +12,14 @@ Example
     $ python crawl_supervisor.py --project project_slug --crawl crawl_slug
 
 """
+from __future__ import absolute_import
 
 import argparse
 import inspect
 
-from apps.crawl_space.crawl_runners import AcheCrawlRunner, NutchCrawlRunner
+from crawl_runners import AcheCrawlRunner, NutchCrawlRunner
 
-from base.models import Project
+from ..base.models import Project
 from apps.crawl_space.models import Crawl
 
 def get_crawl(project_slug, crawl_slug):
@@ -54,7 +55,7 @@ def parse_args():
 
 
 
-class CrawlSupervisor():
+class CrawlSupervisor(object):
     """Wraps crawl process execution.
 
     Parameters
@@ -89,7 +90,6 @@ class CrawlSupervisor():
 
 
 if __name__ == "__main__":
-
     import django
     django.setup()
 

@@ -10,6 +10,11 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import sys
+
+sys.path.insert(1, os.path.abspath(__file__))
+sys.path.insert(1, os.path.dirname(__file__))
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -106,3 +111,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'resources')
 MEDIA_URL = '/resources/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
