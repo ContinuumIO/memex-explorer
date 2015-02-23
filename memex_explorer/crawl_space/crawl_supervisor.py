@@ -74,16 +74,17 @@ class CrawlSupervisor(object):
     """
 
     def __init__(self, *args, **kwargs):
-
-        c = self.crawl_model = get_crawl(
+        import ipdb
+        ipdb.set_trace()
+        crawl = self.crawl_model = get_crawl(
             kwargs['project_slug'],
             kwargs['crawl_slug'])
 
-        if c.crawler == 'ache':
-            self.crawl_runner = AcheCrawlRunner(c)
+        if crawl.crawler == 'ache':
+            self.crawl_runner = AcheCrawlRunner(crawl)
 
-        elif c.crawler == 'nutch':
-            self.crawl_runner = NutchCrawlRunner(c)
+        elif crawl.crawler == 'nutch':
+            self.crawl_runner = NutchCrawlRunner(crawl)
 
     def start(self):
         """Start the crawl process.""" 

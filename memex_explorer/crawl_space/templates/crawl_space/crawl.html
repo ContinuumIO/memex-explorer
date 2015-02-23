@@ -79,9 +79,9 @@
 
 
 
+    {% if crawl.crawler == 'ache' and divs %}
 <div class='row'>
   <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-    {% if crawl.crawler == 'ache' and divs %}
     <a class="btn btn-default btn-padded center"
     href="#TODO">
     Download Relevant Pages</a>
@@ -90,12 +90,24 @@
     <button id="imageDump" type="button" title="Dump crawled images" class="btn btn-default btn-duo center">
       <a>Get Images</a>
     </button>
-    {% endif %}
-    <h3>Description</h3>
-    <p>{{ crawl.description }}</p>
+
   </div>
 </div>
-
+    {% endif %}
+<div class='row'>
+  <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div class="col-sm-6">
+        <h3>Description</h3>
+        <p>{{ crawl.description }}</p>
+    </div>
+    <div class="col-sm-6">
+        {% if crawl.crawler == 'ache' %}
+            <h3>Crawl Model</h3>
+            <p>{{ crawl.crawl_model }}</p>
+        {% endif %}
+    </div>
+  </div>
+</div>
 
 
 <div class='row'>
@@ -125,12 +137,5 @@
 
 
 
-<div class='row'>
-  <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-    {% if crawl.crawler == 'ache' %}
-    <h3>Crawl Model</h3>
-    <p> {{ model.name }}</p>
-    {% endif %}
-  </div>
-</div>
+
 {% endblock content %}
