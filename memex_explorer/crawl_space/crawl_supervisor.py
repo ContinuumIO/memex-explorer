@@ -19,8 +19,8 @@ import inspect
 
 from crawl_runners import AcheCrawlRunner, NutchCrawlRunner
 
-from ..base.models import Project
-from apps.crawl_space.models import Crawl
+from base.models import Project
+from crawl_space.models import Crawl
 
 def get_crawl(project_slug, crawl_slug):
     project = Project.objects.get(slug=project_slug)

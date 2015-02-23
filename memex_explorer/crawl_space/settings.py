@@ -3,9 +3,9 @@
 from __future__ import absolute_import
 
 import os
-from django.conf import settings
+# from django.conf import settings
 
-resources_dir = settings.MEDIA_ROOT
+resources_dir = '/Users/brittainchristopherhard/Documents/memex-explorer/memex_explorer/resources'
 
 # ACHE language detection files.
 # TODO Investigate using conda-installed ACHE resources.

@@ -11,7 +11,7 @@ from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.support.ui import Select
 
 from base.models import Project
-from apps.crawl_space.models import CrawlModel
+from crawl_space.models import CrawlModel
 
 TEST_RESOURCES_DIR = settings.MEDIA_ROOT
 TEST_MODEL_PATH = join(TEST_RESOURCES_DIR,

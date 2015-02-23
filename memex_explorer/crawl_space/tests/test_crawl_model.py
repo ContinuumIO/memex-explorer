@@ -8,7 +8,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 # App
 from base.forms import AddProjectForm
 from base.models import Project
-from test_crawl import assert_form_errors
+from test_crawls import assert_form_errors
 
 
 class TestAddDataModelView(UnitTestSkeleton):
