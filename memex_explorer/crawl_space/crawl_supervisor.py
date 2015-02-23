@@ -16,6 +16,7 @@ from __future__ import absolute_import
 
 import argparse
 import inspect
+import sys, os
 
 from crawl_runners import AcheCrawlRunner, NutchCrawlRunner
 
@@ -88,11 +89,9 @@ class CrawlSupervisor(object):
         """Start the crawl process.""" 
         self.crawl_runner.run()
 
-
 if __name__ == "__main__":
     import django
     django.setup()
-
     args = parse_args()
     crawl_supervisor = CrawlSupervisor(**vars(args))
     crawl_supervisor.start()

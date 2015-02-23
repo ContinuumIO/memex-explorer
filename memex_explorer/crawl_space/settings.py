@@ -2,10 +2,17 @@
 
 from __future__ import absolute_import
 
-import os
-# from django.conf import settings
+import sys, os
 
-resources_dir = '/Users/brittainchristopherhard/Documents/memex-explorer/memex_explorer/resources'
+# from django.conf import settings
+sys.path.insert(1, '/'.join(os.path.dirname(__file__).split('/')[:-1]))
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "memex.settings")
+
+import django
+from django.conf import settings
+
+resources_dir = settings.MEDIA_ROOT
 
 # ACHE language detection files.
 # TODO Investigate using conda-installed ACHE resources.
@@ -19,3 +26,4 @@ CONFIG_PATH = os.path.join(resources_dir, 'configs')
 #   `crawl_space.models`
 SEEDS_TMP_DIR = os.path.join(resources_dir, 'seeds_tmp')
 MODELS_TMP_DIR = os.path.join(resources_dir, 'models_tmp')
+
