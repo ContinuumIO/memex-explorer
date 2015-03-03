@@ -13,7 +13,11 @@
 
 
 {% block content %}
-
+{% if scripts %}
+    {% for script in scripts %}
+        {{ script | safe }}
+    {% endfor %}
+{% endif %}
 {% include "base/sidebar.html" %}
 
   <!-- Crawl Header -->
@@ -95,7 +99,7 @@
     {% endif %}
    --> 
   </div>
-  {% if crawl.descreiption or crawl.crawler == "ache" %}
+  {% if crawl.description or crawl.crawler == "ache" %}
   <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     {% if crawl.description %}
     <div class="col-sm-6">

@@ -4,6 +4,8 @@ channels:
     - memex
     - quasiben
 dependencies:
+    - bokeh=0.7.0
+    - blaze=0.7.0
     - python=2.7.8
     - nutch
     - ache=0.1.0
@@ -11,6 +13,7 @@ dependencies:
     - pytest
     - pip
     - pip:
+        - tld
         - selenium
         - coverage
         - pytest-cov
