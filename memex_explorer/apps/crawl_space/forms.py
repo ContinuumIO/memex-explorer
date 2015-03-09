@@ -46,7 +46,7 @@ class AddCrawlForm(CrispyModelForm):
     def clean_name(self):
         name = self.cleaned_data['name']
         if slugify(unicode(name)) in [x.slug for x in Crawl.objects.all()]:
-            raise ValidationError("Please provide a unique name.")
+            raise ValidationError("Crawl with this Name already exists.")
         return name
 
     class Meta:

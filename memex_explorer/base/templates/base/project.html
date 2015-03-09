@@ -31,9 +31,9 @@
         <a id="link-crawls" href="{% url 'base:crawl_space:crawls' project_slug=project.slug %}">
           <i class="fa fa-search"> &nbsp; </i>Crawls</a>
     <button title="Create Crawl Model" class="btn btn-default btn-duo center" style="float:right;">
-    <a id="link-add-crawl" href="{% url 'base:crawl_space:add_crawl' project_slug=project.slug %}">
-      Add Crawl
-    </a>
+        <a id="link-add-crawl" href="{% url 'base:crawl_space:add_crawl' project_slug=project.slug %}">
+        Add Crawl
+        </a>
     </button>
       </h4>
 
@@ -54,9 +54,9 @@
       <h4>
           <i class="fa fa-bar-chart"> &nbsp; </i>Crawl Models
     <button title="Create Crawl Model" class="btn btn-default btn-duo center" style="float:right;">
-    <a href="{% url 'base:crawl_space:add_crawl_model' project_slug=project.slug %}">
-      Add Crawl Model
-    </a>
+        <a href="{% url 'base:crawl_space:add_crawl_model' project_slug=project.slug %}">
+        Add Crawl Model
+        </a>
     </button>
       </h4>
         {% if project.crawlmodel_set.all %}
