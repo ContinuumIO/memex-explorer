@@ -84,5 +84,15 @@ $( document ).ready(function() {
       }
     });
   }, 5000);
+
+    $("#gotoSolr").on('click', function(){
+        if (window.location.port){
+            solr_url = "http://" + window.location.hostname + ":8983/solr/#"
+        }else{
+            solr_url = "http://" + window.location.host + ":8983/solr/#"
+        }
+        window.open(solr_url, '_blank');
+    });
+
 });
 

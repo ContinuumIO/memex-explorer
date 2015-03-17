@@ -112,13 +112,17 @@
           Download Relevant Pages
         </button>
       </form>
-   <!-- 
-    {% if crawl.crawler == 'nutch' %}
-    <button id="imageDump" type="button" title="Dump crawled images" class="btn btn-default btn-duo center">
-      <a>Get Images</a>
+  </div>
+</div>
+{% endif %}
+
+{% if crawl.crawler == "nutch" %}
+<div class='row'>
+  <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <br>
+    <button id="gotoSolr" type="button" title="Dump crawled images" class="btn btn-default btn-duo center">
+      <a>Goto Solr</a>
     </button>
-    {% endif %}
-   --> 
   </div>
 </div>
 {% endif %}
