@@ -73,9 +73,10 @@
     {% if crawl.crawler == "nutch" %}
       <button id="forceStop" title="Force Stop" type="button" class="btn btn-control"
         data-container="body"
-        {% if crawl.status != "running" %}
+        {% if crawl.status == "stopped" %}
           disabled
         {% endif %}
+        style="margin-left:35px;height:40px;width:40px;"
         data-toggle="tooltip" data-placement="bottom">
         <span class="fa fa-warning"></span>
       </button>

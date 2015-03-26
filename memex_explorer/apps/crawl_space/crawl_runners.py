@@ -226,7 +226,7 @@ class NutchCrawlRunner(CrawlRunner):
                     stopped_by_user = True
                     self.crawl.status = "stopping"
                     self.crawl.save()
-                elif rm_if_exists(self.force_stop):
+                elif rm_if_exists(self.force_stop_file):
                     stopped_by_user = True
                     self.proc.kill()
                     break
