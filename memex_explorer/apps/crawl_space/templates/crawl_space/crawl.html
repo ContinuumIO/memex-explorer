@@ -76,6 +76,9 @@
         {% if crawl.status == "stopped" %}
           disabled
         {% endif %}
+        {% if crawl.status == "Not started" %}
+          disabled
+        {% endif %}
         style="margin-left:35px;height:40px;width:40px;"
         data-toggle="tooltip" data-placement="bottom">
         <span class="fa fa-warning"></span>

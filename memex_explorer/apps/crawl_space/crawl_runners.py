@@ -228,7 +228,7 @@ class NutchCrawlRunner(CrawlRunner):
                     self.crawl.save()
                 elif rm_if_exists(self.force_stop_file):
                     stopped_by_user = True
-                    self.proc.kill()
+                    os.killpg(self.proc.pid, signal.SIGTERM)
                     break
                 sys.stdout.write(".")
                 sys.stdout.flush()
