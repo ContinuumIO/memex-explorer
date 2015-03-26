@@ -70,6 +70,16 @@
         data-toggle="tooltip" data-placement="bottom">
         <span class="fa fa-refresh"></span>
       </button>
+    {% if crawl.crawler == "nutch" %}
+      <button id="forceStop" title="Force Stop" type="button" class="btn btn-control"
+        data-container="body"
+        {% if crawl.status != "running" %}
+          disabled
+        {% endif %}
+        data-toggle="tooltip" data-placement="bottom">
+        <span class="fa fa-warning"></span>
+      </button>
+    {% endif %}
     </div>
   </div>
 </div>

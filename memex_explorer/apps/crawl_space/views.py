@@ -99,6 +99,17 @@ class CrawlView(ProjectObjectMixin, DetailView):
                     status="stopping")),
                 content_type="application/json")
 
+        # Nutch Force Stop
+        elif request.POST['action'] == "force_stop":
+            crawl_model.status = 'stopped'
+            crawl_model.save()
+
+            crawl_path = crawl_model.get_crawl_path()
+            touch(join(crawl_path, 'force_stop'))
+            return HttpResponse(json.dumps(dict(
+                    status="stopped")),
+                content_type="application/json")
+
         # Dump Images
         elif request.POST['action'] == "dump":
             self.dump_images()

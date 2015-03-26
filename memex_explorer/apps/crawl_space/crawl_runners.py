@@ -67,6 +67,7 @@ class CrawlRunner(object):
         self.crawl_dir = crawl.get_crawl_path()
         self.seeds_path = crawl.seeds_list.path
         self.stop_file = join(self.crawl_dir, 'stop')
+        self.force_stop_file = join(self.crawl_dir, 'stop')
         self.solr_url = "http://localhost:8983/solr/"  #TODO - Move to Crawl
 
     @property
@@ -209,6 +210,7 @@ class NutchCrawlRunner(CrawlRunner):
     def run(self):
         while True:
             rm_if_exists(self.stop_file)
+            rm_if_exists(self.force_stop_file)
 
             with open(join(self.crawl_dir, 'crawl_proc.log'), 'a') as stdout:
                 self.proc = subprocess.Popen(self.call,
@@ -224,7 +226,10 @@ class NutchCrawlRunner(CrawlRunner):
                     stopped_by_user = True
                     self.crawl.status = "stopping"
                     self.crawl.save()
-
+                elif rm_if_exists(self.force_stop):
+                    stopped_by_user = True
+                    self.proc.kill()
+                    break
                 sys.stdout.write(".")
                 sys.stdout.flush()
                 time.sleep(5)
