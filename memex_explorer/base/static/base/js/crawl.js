@@ -64,6 +64,41 @@ $( document ).ready(function() {
         });
   });
 
+
+$('#forceStop').click(function(){
+    swal({
+        title: "Are you sure?",
+        text: "Forcing a nutch crawl to stop may result in corrupted crawl data.",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: '#DD6B55',
+        confirmButtonText: 'Yes!',
+        cancelButtonText: "No, cancel!",
+        closeOnConfirm: false,
+        closeOnCancel: false
+    },
+    function(isConfirm){
+        if (isConfirm){
+            swal("Success", "", "success");
+            $('#forceStop').attr("disabled", true);
+            $('#stopButton').attr("disabled", true);
+            $.ajax({
+                type: "POST",
+                data: {"action": "force_stop"},
+                success: function(response) {
+                    console.log(response);
+                    if (response.status != "error") $( '#status' ).text(response.status);
+                    else console.log(response)},
+                    failure: function() {
+                        $( '#status' ).text( "Error (could not stop crawl)" );
+                    }
+            });
+        } else {
+            swal("Cancelled", "", "error");
+        }
+    })
+});
+
   setInterval(function(){
     $.ajax({
       type: "POST",
