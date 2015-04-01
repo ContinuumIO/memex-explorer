@@ -2,6 +2,8 @@ from __future__ import unicode_literals
 
 import os
 import shutil
+import time
+
 from django.core.urlresolvers import reverse
 from django.conf import settings
 
@@ -80,5 +82,10 @@ class TestViews(UnitTestSkeleton):
 
         assert "starting" in response.content
 
-        # assert crawl_is_running
-        assert True
+        time.sleep(10)
+
+        response = self.post('base:crawl_space:crawl', data={'action': 'status'},
+            **self.crawl_slugs)
+
+        assert "running" in response.content
+
