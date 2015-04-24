@@ -63,10 +63,6 @@ class CrawlView(ProjectObjectMixin, DetailView):
     model = Crawl
     template_name = "crawl_space/crawl.html"
 
-    @method_decorator(csrf_exempt)
-    def dispatch(self, *args, **kwargs):
-        return super(CrawlView, self).dispatch(*args, **kwargs)
-
     def post(self, request, *args, **kwargs):
         crawl_model = self.get_object()
 

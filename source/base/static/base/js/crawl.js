@@ -1,5 +1,23 @@
 $( document ).ready(function() {
 
+  function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+      var cookies = document.cookie.split(';');
+      for (var i = 0; i < cookies.length; i++) {
+        var cookie = jQuery.trim(cookies[i]);
+        // Does this cookie string begin with the name we want?
+        if (cookie.substring(0, name.length + 1) == (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  var csrftoken = getCookie('csrftoken');
+
   $( document ).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
   });
@@ -20,9 +38,9 @@ $( document ).ready(function() {
         console.log(response);
         if (response.status != "error") $( '#status' ).text(response.status);
         else console.log(response)},
-          failure: function() {
-            $( '#status' ).text( "Error (could not start crawl)" );
-          }
+      failure: function() {
+        $( '#status' ).text( "Error (could not start crawl)" );
+      }
     });
   });
 
@@ -40,10 +58,10 @@ $( document ).ready(function() {
         console.log(response);
         if (response.status != "error") $( '#status' ).text(response.status);
         else console.log(response)},
-          failure: function() {
-            $( '#status' ).text( "Error (could not stop crawl)" );
-          }
-        });
+      failure: function() {
+        $( '#status' ).text( "Error (could not stop crawl)" );
+      }
+    });
   });
 
 
@@ -59,10 +77,10 @@ $( document ).ready(function() {
         console.log(response);
         if (response.status != "error") $( '#status' ).text(response.status);
         else console.log(response)},
-          failure: function() {
-            $( '#status' ).text( "Error (could not restart crawl)" );
-          }
-        });
+      failure: function() {
+        $( '#status' ).text( "Error (could not restart crawl)" );
+      }
+    });
   });
 
   setInterval(function(){
@@ -89,25 +107,25 @@ $( document ).ready(function() {
     });
   }, 5000);
 
-    $("#gotoSolr").on('click', function(){
-        solr_url = "http://" + window.location.hostname + ":8983/solr/#"
-        window.open(solr_url, '_blank');
-    });
+  $("#gotoSolr").on('click', function(){
+    solr_url = "http://" + window.location.hostname + ":8983/solr/#"
+      window.open(solr_url, '_blank');
+  });
 
-    $("#dumpImages").on('click', function(){
-        $("#nutchButtons").append('<i id="imageSpinner" class="fa fa-refresh fa-spin" style="font-size:20;"></i>')
-        $.ajax({
-            type: "POST",
-            data: {"action": "dump"},
-            success: function(response) {
-                sweetAlert("Success", "Images have been successfully dumped!", "success");
-                $("#imageSpinner").remove()
-            },
-            failure: function() {
-                sweetAlert("Error", "Image dump has failed.", "error");
-                $("#imageSpinner").remove()
-            }
-        });
-    });
+  $("#dumpImages").on('click', function(){
+    $("#nutchButtons").append('<i id="imageSpinner" class="fa fa-refresh fa-spin" style="font-size:20;"></i>')
+      $.ajax({
+        type: "POST",
+        data: {"action": "dump"},
+        success: function(response) {
+          sweetAlert("Success", "Images have been successfully dumped!", "success");
+          $("#imageSpinner").remove()
+        },
+        failure: function() {
+          sweetAlert("Error", "Image dump has failed.", "error");
+          $("#imageSpinner").remove()
+        }
+      });
+  });
 });
 

@@ -54,10 +54,6 @@ class ProjectView(DetailView):
     slug_url_kwarg = 'project_slug'
     template_name = "base/project.html"
 
-    @method_decorator(csrf_exempt)
-    def dispatch(self, *args, **kwargs):
-        return super(ProjectView, self).dispatch(*args, **kwargs)
-
     def post(self, request, *args, **kwargs):
 
         if request.POST['action'] == "create_index":
@@ -99,3 +95,4 @@ class DeleteProjectView(SuccessMessageMixin, DeleteView):
 
     def get_crawls(self):
         return Crawl.objects.filter(project=self.get_object())
+
