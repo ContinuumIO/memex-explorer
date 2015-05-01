@@ -1,0 +1,51 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}{{project.name}}: Indices{% endblock %}
+{% block content %}
+
+{% include "base/sidebar.html" %}
+
+<div class='row'>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <h1>Indices</h1>
+    </div>
+    {% for index in project.index_set.all %}
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <p>{{ index.name }}</p>
+    <a href="{% url 'base:index_settings' project_slug=project.slug index_slug=index.slug %}">
+      <button id="editButton" title="Edit Project" type="button" class="btn btn-control"
+      data-container="body"
+      data-toggle="tooltip" data-placement="bottom">
+      <i class="fa fa-gears" style="font-size:24px;"></i>
+    </button></a>
+    <div class="col-sm-6">
+        <table class="table table-striped">
+            <tr>
+                <th>Number of Files</th>
+            </tr>
+            <tr>
+                <td>0</td>
+            </tr>
+        </table>
+    </div>
+    </div>
+
+
+
+    {% empty %}
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <p>There are no indices associated with this project.</p>
+        </div>
+
+
+
+    {% endfor %}
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="col-sm-6">
+            <a class="btn btn-default btn-duo center link-button" style="float:right;" href="{% url 'base:add_index' project_slug=project.slug %}">Add Index</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

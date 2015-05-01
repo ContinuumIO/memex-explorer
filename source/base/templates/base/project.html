@@ -36,11 +36,6 @@
 
 <div class='row'>
   <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-    <a href="/{{ project.name }}/kibana/">Kibana</a>
-  </div>
-</div>
-<div class='row'>
-  <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     <div class="col-sm-4">
       <h4 style="line-height:2em;">
         <a id="link-crawls" href="{% url 'base:crawl_space:crawls' project_slug=project.slug %}">
@@ -62,7 +57,7 @@
         <a id="link-add-crawl" class="btn btn-default btn-duo center link-button" href="{% url 'base:crawl_space:add_crawl' project_slug=project.slug %}">Add Crawl</a>
     </div>
 
-    <div class="col-sm-8">
+    <div class="col-sm-4">
       <h4 style="line-height:2em;">
           <i class="fa fa-bar-chart"> &nbsp; </i>Crawl Models
         &nbsp;&nbsp;&nbsp;
@@ -73,10 +68,11 @@
           <li class="list-group-item">
             <i class="fa fa-bar-chart"></i>
                 {{ x.name }}
-                <form action="{% url 'base:crawl_space:delete_crawl_model' project_slug=project.slug model_slug=x.slug %}" method="post" onSubmit="return confirm('Are you sure you want to delete this crawl model?')">
+                <form action="{% url 'base:crawl_space:delete_crawl_model' project_slug=project.slug model_slug=x.slug %}"
+                method="post" onSubmit="return confirm('Are you sure you want to delete this crawl model?')">
                     {% csrf_token %}
                 <button class="fa fa-trash-o" type="submit"></button>
-            </form>
+                </form>
           </li>
           {% endfor %}
         </ul>
@@ -85,16 +81,68 @@
         {% endif %}
       <a class="btn btn-default btn-duo center link-button" href="{% url 'base:crawl_space:add_crawl_model' project_slug=project.slug %}">Add Crawl Model</a>
       </div>
-        <div class="col-sm-4" style="margin-top:40px;">
-        {% if project.data_folder %}
-        <p>If you have uploaded PDF data and would like to analyze the data using Elastic Search, click this button.</p>
-        <button id="createIndex" type="button" title="Create ElasticsearchIndex" class="btn btn-default btn-duo center" style="float:left;">
-            <a>Create Index</a>
-        </button>
-        {% endif %}
-        </div>
+    <div class="col-sm-4">
+      <h4 style="line-height:2em;">
+        <a href="{% url 'base:indices' project_slug=project.slug %}">
+          <i class="fa fa-archive"> &nbsp; </i>Indices
+        </a>
+        <button style="float:right;" id="gotoKibana" title="Goto Kibana" type="button" class="btn btn-control"
+            data-container="body"
+            disabled
+            data-toggle="tooltip" data-placement="bottom">
+        Goto Kibana</button>
+      </h4>
+
+      {% if project.index_set.all %}
+      <ul class="list-group">
+        {%  for w in project.index_set.all %}
+        <li class="list-group-item">
+        <a id="link-crawls" href="{% url 'base:index_settings' project_slug=project.slug index_slug=w.slug %}">
+          <i class="fa fa-archive"></i>&nbsp{{ w.name }}
+        </li>
+        {% endfor %}
+       </ul>
+      {% else %}
+      <p>No Indices Registered.</p>
+      {% endif %}
+        <a id="link-add-crawl" class="btn btn-default btn-duo center link-button" href="{% url 'base:add_index' project_slug=project.slug %}">Add Index</a>
+    </div>
     </div>
 
   </div>
+{% if deployment %}
+<script>
+
+$(document).ready(function(){
+
+  var goto_kibana = $("#gotoKibana");
+
+  function get_kibana(){
+    return $.ajax({
+      type: "GET",
+      url: "/{{ project.name }}/kibana/",
+      statusCode: {
+        404: function(){
+          goto_kibana.attr("disabled", true);
+        }
+      },
+      success: function(){
+        goto_kibana.attr("disabled", false);
+      }
+    });
+  }
+
+  function kibana_interval(){
+    get_kibana();
+    return setInterval(function(){
+      get_kibana();
+    }, 20000);
+  }
+
+  kibana_interval();
+
+});
+
 </script>
+{% endif %}
 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends "base/base.html" %}
 {% load static %}
 
-{% block title %}{{project.name}}{% endblock %}
+{% block title %}{{project.name}}: Crawls{% endblock %}
 {% block content %}
 
 {% include "base/sidebar.html" %}
@@ -42,7 +42,6 @@
             </tr>
         </table>
         {% endif %}
-        <a class="btn btn-default btn-duo center link-button" style="float:right;" href="{% url 'base:crawl_space:add_crawl' project_slug=project.slug %}">Add Crawl</a>
     </div>
     </div>
 
@@ -56,6 +55,11 @@
 
 
     {% endfor %}
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="col-sm-6">
+            <a class="btn btn-default btn-duo center link-button" style="float:right;" href="{% url 'base:crawl_space:add_crawl' project_slug=project.slug %}">Add Crawl</a>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

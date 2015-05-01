@@ -7,12 +7,21 @@ Memex explorer application written in Django 1.7
 ```
 $ wget http://bit.ly/miniconda
 $ bash miniconda
-$ conda env create -n memex -f environment.yml
+```
+Then, navigate to the repository root and run these commands:
+```
+$ conda env update
 $ source activate memex
 ```
-* To setup the application, in an environment with Django 1.7 and Python 3 installed, run this command in the `source` folder. This will create the database for the application using the migration scripts provided in the source code:
+* Before you create the database, you need to copy one of the settings files that you need to use. There are two settings files, one for development and one for deployment. Do the following:
 ```
-$ cd memex_explorer
+$ cd source
+$ cp memex/settings_files/dev_settings.py memex/settings.py
+(or)
+$ cp memex/settings_files/deploy_settings.py memex/settings.py
+```
+* To setup the application, after creating the `memex` environment, run these commands in the `source` folder. This will create the database for the application using the migration scripts provided in the source code:
+```
 $ python manage.py migrate
 ```
 * Then, in the same folder run this command to launch the application as a local server:
@@ -48,3 +57,4 @@ Then run `$ gem install compass --user-install`. This will install Compass on yo
 $ cd ../
 $ compass watch
 ```
+

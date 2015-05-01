@@ -6,7 +6,7 @@ python:
 branches:
     only:
         - master
-        - 0.3.0
+        - dockerize
 
 before_install:
   - "export DISPLAY=:99.0"
@@ -19,6 +19,7 @@ install:
     - conda config --set always_yes yes
     - conda env create -n memex -f environment.yml
     - source activate memex
+    - cp source/memex/settings_files/dev_settings.py source/memex/settings.py
 
 script:
     - coverage run $(which py.test) --runslow

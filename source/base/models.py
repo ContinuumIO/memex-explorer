@@ -2,6 +2,7 @@
 
 import os
 import subprocess
+import shutil
 
 from django.db import models
 from django.utils.text import slugify
@@ -16,6 +17,7 @@ from jinja2.runtime import Context
 from django.conf import settings
 
 from task_manager.file_tasks import unzip
+from task_manager.tika_tasks import create_index
 
 
 def alphanumeric_validator():
@@ -28,14 +30,16 @@ def zipped_file_validator():
         'Only compressed archive (.zip) files are allowed.')
 
 
-def get_zipped_data_path(instance, filename):
-    """
-    This method must stay outside of the class definition because django
-    cannot serialize unbound methods in Python 2:
-
-    https://docs.djangoproject.com/en/dev/topics/migrations/#migration-serializing
-    """
-    return os.path.join(settings.PROJECT_PATH, instance.slug, "zipped_data", filename)
+def delete_folder_contents(folder):
+    for file in os.listdir(folder):
+        file_path = os.path.join(folder, file)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shitul.rmtree(file_path)
+        except Exception, e:
+            print(e)
 
 
 class Project(models.Model):
@@ -55,36 +59,18 @@ class Project(models.Model):
 
     """
 
-
-    def get_dumped_data_path(instance):
-        return os.path.join(settings.PROJECT_PATH, instance.slug, "data")
-
     name = models.CharField(max_length=64, unique=True,
         validators=[alphanumeric_validator()])
     slug = models.SlugField(max_length=64, unique=True)
     description = models.TextField(blank=True)
-    uploaded_data = models.FileField(upload_to=get_zipped_data_path,
-        null=True, blank=True, default=None, validators=[zipped_file_validator()])
-    data_folder = models.TextField(blank=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(unicode(self.name))
+        super(Project, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse('base:project',
             kwargs=dict(project_slug=self.slug))
-
-    def save(self, *args, **kwargs):
-        self.slug = slugify(unicode(self.name))
-
-        ### This entire part might be best done asynchronously
-
-        #fill it in with each project's 
-
-        if self.uploaded_data:
-            super(Project, self).save(*args, **kwargs)
-            unzip.delay(get_zipped_data_path(self, self.uploaded_data.name),
-                    self.get_dumped_data_path())
-            self.data_folder = self.get_dumped_data_path()
-
-        super(Project, self).save(*args, **kwargs)
 
     def kibana_url(self):
         return '/{}/kibana/'.format(self.name)
@@ -286,4 +272,68 @@ def start_container_celery(sender, instance, **kwargs):
     start_containers.delay(instance)
 
 
-post_save.connect(start_container_celery, sender = Project)
+if settings.DEPLOYMENT:
+    post_save.connect(start_container_celery, sender = Project)
+
+
+def get_zipped_data_path(instance, filename):
+    """
+    This method must stay outside of the class definition because django
+    cannot serialize unbound methods in Python 2:
+
+    https://docs.djangoproject.com/en/dev/topics/migrations/#migration-serializing
+    """
+    return os.path.join(settings.MEDIA_ROOT, "indices", instance.slug, "zipped_data", filename)
+
+
+class Index(models.Model):
+    """Index model.
+
+    The index model keeps track of indices that are made and what files are
+    contained within them.
+
+    Model Fields
+    ------------
+
+    name : str, 64 characters max
+    description : textfield
+    uploaded_data : Django FileField
+    data_dolder : textfield
+    project : fk to base.Project
+
+    """
+    def get_dumped_data_path(instance):
+        return os.path.join(
+            settings.MEDIA_ROOT,
+            "indices",
+            instance.slug,
+            "data"
+        )
+
+    name = models.CharField(max_length=64, unique=True,
+        validators=[alphanumeric_validator()])
+    slug = models.SlugField(max_length=64, unique=True)
+    uploaded_data = models.FileField(upload_to=get_zipped_data_path,
+        validators=[zipped_file_validator()])
+    data_folder = models.TextField(blank=True)
+    project = models.ForeignKey(Project)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(unicode(self.name))
+        if self.uploaded_data:
+            zipped_data_path = os.path.dirname(get_zipped_data_path(self, self.uploaded_data.name))
+            if os.path.isdir(zipped_data_path):
+                delete_folder_contents(zipped_data_path)
+            super(Index, self).save(*args, **kwargs)
+            self.data_folder = self.get_dumped_data_path()
+            if os.path.isdir(self.data_folder):
+                delete_folder_contents(self.data_folder)
+            unzip.delay(self.uploaded_data.name, self.data_folder)
+            if settings.DEPLOYMENT:
+                create_index.delay(self)
+        super(Index, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('base:index_settings',
+            kwargs=dict(index_slug=self.slug, project_slug=self.project.slug))
+

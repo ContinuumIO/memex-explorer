@@ -1,4 +1,6 @@
 """Base views."""
+from __future__ import absolute_import
+
 import json
 import shutil
 import os
@@ -11,15 +13,19 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 from django.http import HttpResponse
+from django.core.urlresolvers import reverse
+from django.conf import settings
 
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
-from base.models import Project
-from base.forms import AddProjectForm, ProjectSettingsForm
+from base.models import Project, Index
+from base.forms import (AddProjectForm, ProjectSettingsForm, AddIndexForm,
+    IndexSettingsForm)
 
 from apps.crawl_space.models import Crawl
 from apps.crawl_space.settings import CRAWL_PATH
+from apps.crawl_space.views import ProjectObjectMixin
 
 from task_manager.tika_tasks import create_index
 
@@ -54,20 +60,13 @@ class ProjectView(DetailView):
     slug_url_kwarg = 'project_slug'
     template_name = "base/project.html"
 
-    def post(self, request, *args, **kwargs):
-
-        if request.POST['action'] == "create_index":
-            create_index.delay(self.get_object())
-            return HttpResponse("Success")
-
-        return HttpResponse(json.dumps(dict(
-                args=args,
-                kwargs=kwargs,
-                post=request.POST)),
-            content_type="application/json")
-
     def get_object(self):
         return Project.objects.get(slug=self.kwargs['project_slug'])
+
+    def get_context_data(self, **kwargs):
+        context = super(ProjectView, self).get_context_data(**kwargs)
+        context["deployment"] = settings.DEPLOYMENT
+        return context
 
 
 class ProjectSettingsView(SuccessMessageMixin, UpdateView):
@@ -95,4 +94,65 @@ class DeleteProjectView(SuccessMessageMixin, DeleteView):
 
     def get_crawls(self):
         return Crawl.objects.filter(project=self.get_object())
+
+
+class ListIndicesView(ProjectObjectMixin, ListView):
+    model = Index
+    template_name = "base/indices.html"
+
+
+class AddIndexView(SuccessMessageMixin, ProjectObjectMixin, CreateView):
+    model = Index
+    form_class = AddIndexForm
+    template_name = "base/add_index.html"
+    success_message = "Index %(name)s was added successfully."
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
+
+    def form_valid(self, form):
+        form.instance.project = self.get_project()
+        return super(AddIndexView, self).form_valid(form)
+
+
+class IndexSettingsView(SuccessMessageMixin, ProjectObjectMixin, UpdateView):
+    model = Index
+    slug_url_kwarg = 'index_slug'
+    form_class = IndexSettingsForm
+    success_message = "Index was edited successfully."
+    template_name_suffix = '_update_form'
+
+    def get_success_url(self):
+        return self.get_object().get_absolute_url()
+
+    def get_object(self):
+        return Index.objects.get(
+            project=self.get_project(),
+            slug=self.kwargs['index_slug'])
+
+    def get_context_data(self, **kwargs):
+        context = super(IndexSettingsView, self).get_context_data(**kwargs)
+        context["name"] = self.get_object().name
+        return context
+
+
+class DeleteIndexView(SuccessMessageMixin, ProjectObjectMixin, DeleteView):
+    model = Index
+    success_message = "Index was deleted successfully."
+    success_url = ""
+
+    def delete(self, request, *args, **kwargs):
+        self.success_url = self.get_object().get_absolute_url()
+        shutil.rmtree(os.path.dirname(self.get_object().data_folder))
+        return super(DeleteIndexView, self).delete(request, *args, **kwargs)
+
+    def get_object(self):
+        return Index.objects.get(
+            project=self.get_project(),
+            slug=self.kwargs['index_slug'])
+
+    def get_context_data(self, **kwargs):
+        context = super(IndexSettingsView, self).get_context_data(**kwargs)
+        context["name"] = self.get_object().name
+        return context
 

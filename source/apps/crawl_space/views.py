@@ -29,7 +29,6 @@ from task_manager.tika_tasks import create_index
 
 
 class ProjectObjectMixin(ContextMixin):
-
     def get_project(self):
         return Project.objects.get(slug=self.kwargs['project_slug'])
 
@@ -41,7 +40,6 @@ class ProjectObjectMixin(ContextMixin):
 
 
 class AddCrawlView(SuccessMessageMixin, ProjectObjectMixin, CreateView):
-
     form_class = AddCrawlForm
     template_name = "crawl_space/add_crawl.html"
     success_message = "Crawl %(name)s was saved successfully."
@@ -202,7 +200,6 @@ class CrawlView(ProjectObjectMixin, DetailView):
 
 
 class CrawlSettingsView(SuccessMessageMixin, ProjectObjectMixin, UpdateView):
-
     model = Crawl
     form_class = CrawlSettingsForm
     success_message = "Crawl %(name)s was edited successfully."
@@ -218,7 +215,6 @@ class CrawlSettingsView(SuccessMessageMixin, ProjectObjectMixin, UpdateView):
 
 
 class AddCrawlModelView(SuccessMessageMixin, ProjectObjectMixin, CreateView):
-
     form_class = AddCrawlModelForm
     template_name = "crawl_space/add_crawl_model.html"
     success_message = "Crawl model %(name)s was added successfully."
@@ -232,7 +228,6 @@ class AddCrawlModelView(SuccessMessageMixin, ProjectObjectMixin, CreateView):
 
 
 class DeleteCrawlView(SuccessMessageMixin, ProjectObjectMixin, DeleteView):
-
     model = Crawl
     success_message = "Crawl %(name)s was deleted successfully."
 
@@ -250,7 +245,6 @@ class DeleteCrawlView(SuccessMessageMixin, ProjectObjectMixin, DeleteView):
 
 
 class DeleteCrawlModelView(SuccessMessageMixin, ProjectObjectMixin, DeleteView):
-
     model = CrawlModel
     success_message = "Crawl model %(name)s was deleted successfully."
 

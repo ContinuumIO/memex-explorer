@@ -10,8 +10,6 @@ import os
 
 from celery import shared_task, task
 
-from base.models import Project
-
 TIKA_ENDPOINT="http://ec2-54-237-89-165.compute-1.amazonaws.com:9998/"
 ELASTICSEARCH_HOST="http://ec2-54-237-89-165.compute-1.amazonaws.com:9200/"
 
@@ -52,12 +50,12 @@ def process_content(content_str, stopwords):
 
 
 @shared_task()
-def create_index(project):
+def create_index(index):
     es = Elasticsearch([ELASTICSEARCH_HOST])
-    files = [os.path.join(project.data_folder, x) for x in os.listdir(project.data_folder)]
-    if es.indices.exists(project.slug):
-        print("Deleting '%s' index" % project.slug)
-        res = es.indices.delete(index=project.slug)
+    files = [os.path.join(index.data_folder, x) for x in os.listdir(index.data_folder)]
+    if es.indices.exists(index.slug):
+        print("Deleting '%s' index" % index.slug)
+        res = es.indices.delete(index=index.slug)
         print("  response: '%s'" % res)
 
     stopwords = []
@@ -77,7 +75,7 @@ def create_index(project):
             for kw, val in features.items():
                 parsed["has_" + re.sub(' ', '_', kw)] = val
             #parsed["authors"] = process_authors(parsed["X-TIKA:content"])
-            es.index(index=project.slug,
+            es.index(index=index.slug,
                      doc_type="autonomy",
                      body = parsed,
                      )

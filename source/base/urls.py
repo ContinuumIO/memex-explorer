@@ -30,6 +30,14 @@ urlpatterns = patterns('',
         name='project_settings'),
     url(project_slug + r'settings/delete/$', views.DeleteProjectView.as_view(),
         name='delete_project'),
+    url(project_slug + r'add_index/$', views.AddIndexView.as_view(),
+        name='add_index'),
+    url(project_slug + r'indices/$', views.ListIndicesView.as_view(),
+        name='indices'),
+    url(project_slug + r'indices/(?P<index_slug>[\w-]+)/settings/$',
+        views.IndexSettingsView.as_view(), name='index_settings'),
+    url(project_slug + r'indices/(?P<index_slug>[\w-]+)/settings/delete/$',
+        views.DeleteIndexView.as_view(), name='delete_index'),
 )
 
 

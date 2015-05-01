@@ -22,5 +22,27 @@
     </div>
   </div>
 </div>
+  <div class="accordion" id="accordion3">
+    <div class="accordion-group">
+      <div class="accordion-heading sidebar-buttons">
+        <a href="{% url 'base:indices' project_slug=project.slug %}">
+        Indices
+      </a>
+      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#collapseThree"  style='float:right;'><i class="fa fa-list"></i></a>
+    </div>
+    <div id="collapseThree" class="accordion-body collapse accordion-links">
+      {% if project.index_set.all %}
+      {% for w in project.index_set.all %}
+      <div class="accordion-inner">
+          <a href="{{ w.get_absolute_url }}">{{ w.name }}</a>
+      </div>
+      {% endfor %}
+      {% endif %}
+      <div class="accordion-inner">
+        <a href="{% url 'base:add_index' project_slug=project.slug %}">+ Add Index</a>
+      </div>
+    </div>
+  </div>
+</div>
 </div>
 </div>
