@@ -16,10 +16,14 @@ import sys
 import os
 import sphinx_rtd_theme
 
+# Django needs this
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "memex.settings")
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('../source'))
 
 # -- General configuration ------------------------------------------------
 
@@ -49,7 +53,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'memex-explorer'
-copyright = u'2014, Continuum Analytics'
+copyright = u'2014-15, Continuum Analytics'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -202,7 +206,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
   ('index', 'memex-explorer.tex', u'memex-explorer Documentation',
-   u'Andy Terrel, Christine Doig, Ben Zaitlen, Karan Dodia, Brittain Hard', 'manual'),
+   u'Andy Terrel, Christine Doig, Ben Zaitlen, Karan Dodia, Brittain Hard, Aron Ahmadia, Andrew Farrel', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -261,3 +265,4 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
