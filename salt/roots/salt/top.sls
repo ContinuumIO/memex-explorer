@@ -5,6 +5,7 @@ base:
     - nginx
     - redis-server
     - git
+    - pip
     - silversearcher-ag
     - docker
     - tig
