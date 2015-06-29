@@ -31,10 +31,13 @@ from task_manager.file_tasks import upload_zip
 
 
 def project_context_processor(request):
-    return {
+    additional_context = {
         'projects': Project.objects.all(),
         'deployment': settings.DEPLOYMENT,
     }
+    for app, location in settings.EXTERNAL_APP_LOCATIONS.items():
+        additional_context["{}_link".format(app)] = location
+    return additional_context
 
 
 class IndexView(ListView):

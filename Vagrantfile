@@ -21,6 +21,7 @@ Vagrant.configure(2) do |config|
 
   # We bring the memex-explorer main server up on 8000
   config.vm.network "forwarded_port", guest: 8000, host: 8000
+  config.vm.network "forwarded_port", guest: 8888, host: 28888
   # And the log.io server on 28778
   config.vm.network "forwarded_port", guest: 28778, host: 28778
   # And (if needed) a local elasticsearch container up on 9200

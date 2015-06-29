@@ -146,3 +146,8 @@ CELERY_TRACK_STARTED = True
 
 # Disable dockerize functionality
 DEPLOYMENT = False
+
+EXTERNAL_APP_LOCATIONS = {
+    'kibana': 'http://localhost:9999',
+    'logio': 'http://localhost:28778',
+}

@@ -65,7 +65,7 @@ class AddCrawlView(SuccessMessageMixin, ProjectObjectMixin, CreateView):
         return super(AddCrawlView, self).post(request, *args, **kwargs)
 
     def get_success_url(self):
-        return self.object.get_absolute_url()
+        return self.request.build_absolute_uri(self.object.get_absolute_url())
 
     def form_valid(self, form):
         form.instance.project = self.get_project()
@@ -262,7 +262,7 @@ class CrawlSettingsView(SuccessMessageMixin, ProjectObjectMixin, UpdateView):
     template_name_suffix = '_update_form'
 
     def get_success_url(self):
-        return self.object.get_absolute_url()
+        return self.request.build_absolute_uri(self.object.get_absolute_url())
 
     def get_object(self):
         return Crawl.objects.get(
@@ -280,7 +280,7 @@ class AddCrawlModelView(SuccessMessageMixin, ProjectObjectMixin, CreateView):
         return super(AddCrawlModelView, self).form_valid(form)
 
     def get_success_url(self):
-        return self.object.get_absolute_url()
+        return self.request.build_absolute_uri(self.object.get_absolute_url())
 
 
 class DeleteCrawlView(SuccessMessageMixin, ProjectObjectMixin, DeleteView):
@@ -293,7 +293,7 @@ class DeleteCrawlView(SuccessMessageMixin, ProjectObjectMixin, DeleteView):
         return super(DeleteCrawlView, self).delete(request, *args, **kwargs)
 
     def get_success_url(self):
-        return self.get_project().get_absolute_url()
+        return self.request.build_absolute_uri(self.object.get_absolute_url())
 
     def get_object(self):
         return Crawl.objects.get(project=self.get_project(),
@@ -305,7 +305,7 @@ class DeleteCrawlModelView(SuccessMessageMixin, ProjectObjectMixin, DeleteView):
     success_message = "Crawl model %(name)s was deleted successfully."
 
     def get_success_url(self):
-        return self.get_project().get_absolute_url()
+        return self.request.build_absolute_uri(self.object.get_absolute_url())
 
     def get_object(self):
         return CrawlModel.objects.get(

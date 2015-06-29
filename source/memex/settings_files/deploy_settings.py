@@ -146,3 +146,9 @@ CELERYD_GROUP="vagrant"
 
 # Enable dockerize functionality
 DEPLOYMENT = True
+
+#Must match the urls given in deploy/nginx.conf
+EXTERNAL_APP_LOCATIONS = {
+    'kibana': '/kibana/',
+    'logio': '/logio/',
+}
