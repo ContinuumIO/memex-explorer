@@ -71,3 +71,15 @@ reload-supervisor:
            /home/vagrant/miniconda/bin:/home/ubuntu/miniconda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
     - require:
         - sls: conda-memex
+
+/home/vagrant/resources/configs:
+  file.recurse:
+    - source: salt://source/resources/configs
+    - user: vagrant
+    - force: True
+
+/home/vagrant/resources/profiles:
+  file.recurse:
+    - source: salt://source/resources/profiles
+    - user: vagrant
+    - force: True

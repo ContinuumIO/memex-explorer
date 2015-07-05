@@ -4,3 +4,7 @@
 # resolved, then the minion will fail to start.
 master: localhost
 file_client: local
+file_roots:
+  base:
+    - /vagrant
+    - /srv/salt
