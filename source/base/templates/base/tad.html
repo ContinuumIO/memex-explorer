@@ -1,0 +1,21 @@
+{% extends "base/base.html" %}
+
+{% block title %}TAD{% endblock %}
+
+{% load static %}
+
+{% block extrafooter %}
+    <script src="{% static 'base/js/ajax.js' %}"></script>
+    <script src="{% static 'base/js/tad.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+{% include "base/sidebar.html" %}
+<div class='row'>
+  <div class="col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-2 main">
+    <h1>TAD</h1>
+      <button class="btn btn-default btn-duo center link-button" id="tadUpdate" style="float:right;">Check Status</button><br><br>
+      <div id="tadResponse"></div>
+  </div>
+</div>
+{% endblock %}

@@ -18,3 +18,4 @@ base:
     - memex-docker
     - memex-explorer
     - logio
+    - tad-docker

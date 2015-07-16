@@ -28,6 +28,8 @@ urlpatterns = patterns('',
         name='project'),
     url(project_slug + r'settings/$', views.ProjectSettingsView.as_view(),
         name='project_settings'),
+    url(project_slug + r'tad/$', views.TadView.as_view(),
+        name='tad'),
     url(project_slug + r'settings/delete/$', views.DeleteProjectView.as_view(),
         name='delete_project'),
     url(project_slug + r'add_dataset/$', views.AddIndexView.as_view(),
@@ -53,4 +55,3 @@ inject_urls = [
 ]
 
 urlpatterns += patterns('', *inject_urls)
-
