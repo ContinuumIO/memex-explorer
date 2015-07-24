@@ -40,7 +40,6 @@ INSTALLED_APPS = (
     'crispy_forms',
     'base',
     'task_manager',
-    'debug_toolbar',
 )
 
 EXPLORER_APPS = (
@@ -119,7 +118,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'handlers': {
         'file': {
-            'level': 'DEBUG',
+            'level': 'WARNING',
             'class': 'logging.FileHandler',
             'filename': os.path.join(BASE_DIR, 'memex/logs/debug.log'),
         },

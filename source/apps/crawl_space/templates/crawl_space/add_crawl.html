@@ -3,6 +3,12 @@
 
 {% block title %}Add Crawl{% endblock %}
 
+{% load staticfiles %}
+
+{% block extrafooter %}
+    <script src="{% static 'base/js/crawl_form.js' %}"></script>
+{% endblock %}
+
 {% block content %}
 
 {% include "base/sidebar.html" %}
@@ -22,10 +28,3 @@
 </div>
 
 {% endblock %}
-
-{% load staticfiles %}
-{% block extrafooter %}
-<script src="{% static 'base/js/crawl_form.js' %}"></script>
-{% endblock %}
-
-

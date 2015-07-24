@@ -70,7 +70,7 @@ class ProjectView(DetailView):
     template_name = "base/project.html"
 
     def post(self, request, *args, **kwargs):
-        if request.POST['action'] == "index_status":
+        if request.POST["action"] == "index_status":
             statuses = {}
             for x in self.get_object().index_set.all():
                 x.status = x.celerytask.task.status

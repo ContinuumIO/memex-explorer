@@ -7,6 +7,10 @@
 {% block extrafooter %}
     <script src="{% static 'base/js/ajax.js' %}"></script>
     <script src="{% static 'base/js/project.js' %}"></script>
+    <script src="{% static 'base/js/form_ajax.js' %}"></script>
+    <script src="{% static 'base/js/crawl_form.js' %}"></script>
+    <script src="{% static 'base/js/forms/crawl_submit.js' %}"></script>
+    <script src="{% static 'base/js/forms/crispy_form_errors.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -45,7 +49,7 @@
           <div class="btn-group" role="group" aria-label="...">
              <a id="link-add-crawl" class="btn btn-default btn-duo center link-button" href="{% url 'base:crawl_space:add_crawl' project_slug=project.slug %}">Add Crawl</a>
 
-            <a class="add_index btn btn-default btn-duo center link-button" href="{% url 'base:add_index' project_slug=project.slug %}">Add Dataset</a>
+            <a target="_blank" class="add_index btn btn-default btn-duo center link-button" href="{% url 'base:add_index' project_slug=project.slug %}">Add Dataset</a>
 
             <a class="btn btn-default btn-duo center link-button" href="{% url 'base:crawl_space:add_crawl_model' project_slug=project.slug %}">Add Crawl Model</a>
           </div>
@@ -177,7 +181,6 @@
         {% endif %}
 -->
 
-
         {% if project.crawlmodel_set.all %}
         <table class="table table-striped table-condensed">
           <tr>
@@ -202,8 +205,10 @@
         {% else %}
         <p>No Crawl Models Registered.</p>
         {% endif %}
+
+        {% include "crawl_space/add_crawl_form.html" %}
+
       </div>
     </div>
-
   </div>
 {% endblock %}

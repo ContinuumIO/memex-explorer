@@ -1,0 +1,93 @@
+  <form method="post" enctype="multipart/form-data" id="addCrawlForm">
+    <h1>Add Crawl</h1>
+    {% csrf_token %}
+    <fieldset>
+      <div id="div_id_name" class="form-group">
+        <label for="id_name" class="control-label requiredField">
+  				Name<span class="asteriskField">*</span>
+        </label>
+        <div class="controls ">
+          <input class="textinput textInput form-control" id="id_name" maxlength="64" name="name" type="text" />
+          <span class="help-block">
+            <strong id="error_id_name" hidden></strong>
+          </span>
+        </div>
+      </div>
+      <div id="div_id_description" class="form-group">
+        <label for="id_description" class="control-label ">
+  				Description
+  			</label>
+        <div class="controls ">
+          <textarea class="textarea form-control" cols="40" id="id_description" name="description" rows="10"></textarea>
+        </div>
+      </div>
+      <div id="div_id_seeds_list" class="form-group">
+        <label for="id_seeds_list" class="control-label  requiredField">
+  				Seeds list<span class="asteriskField">*</span>
+        </label>
+        <div class="controls">
+          <input class="clearablefileinput" id="id_seeds_list" name="seeds_list" type="file" />
+          <span class="help-block">
+            <strong id="error_id_seeds_list" hidden></strong>
+          </span>
+        </div>
+      </div>
+      <div id="div_id_textseeds" class="form-group">
+        <label for="id_textseeds" class="control-label">
+          Or, paste  urls to crawl.
+        </label>
+        <div class="controls ">
+          <textarea class="textarea form-control" cols="10" id="id_textseeds" name="textseeds"rows="10"></textarea>
+        </div>
+      </div>
+      <div id="div_id_crawler" class="form-group">
+        <label for="id_crawler"  class="control-label  requiredField">
+          Crawler<span class="asteriskField">*</span>
+        </label>
+        <div class="controls">
+          <label class="radio-inline">
+            <input type="radio" checked="checked" name="crawler" id="id_crawler_1" value="nutch" >Nutch
+          </label>
+          <label class="radio-inline">
+            <input type="radio" name="crawler" id="id_crawler_2" value="ache" >ACHE
+          </label>
+          <span class="help-block">
+            <strong id="error_id_crawler" hidden></strong>
+          </span>
+        </div>
+      </div>
+      <div id="div_id_rounds_left" class="form-group">
+        <label for="id_rounds_left" class="control-label ">
+  				Rounds
+  			</label>
+        <div class="controls ">
+          <input class="numberinput form-control" id="id_rounds_left" name="rounds_left" type="number" value="1" />
+          <span class="help-block">
+            <strong id="error_id_rounds_left" hidden></strong>
+          </span>
+        </div>
+      </div>
+      <div id="div_id_crawl_model" class="form-group">
+        <label for="id_crawl_model" class="control-label ">
+  				Crawl model
+  			</label>
+        <div class="controls ">
+          <select class="select form-control" id="id_crawl_model" name="crawl_model">
+            <option value="" selected="selected">---------</option>
+            {% for w in project.crawlmodel_set.all %}
+            <option value="{{ w.id }}">{{ w.name }}</option>
+            {% endfor %}
+          </select>
+          <span class="help-block">
+            <strong id="error_id_crawl_model" hidden></strong>
+          </span>
+        </div>
+      </div>
+      <div class="form-actions">
+        <input type="submit" name="submit" value="Create" class="btn btn-primary" id="submit-id-submit" />
+      </div>
+      <a class="add_index btn btn-primary link-button" id="cancelSubmit" target="_blank" href="#">
+        Cancel
+      </a>
+    </fieldset>
+  </form>
