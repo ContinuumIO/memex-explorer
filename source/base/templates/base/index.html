@@ -8,6 +8,7 @@
     <script src="{% static 'base/js/forms/form_ajax.js' %}"></script>
     <script src="{% static 'base/js/forms/crispy_form_errors.js' %}"></script>
     <script src="{% static 'base/js/forms/project_submit.js' %}"></script>
+    <script src="{% static 'base/js/backbone/projects.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -41,30 +42,7 @@
                 </a>
             </div>
         </div>
-        {% for project in projects %}
-        <div class="col-lg-3 col-md-4 project-tab">
-            <div class="panel panel-project">
-                <div class="panel-heading">
-                <a href="{% url 'base:project' project_slug=project.slug %}" style="text-decoration:none;">
-                    <div class="row">
-                        <div class="col-md-12 color-set">
-                            <p>{{ project.name }}</p>
-                        </div>
-                        <!--div class="col-xs-9 text-right">
-                            <i class="fa {{project.icon}} fa-3x"></i>
-                        </div-->
-                    </div>
-                </div>
-                    <div class="panel-footer">
-                        <p>{{ project.description }}</p>
-
-                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                        <div class="clearfix"></div>
-                    </div>
-                </a>
-            </div>
-        </div>
-        {% endfor %}
+        <div id="projects"></div>
     </div>
 
     <div class="modal fade" id="newProjectModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -74,9 +52,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="myModalLabel">Add Project</h4>
                 </div>
-                <div class="modal-body">
-                    {% include "base/add_project_form.html" %}
-                </div>
+                <div class="modal-body" id="addProjectContainer"></div>
             </div>
         </div>
     </div>

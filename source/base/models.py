@@ -57,6 +57,10 @@ class Project(models.Model):
         return reverse('base:project',
             kwargs=dict(project_slug=self.slug))
 
+    @property
+    def url(self):
+        return self.get_absolute_url()
+
     def kibana_url(self):
         return '/{}/kibana/'.format(self.name)
 

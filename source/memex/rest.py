@@ -9,6 +9,8 @@ class SlugModelSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(SlugModelSerializer):
+    url = serializers.CharField(read_only=True)
+
     class Meta:
         model = Project
 
