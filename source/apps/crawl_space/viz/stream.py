@@ -17,6 +17,10 @@ from bokeh.embed import autoload_server
 from bokeh.session import Session
 from bokeh.document import Document
 
+from django.conf import settings
+EXTERNAL_APP_LOCATIONS = settings.EXTERNAL_APP_LOCATIONS
+VIRTUAL_HOST = settings.VIRTUAL_HOST
+
 DEFAULT_NUM_URLS = 25
 URL_CHAR_WIDTH = 50
 EXCHANGE_NAME = "fetcher_log"
@@ -60,6 +64,9 @@ def init_plot(crawl_name):
 
     #TODO: Looks like a Bokeh bug, probably not repeatable with current code
     script = script.replace("'modelid': u'", "'modelid': '")
+
+    if VIRTUAL_HOST != "localhost":
+        script = script.replace('http://localhost:5006', EXTERNAL_APP_LOCATIONS['bokeh-server'])
     return script
 
 

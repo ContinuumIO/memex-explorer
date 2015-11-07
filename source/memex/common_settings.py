@@ -19,6 +19,7 @@ from local_settings import *
 from supervisor_services import check_process_state
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+VIRTUAL_HOST = os.environ.get('VIRTUAL_HOST', 'localhost')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
