@@ -133,6 +133,48 @@ var statuses = statuses || {};
         "seeds",
       ],
     },
+    "INVERTLINKS": {
+      "disabled": [
+        "play",
+        "restart",
+        "images",
+        "cca",
+        "rounds",
+      ],
+      "enabled": [
+        "stop",
+        "log",
+        "seeds",
+      ],
+    },
+    "INDEX": {
+      "disabled": [
+        "play",
+        "restart",
+        "images",
+        "cca",
+        "rounds",
+      ],
+      "enabled": [
+        "stop",
+        "log",
+        "seeds",
+      ],
+    },
+    "DEDUP": {
+      "disabled": [
+        "play",
+        "restart",
+        "images",
+        "cca",
+        "rounds",
+      ],
+      "enabled": [
+        "stop",
+        "log",
+        "seeds",
+      ],
+    },
     "RESTARTING": {
       "disabled": [
         "play",
