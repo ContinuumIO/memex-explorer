@@ -169,6 +169,7 @@ class Crawl(models.Model):
     def save(self, *args, **kwargs):
         if self.pk is None:
             self.slug = slugify(unicode(self.name))
+            self.name = self.name.strip().replace(" ", "-")
             # TODO:
             # Fix this function and its weird side effect. Without this line the
             # save method wont work.

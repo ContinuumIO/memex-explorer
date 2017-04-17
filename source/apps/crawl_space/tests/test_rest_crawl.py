@@ -98,7 +98,7 @@ class TestCrawlREST(APITestCase):
 
     def test_get_crawl_by_name(self):
         response = self.client.get(self.url + "?name=%s" % self.test_nutch_crawl.name)
-        assert self.parse_response(response)["name"] == "Test Nutch REST"
+        assert self.parse_response(response)["name"] == "Test-Nutch-REST"
 
     def test_get_crawl_by_slug(self):
         response = self.client.get(self.url + "?slug=%s" % self.test_nutch_crawl.slug)
@@ -128,13 +128,13 @@ class TestCrawlREST(APITestCase):
         data = {"name": "Nutch POST REST", "crawler": "nutch", "seeds_object": self.test_seeds_list.id,
             "project": self.test_project.id}
         response = self.client.post(self.url, data, format="json")
-        assert json.loads(response.content)["name"] == "Nutch POST REST"
+        assert json.loads(response.content)["name"] == "Nutch-POST-REST"
 
     def test_add_crawl_rest_ache(self):
         data = {"name": "Ache POST REST", "crawler": "ache", "seeds_object": self.test_seeds_list.id,
             "project": self.test_project.id, "crawl_model": self.test_crawlmodel.id}
         response = self.client.post(self.url, data, format="json")
-        assert json.loads(response.content)["name"] == "Ache POST REST"
+        assert json.loads(response.content)["name"] == "Ache-POST-REST"
 
     def test_crawl_change_name(self):
         response = self.client.patch(self.url + "%d/" % self.test_nutch_crawl.id,
